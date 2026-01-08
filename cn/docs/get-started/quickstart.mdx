@@ -1,0 +1,165 @@
+---
+title: "Poixe 入门指南"
+sidebarTitle: "快速入门"
+description: "进行您的第一次 Poixe API 调用，向 ChatGPT 发送消息并获取响应。"
+---
+
+import QuickstartCurlRequest from "/snippets/quickstart/curl-req.mdx";
+import QuickstartCurlResponse from "/snippets/quickstart/curl-resp.mdx";
+
+import QuickStartTsRequest from "/snippets/quickstart/ts-req.mdx";
+import QuickStartTsResponse from "/snippets/quickstart/ts-resp.mdx";
+
+import QuickStartPyRequest from "/snippets/quickstart/python-req.mdx";
+import QuickStartPyResponse from "/snippets/quickstart/python-resp.mdx";
+
+import QuickStartGoRequest from "/snippets/quickstart/golang-req.mdx";
+import QuickStartGoResponse from "/snippets/quickstart/golang-resp.mdx";
+
+## 前置条件
+
+- 一个 [Poixe 账户](https://poixe.com/dashboard)
+- 一个 [API 密钥](https://poixe.com/token)
+
+## 调用 API
+
+<Tabs>
+  <Tab title="cURL">
+    <Steps>
+      <Step title="设置您的 API 密钥">
+        从 [Poixe 控制台](https://poixe.com/dashboard) 获取您的 API 密钥并将其设置为环境变量：
+
+        ```bash
+        export POIXE_API_KEY='your-api-key-here'
+        ```
+      </Step>
+
+      <Step title="进行您的第一次 API 调用">
+        运行此命令以发送您的第一次 Poixe API 请求：
+
+        <QuickstartCurlRequest />
+
+        **示例输出：**
+
+        <QuickstartCurlResponse />
+      </Step>
+    </Steps>
+  </Tab>
+
+  <Tab title="TypeScript">
+    <Steps>
+      <Step title="设置您的 API 密钥">
+        从 [Poixe 控制台](https://poixe.com/dashboard) 获取您的 API 密钥并将其设置为环境变量：
+
+        ```bash
+        export POIXE_API_KEY='your-api-key-here'
+        ```
+      </Step>
+
+      <Step title="安装 SDK">
+        安装 OpenAI TypeScript SDK：
+
+        ```bash
+        npm install openai
+        ```
+      </Step>
+
+      <Step title="创建您的代码">
+        将其保存为 `quickstart.ts`：
+
+        <QuickStartTsRequest />
+      </Step>
+
+      <Step title="运行您的代码">
+        ```bash
+        npx tsx quickstart.ts
+        ```
+
+        **示例输出：**
+        <QuickStartTsResponse />
+      </Step>
+    </Steps>
+
+  </Tab>
+
+  <Tab title="Python">
+    <Steps>
+      <Step title="设置您的 API 密钥">
+        从 [Poixe 控制台](https://poixe.com/dashboard) 获取您的 API 密钥并将其设置为环境变量：
+
+        ```bash
+        export POIXE_API_KEY='your-api-key-here'
+        ```
+      </Step>
+
+      <Step title="安装 SDK">
+        安装 OpenAI Python SDK：
+
+        ```bash
+        pip install openai
+        ```
+      </Step>
+
+      <Step title="创建您的代码">
+        将其保存为 `quickstart.py`：
+
+        <QuickStartPyRequest />
+      </Step>
+
+      <Step title="运行您的代码">
+        ```bash
+        python quickstart.py
+        ```
+
+        **示例输出：**
+        <QuickStartPyResponse />
+      </Step>
+    </Steps>
+
+  </Tab>
+
+  <Tab title="Golang">
+    <Steps>
+      <Step title="设置您的 API 密钥">
+        从 [Poixe 控制台](https://poixe.com/dashboard) 获取您的 API 密钥并将其设置为环境变量：
+
+        ```bash
+        export POIXE_API_KEY='your-api-key-here'
+        ```
+      </Step>
+
+      <Step title="初始化 Go 模块（可选）">
+        如果你是新目录，先初始化一个 Go module：
+
+        ```bash
+        mkdir poixe-go-quickstart && cd poixe-go-quickstart
+        go mod init main
+        ```
+      </Step>
+
+      <Step title="安装 SDK">
+        安装 OpenAI 兼容的 Go SDK（go-openai）：
+
+        ```bash
+        go get github.com/sashabaranov/go-openai
+        ```
+      </Step>
+
+      <Step title="创建您的代码">
+        将其保存为 `main.go`：
+
+        <QuickStartGoRequest />
+      </Step>
+
+      <Step title="运行您的代码">
+        ```bash
+        go run main.go
+        ```
+
+        **示例输出：**
+        <QuickStartGoResponse />
+      </Step>
+    </Steps>
+
+  </Tab>
+</Tabs>

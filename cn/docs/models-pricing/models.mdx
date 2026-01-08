@@ -1,0 +1,76 @@
+---
+title: "支持模型"
+sidebarTitle: "模型"
+---
+
+Poixe AI 聚合了多家厂商的主流大模型，支持多种接口协议，方便你按场景选择合适的模型与成本。
+
+## 支持的模型系列
+
+目前以**文本对话模型**为主，覆盖市面上常见的模型系列。
+**图片 / 视频 / 语音生成**相关模型正在适配中，会逐步上线。
+
+已覆盖的模型系列：
+
+* ChatGPT
+* DeepSeek
+* Claude
+* Gemini
+* Grok
+* 豆包（Doubao）
+* 通义千问（Qwen）
+* Kimi
+
+> 以上系列会持续补充新模型与新版本，具体以价格页的实时列表为准。
+
+## 支持的模型厂商
+
+Poixe AI 通过多家模型厂商向用户提供资源，以确保服务的多样性与稳定性，包括（但不限于）：
+
+* OpenAI / Azure OpenAI
+* DeepSeek / Anthropic / Google / xAI
+* 火山引擎（Volcengine）/ 阿里云（Aliyun）/ SiliconFlow
+* Chutes / Moonshot / Cerebras / Groq
+* Fireworks / Novita / Together / Nebius
+
+不同厂商在**可用模型、速率、稳定性与计费策略**上会有差异，我们会在后台做基础的可用性与负载管理，帮助你更稳定地调用。
+
+## 支持的接口协议
+
+为兼容不同生态与 SDK，我们支持多种主流协议：
+
+- **OpenAI**：Completions、Responses  
+- **Anthropic**：Messages  
+- **Google Gemini**：generateContent（Gemini Developer API）
+
+<CardGroup cols={2}>
+  <Card title="OpenAI · Chat Completions" href="https://platform.openai.com/docs/api-reference/chat/create">
+    官方文档
+  </Card>
+  <Card title="OpenAI · Responses" href="https://platform.openai.com/docs/api-reference/responses/create">
+    官方文档
+  </Card>
+  <Card title="Anthropic · Messages" href="https://platform.claude.com/docs/en/api/messages/create">
+    官方文档
+  </Card>
+  <Card title="Google · Gemini generateContent" href="https://ai.google.dev/gemini-api/docs/text-generation?hl=zh-cn">
+    官方文档
+  </Card>
+</CardGroup>
+
+如果你已经有现成的 OpenAI/Anthropic/Gemini 调用代码，通常只需要更换 `base_url` 和 `api_key` 即可接入。
+
+## 查看完整模型列表与价格
+
+具体支持哪些模型、各模型价格与速率限制，请以价格页为准：
+[https://poixe.com/pricing](https://poixe.com/pricing)
+
+## 查看模型运行状态
+
+你可以在控制台查看模型的**健康统计、容量情况与负载状态**：
+[https://poixe.com/model](https://poixe.com/model)
+
+## 免费模型
+
+我们提供部分**免费模型**供测试与轻量使用：在模型名后添加 `:free` 后缀即可调用。
+详情请查看：[https://poixe.com/products/free](https://poixe.com/products/free)

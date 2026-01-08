@@ -8,56 +8,11 @@
     "dark": "#111111"
   },
   "favicon": "/assets/logo/favicon.ico",
-  "navigation": {
-    "languages": [
-      {
-        "language": "en",
-        "default": true,
-        "tabs": [
-          {
-            "tab": "Docs",
-            "groups": [
-              { "group": "Getting started", "pages": ["en/quickstart"] }
-            ]
-          },
-          {
-            "tab": "API reference",
-            "groups": [
-              { "group": "Getting started", "pages": ["en/development"] }
-            ]
-          }
-        ]
-      },
-      {
-        "language": "cn",
-        "tabs": [
-          {
-            "tab": "Docs",
-            "groups": [
-              { "group": "Getting started", "pages": ["cn/quickstart"] }
-            ]
-          },
-          {
-            "tab": "API reference",
-            "groups": [
-              { "group": "Getting started", "pages": ["cn/development"] }
-            ]
-          }
-        ]
-      }
-    ]
-  },
   "logo": {
     "light": "/assets/logo/poixe_docs_light.svg",
     "dark": "/assets/logo/poixe_docs_dark.svg"
   },
   "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "https://poixe.com/about/contact"
-      }
-    ],
     "primary": {
       "type": "button",
       "label": "Dashboard",
@@ -69,5 +24,105 @@
       "x": "https://x.com/PoixeAI",
       "github": "https://github.com/poixeai/"
     }
+  },
+  "navigation": {
+    "languages": [
+      {
+        "language": "cn",
+        "default": true,
+        "tabs": [
+          {
+            "tab": "文档",
+            "groups": [
+              {
+                "group": "开始使用",
+                "pages": [
+                  "cn/docs/get-started/overview",
+                  "cn/docs/get-started/quickstart",
+                  "cn/docs/get-started/about"
+                ]
+              },
+              {
+                "group": "模型与价格",
+                "pages": [
+                  "cn/docs/models-pricing/models",
+                  "cn/docs/models-pricing/pricing",
+                  "cn/docs/models-pricing/rate-limits"
+                ]
+              },
+              {
+                "group": "控制台",
+                "pages": [
+                  "cn/docs/dashboard/create-tokens",
+                  "cn/docs/dashboard/top-up",
+                  "cn/docs/dashboard/logs"
+                ]
+              },
+              {
+                "group": "供应商",
+                "pages": [
+                  "cn/docs/vendor/onboarding",
+                  "cn/docs/vendor/integration",
+                  "cn/docs/vendor/payouts"
+                ]
+              },
+              {
+                "group": "企业服务",
+                "pages": [
+                  "cn/docs/enterprise/invoicing"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "API 参考",
+            "groups": [
+              {
+                "group": "API 参考",
+                "pages": [
+                  "cn/api-reference/introduction/overview",
+                  "cn/api-reference/introduction/base-url"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "使用场景",
+            "groups": [
+              {
+                "group": "使用场景",
+                "pages": ["cn/use-cases/introduction/overview"]
+              },
+              {
+                "group": "对话",
+                "pages": ["cn/use-cases/chat/cherry-studio"]
+              }
+            ]
+          },
+          {
+            "tab": "帮助支持",
+            "groups": [
+              {
+                "group": "帮助支持",
+                "pages": ["cn/help/introduction/overview"]
+              },
+              {
+                "group": "常见问题",
+                "pages": ["cn/help/faq/faq"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "language": "en",
+        "tabs": [
+          {
+            "tab": "Docs",
+            "groups": [{ "group": "Getting started", "pages": ["en/index"] }]
+          }
+        ]
+      }
+    ]
   }
 }
