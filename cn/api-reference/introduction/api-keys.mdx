@@ -1,0 +1,53 @@
+---
+title: "API 密钥（API Keys）"
+sidebarTitle: "API 密钥"
+# description: "创建与管理 API Key，并了解使用方式。"
+---
+
+Poixe AI 使用 **API Key** 来标识调用身份，并决定可用额度与可选限制（如限速、模型范围等）。
+
+在控制台里，API Key 也常被称为 API Token 或 令牌，它们指的是同一个概念。
+
+如果你还没有创建 API Key，请先前往控制台完成创建：
+
+<CardGroup cols={1}>
+  <Card title="创建令牌（控制台）" icon="key" href="/cn/docs/dashboard/create-tokens">
+    在控制台创建、查看与管理你的 API Key（Token/令牌）。
+  </Card>
+</CardGroup>
+
+## Key 余额与账户余额
+
+创建 API Key 时，你可以为它设置一个 **Key 余额**（可理解为该 Key 的“预算上限/可用额度”）。
+
+- **Key 余额是自定义的**：你可以设置为很大的值，甚至看起来像“无限”。
+- **实际扣费仍以账户余额为准**：每次请求会同时受 **账户余额** 与 **Key 余额** 共同约束。
+
+### 两条规则（务必了解）
+
+1) **账户余额不足**  
+即使 **Key 余额充足**，请求依然会失败（余额不足错误）。
+
+2) **Key 余额不足**  
+当 **账户余额充足** 但 **Key 余额不足** 时，该 Key 会被 **自动禁用**，以避免继续被调用。
+
+> 建议：生产环境按服务/环境拆分 Key，并为每个 Key 设置合理的预算和限制，方便管控与追踪。
+
+## 如何在请求里使用
+
+不同协议的鉴权字段不完全相同（Header 名称、字段格式可能不同）。建议按你正在使用的协议文档来填写鉴权信息：
+
+<CardGroup cols={2}>
+  <Card title="协议与鉴权总览" icon="list" href="/cn/api-reference/introduction/protocols">
+    快速对照 4 种协议的鉴权方式与差异点。
+  </Card>
+  <Card title="错误码与排查" icon="siren" href="/cn/api-reference/introduction/errors">
+    遇到鉴权失败、余额不足等问题时先看这里。
+  </Card>
+</CardGroup>
+
+## 推荐做法
+
+- **按用途拆分 Key**：生产 / 测试 / 脚本分别创建，便于追踪与隔离风险   
+- **及时轮换与回收**：不再使用的 Key 及时禁用或删除  
+- **不要写死在代码里**：用环境变量或密钥管理系统（CI/CD Secret、Vault 等）注入

@@ -1,0 +1,42 @@
+---
+title: "指定模型厂商（路由）"
+sidebarTitle: "指定厂商"
+---
+
+系统支持通过 **模型名称前缀** 来指定上游厂商（Provider）。这通常用于：你希望固定使用某个厂商的 AI 模型，或对行为一致性有明确要求。
+
+## 默认路由（不指定厂商）
+
+当你不写前缀时，系统会走 **default 默认路由**：由系统自动选择可用上游。
+
+```text
+gpt-4o
+```
+
+## 指定厂商（在模型名前加前缀）
+
+通过 `provider/<base_model>` 的形式指定厂商：
+
+```text
+openai/gpt-4o
+azure/gpt-5.2
+anthropic/claude-sonnet-4-5-20250929
+google/gemini-2.5-flash
+```
+
+## 注意：指定厂商可能导致价格不同
+
+- **default 默认路由** 与 **指定厂商** 的计费价格可能不同
+- 在生产环境使用前，建议你先确认该厂商对应模型的价格与可用性，再进行固定指定
+
+## 进一步阅读
+
+<CardGroup cols={1}>
+  <Card
+    title="模型命名（前缀 / base model / :free）"
+    icon="tag"
+    href="/cn/api-reference/introduction/model-naming"
+  >
+    查看完整的模型命名规则、免费模型 :free、以及更多示例。
+  </Card>
+</CardGroup>

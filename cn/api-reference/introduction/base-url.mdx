@@ -1,82 +1,64 @@
 ---
-title: "接口地址"
-description: "Start building awesome documentation in minutes"
+title: "接口地址（Base URL）"
+sidebarTitle: "接口地址"
+# description: "了解 Poixe AI 统一的接口域名与请求路径规则。"
 ---
 
-## Get started in three steps
+Poixe AI 提供 **主接口** 与 **副接口** 两类 Base URL。它们的容量差异不大，主要区别在于 **高可用性 / 是否经过 CDN / 超时限制**。
 
-hi
+> **什么是高可用（High Availability）？**  
+> 高可用指的是：当某条线路、某台服务器或某个节点出现故障时，服务仍能通过自动切换/冗余继续提供访问，尽量减少不可用时间。
 
-Get your documentation site running locally and make your first customization.
+## 主接口（推荐）
 
-### Step 1: Set up your local environment
+用于大多数场景：更稳定、更适合生产环境。
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+**Base URL：**
 
-### Step 2: Deploy your changes
+```text
+https://api.poixe.com/
+````
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+**特点**
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+* **高可用**（面向生产使用）
+* 接入 **Cloudflare CDN**（更稳定的全球访问与防护能力）
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+**限制**
 
-### Step 3: Go live
+* 存在 **120 秒强制超时**（由 Cloudflare CDN 产生）
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+* 当你的请求可能超过 120 秒（例如超长输出、慢工具链、长时间流式等），建议改用副接口。
 
-## Next steps
+## 副接口（无 CDN，长连接更友好）
 
-Now that you have your docs running, explore these key features:
+当你需要更长的请求时长（例如长时间流式、复杂任务）可使用副接口。
 
-<CardGroup cols={2}>
+**Base URL（可直接复制）：**
 
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
+```text
+https://api-eu-central-1-dc8.poixe.com
+```
 
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
+```text
+https://api-eu-central-1-dc15.poixe.com
+```
 
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
+**特点**
 
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
+* **没有 120 秒强制超时**（不经过 CDN）
+* 理论请求超时上限约 **600 秒**（以客户端/网络环境为准）
 
-</CardGroup>
+**限制**
 
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>
+* **非高可用**：单点接口，偶发不可达时需要你在客户端自行切换到另一个副接口。
+
+## 选择建议
+
+* **默认使用主接口**：更稳、更适合生产环境。
+* 如果你明确遇到 **120 秒超时** 或需要更长时长：改用 **副接口**，并在客户端实现 **备用切换**（dc8 / dc15 互切）。
+
+## 常见注意事项
+
+* Base URL 只需要配置到你所使用协议的请求地址中；不同协议只影响 **鉴权字段与请求结构**，不影响这里的域名选择。
+* 建议在配置时保留末尾 `/` 的一致性（尤其是主接口）。

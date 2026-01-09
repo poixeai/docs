@@ -1,0 +1,321 @@
+---
+title: "模型命名"
+sidebarTitle: "模型命名"
+---
+
+Poixe AI 不修改官方模型名，默认与上游保持一致。在此基础上，我们增加了少量扩展标识，用于实现多厂商路由与免费模型调用等能力。
+
+系统处理流程可以简单理解为：
+
+1. **收到请求** → 先确定你使用的**接口协议**（Chat Completions / Responses / Messages / Gemini Content）
+2. 读取请求里的 **model** → 解析出路由信息（是否指定厂商、是否免费模型等）
+3. 根据解析结果选择可用上游，并按对应协议完成调用
+
+## 模型名称的结构
+
+模型名称由三部分组成：
+
+- **前缀（可选）**：决定路由方式（默认路由 or 指定厂商）
+- **Base Model（必选）**：模型本体名称（例如 `gpt-4o`）
+- **后缀（可选）**：目前仅支持 `:free`
+
+形式如下：
+
+```text
+[prefix/]<base_model>[:free]
+````
+
+---
+
+## 1. 前缀：决定路由（默认 / 指定厂商）
+
+### 默认路由（推荐）
+
+不写前缀，或使用 `default/`，都表示走 **默认路由**（由系统自动选择可用上游）。
+
+```bash
+# 不写前缀
+gpt-4o
+
+# 使用 default 前缀
+default/gpt-4o
+```
+
+### 指定厂商路由
+
+你也可以通过 `provider/base_model` 的形式显式指定厂商：
+
+```bash
+# openai 提供的 gpt-4o 模型
+openai/gpt-4o
+
+# azure 提供的 gpt-5.2 模型
+azure/gpt-5.2
+
+# anthropic 提供的 claude-sonnet-4-5-20250929 模型
+anthropic/claude-sonnet-4-5-20250929
+
+# google 提供的 gemini-2.5-flash 模型
+google/gemini-2.5-flash
+```
+
+> 提醒：指定厂商意味着你希望请求固定走该厂商的上游能力；如果该厂商当前不可用或该模型不支持对应协议，请求会失败。
+
+---
+
+## 2. Base Model：模型本体名称
+
+`base_model` 是你真正要调用的模型名称，例如：
+
+```bash
+# 默认路由，由系统根据当前负载情况，自动选择合适厂商
+gpt-4o
+gpt-5.2
+claude-sonnet-4-5-20250929
+gemini-2.5-flash
+```
+
+不同协议支持的 `base_model` 范围取决于对应厂商与模型系列的能力。
+
+---
+
+## 3. 后缀：免费模型 `:free`
+
+使用固定后缀 `:free`，用于标记“免费模型”请求：
+
+```bash
+# 免费模型
+gpt-4o:free
+```
+
+**规则：**
+
+* `:free` 仅表示使用平台提供的免费模型，**并非所有模型都支持免费调用**
+* `:free` **只能走默认路由**（不允许指定厂商）
+* `:free` **只能走 OpenAI Chat Completions 接口**（暂未适配其他协议）
+
+免费模型活动说明（是否可用、可用范围以页面为准）：
+
+* [https://poixe.com/products/free](https://poixe.com/products/free)
+
+## 支持的参数集合（参考）
+
+下面这些是系统内部用于路由与兼容的“参数集合”。并不意味着任意组合都一定可用，实际仍取决于：协议能力、厂商支持、以及具体模型是否上线。
+
+### 接口协议（Protocol）
+
+```bash
+# OpenAI Chat Completions
+openai_completions
+
+# OpenAI Responses
+openai_responses
+
+# Anthropic Messages
+anthropic_messages
+
+# Google Gemini Content
+google_gemini_content
+```
+
+### 模型系列（Family）
+
+```bash
+# ChatGPT 系列
+chatgpt
+
+# DeepSeek 系列
+deepseek
+
+# Claude 系列
+claude
+
+# Gemini 系列
+gemini
+
+# Grok 系列
+grok
+
+# 豆包（Doubao）系列
+doubao
+
+# 千问（Qwen）系列
+qwen
+
+# Kimi 系列
+kimi
+```
+
+### 模型厂商（Provider）
+
+```bash
+# 默认路由
+default
+
+# OpenAI
+openai
+
+# Azure
+azure
+
+# DeepSeek
+deepseek
+
+# Anthropic
+anthropic
+
+# Google
+google
+
+# XAI
+xai
+
+# 火山云（Volcengine）
+volcengine
+
+# 阿里云（Aliyun）
+aliyun
+
+# 硅基流动（SiliconFlow）
+siliconflow
+
+# Chutes
+chutes
+
+# 月之暗面（Moonshot）
+moonshot
+
+# Cerebras
+cerebras
+
+# Groq
+groq
+
+# Fireworks
+fireworks
+
+# Novita
+novita
+
+# Together
+together
+
+# Nebius
+nebius
+```
+
+## 模型映射（Provider Model Mapping）
+
+系统默认沿用**官方模型名**作为 `base_model`。
+
+但在部分第三方上游（如 SiliconFlow / Chutes / Fireworks 等）中，同一个模型往往会被写成**带命名空间、前缀或不同格式**的 ID（例如 `deepseek-ai/DeepSeek-R1`）。
+
+为保证对接时 **model 字段保持简洁、稳定、最小侵入**，系统维护了一张 **“模型名 → 上游真实模型 ID”** 的映射表：
+
+* 你在请求里始终使用 **标准 `base_model`**（例如 `deepseek-r1`）
+* 当你指定某个上游厂商时（例如 `chutes/`），Poixe 会自动把 `base_model` 映射到该厂商的真实模型 ID（例如 `deepseek-ai/DeepSeek-R1`），然后再完成转发调用
+
+### 模型映射配置表
+
+```json
+{
+  "siliconflow": {
+    "deepseek-r1": "Pro/deepseek-ai/DeepSeek-R1",
+    "deepseek-v3": "Pro/deepseek-ai/DeepSeek-V3",
+    "qwen3-235b-a22b": "Qwen/Qwen3-235B-A22B",
+    "qwen3-30b-a3b": "Qwen/Qwen3-30B-A3B",
+    "qwen3-32b": "Qwen/Qwen3-32B",
+    "qwen3-14b": "Qwen/Qwen3-14B",
+    "qwen3-8b": "Qwen/Qwen3-8B",
+    "kimi-k2-0711-preview": "Pro/moonshotai/Kimi-K2-Instruct"
+  },
+  "chutes": {
+    "deepseek-r1": "deepseek-ai/DeepSeek-R1",
+    "deepseek-r1-250528": "deepseek-ai/DeepSeek-R1-0528",
+    "deepseek-v3": "deepseek-ai/DeepSeek-V3",
+    "deepseek-v3-250324": "deepseek-ai/DeepSeek-V3-0324",
+    "qwen3-235b-a22b": "Qwen/Qwen3-235B-A22B",
+    "qwen3-30b-a3b": "Qwen/Qwen3-30B-A3B",
+    "qwen3-32b": "Qwen/Qwen3-32B",
+    "qwen3-14b": "Qwen/Qwen3-14B",
+    "qwen3-8b": "Qwen/Qwen3-8B",
+    "kimi-k2-0711-preview": "moonshotai/Kimi-K2-Instruct",
+    "gpt-oss-120b": "openai/gpt-oss-120b"
+  },
+  "aliyun": {
+    "kimi-k2-0711-preview": "Moonshot-Kimi-K2-Instruct"
+  },
+  "groq": {
+    "gpt-oss-120b": "openai/gpt-oss-120b",
+    "gpt-oss-20b": "openai/gpt-oss-20b"
+  },
+  "fireworks": {
+    "gpt-oss-120b": "accounts/fireworks/models/gpt-oss-120b",
+    "gpt-oss-20b": "accounts/fireworks/models/gpt-oss-20b"
+  },
+  "novita": {
+    "gpt-oss-120b": "openai/gpt-oss-120b",
+    "gpt-oss-20b": "openai/gpt-oss-20b"
+  },
+  "together": {
+    "gpt-oss-120b": "openai/gpt-oss-120b"
+  },
+  "nebius": {
+    "gpt-oss-120b": "openai/gpt-oss-120b",
+    "gpt-oss-20b": "openai/gpt-oss-20b"
+  }
+}
+```
+
+### 示例：Chutes 的 DeepSeek-R1
+
+映射表（配置）：
+
+```json
+"chutes": {
+  "deepseek-r1": "deepseek-ai/DeepSeek-R1"
+}
+```
+
+正确写法（使用 Poixe 标准名）：
+
+```text
+chutes/deepseek-r1
+```
+
+错误写法（把上游真实 ID 直接塞进 model）：
+
+```text
+chutes/deepseek-ai/DeepSeek-R1
+```
+
+原因：Poixe 的 `model` 字段只接受 `provider/<base_model>` 结构；`base_model` 必须是 Poixe 侧的标准模型名（映射表左侧的 key），否则无法命中映射并会被判定为不支持。
+
+## 常见用法示例
+
+### 默认路由（最常用）
+
+```text
+gpt-4o
+```
+
+### 指定厂商
+
+```text
+openai/gpt-4o
+azure/gpt-5.2
+```
+
+### 免费模型
+
+```text
+gpt-4o:free
+```
+
+---
+
+## 建议
+
+* 不确定用哪个厂商时，优先用 **默认路由**（更省心）
+* 需要固定上游、对稳定性/行为一致性有要求时，再使用 **指定厂商前缀**
+* 免费模型仅用于支持 `:free` 的活动模型，且只能走默认路由

@@ -1,0 +1,65 @@
+---
+title: "文本协议兼容性"
+sidebarTitle: "协议兼容"
+# description: "了解 Poixe AI 对主流协议的兼容情况与差异。"
+---
+
+Poixe AI 兼容 4 种主流文本对话协议。它们都可以通过统一的入口地址调用，但**请求结构与鉴权方式仍严格遵循各协议官方定义**。
+
+## 不做协议转换
+
+系统不会把一种协议“翻译”为另一种协议。
+
+如果请求用 **Chat Completions** 调用某个厂商的模型时，系统会直接走该厂商**官方提供的 Chat Completions 兼容实现**，而不是先用其它协议调用后再转换成 **Chat Completions**。
+
+## 协议一览
+
+<CardGroup cols={2}>
+  <Card title="OpenAI Chat Completions 协议" icon="sparkles" href="/cn/api-reference/text-api/openai-completions">
+    兼容历史生态：适用于已有 OpenAI 生态的对接方式。
+  </Card>
+  <Card title="OpenAI Responses 协议" icon="sparkles" href="/cn/api-reference/text-api/openai-responses">
+    更统一的内容结构，支持多模态与工具调用扩展。
+  </Card>
+  <Card title="Anthropic Messages 协议" icon="sparkles" href="/cn/api-reference/text-api/anthropic-messages">
+    对接 Claude 生态：按 Messages 结构组织输入与输出。
+  </Card>
+  <Card title="Google Gemini Content 协议" icon="sparkles" href="/cn/api-reference/text-api/google-gemini-content">
+    对接 Gemini 生态：基于 generateContent / streamGenerateContent 的结构。
+  </Card>
+</CardGroup>
+
+## 兼容策略与边界
+
+### 1. OpenAI Chat Completions（兼容性最好）
+
+- 历史最经典、生态最广，**几乎所有主流模型厂商都会提供该协议或兼容实现**
+- 对于“普通对话/文本生成”，通常用它就足够
+- Poixe AI 在该协议上的对接体验与兼容处理也最成熟（推荐作为默认选择）
+
+### 2. OpenAI Responses（OpenAI 新协议）
+
+- 更统一的接口形态，适合做更“现代化”的对话与多轮流程组织
+- 对多模态与工具扩展的表达更自然（以官方定义为准）
+- 注意：仅当你要调用的模型厂商本身支持 Responses（或提供兼容实现）时才可用
+
+### 3. Anthropic Messages（Claude 协议）
+
+- Anthropic 官方的 Messages 结构（以官方定义为准）
+- 常见用于需要 Claude 原生能力的场景（例如其原生工具/工作流相关能力）
+- 同样受限于：模型厂商是否提供 Messages 协议能力
+
+### 4. Google Gemini Content（Gemini 协议）
+
+- Google 官方 generateContent / streamGenerateContent 结构（以官方定义为准）
+- 常见用于需要 Gemini 原生能力的场景（例如其原生工具/工作流相关能力）
+- 同样受限于：模型厂商是否提供 Content 协议能力
+
+> **总结：** 除了 Chat Completions 之外，其它协议基本是“按官方协议原样兼容”，可用范围取决于厂商与模型支持情况。
+
+## 如何选择
+
+- **只做普通对话/文本生成，追求最大兼容与最少踩坑**：优先用 **Chat Completions**
+- **你明确要用 OpenAI 的 Responses 生态能力**（例如更统一的多轮流程/扩展能力）：用 **Responses**
+- **你明确要用 Claude 的原生协议能力**：用 **Messages**
+- **你明确要用 Gemini 的原生协议能力**：用 **Content**

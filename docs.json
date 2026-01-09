@@ -21,6 +21,7 @@
   },
   "footer": {
     "socials": {
+      "website": "https://poixe.com",
       "x": "https://x.com/PoixeAI",
       "github": "https://github.com/poixeai/"
     }
@@ -47,7 +48,8 @@
                 "pages": [
                   "cn/docs/models-pricing/models",
                   "cn/docs/models-pricing/pricing",
-                  "cn/docs/models-pricing/rate-limits"
+                  "cn/docs/models-pricing/rate-limits",
+                  "cn/docs/models-pricing/provider-routing"
                 ]
               },
               {
@@ -68,9 +70,7 @@
               },
               {
                 "group": "企业服务",
-                "pages": [
-                  "cn/docs/enterprise/invoicing"
-                ]
+                "pages": ["cn/docs/enterprise/invoicing"]
               }
             ]
           },
@@ -81,7 +81,35 @@
                 "group": "API 参考",
                 "pages": [
                   "cn/api-reference/introduction/overview",
-                  "cn/api-reference/introduction/base-url"
+                  "cn/api-reference/introduction/base-url",
+                  "cn/api-reference/introduction/api-keys",
+                  "cn/api-reference/introduction/protocols",
+                  "cn/api-reference/introduction/model-naming",
+                  {
+                    "group": "错误码",
+                    "pages": [
+                      "cn/api-reference/introduction/errors/overview",
+                      "cn/api-reference/introduction/errors/upstream",
+                      "cn/api-reference/introduction/errors/system",
+                      "cn/api-reference/introduction/errors/unformatted"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "文本接口",
+                "pages": [
+                  "cn/api-reference/text-api/openai-completions",
+                  "cn/api-reference/text-api/openai-responses",
+                  "cn/api-reference/text-api/anthropic-messages",
+                  "cn/api-reference/text-api/google-gemini-content"
+                ]
+              },
+              {
+                "group": "管理接口",
+                "pages": [
+                  "cn/api-reference/admin-api/dashboard",
+                  "cn/api-reference/admin-api/vendor"
                 ]
               }
             ]
