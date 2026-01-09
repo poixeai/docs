@@ -1,0 +1,40 @@
+```go golang
+package main
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/sashabaranov/go-openai"
+)
+
+func main() {
+	newConfig := openai.DefaultConfig("POIXE_API_KEY")
+	newConfig.BaseURL = "https://api.poixe.com/v1"
+	client := openai.NewClientWithConfig(newConfig)
+
+	resp, err := client.CreateChatCompletion(
+		context.Background(),
+		openai.ChatCompletionRequest{
+			Model: "gpt-5.2",
+			Messages: []openai.ChatCompletionMessage{
+				{
+					Role:    openai.ChatMessageRoleSystem,
+					Content: "You are a helpful assistant.",
+				},
+				{
+					Role:    openai.ChatMessageRoleUser,
+					Content: "Hello!",
+				},
+			},
+		},
+	)
+
+	if err != nil {
+		fmt.Printf("ChatCompletion error: %v", err)
+		return
+	}
+
+	fmt.Println(resp.Choices[0].Message.Content)
+}
+```

@@ -1,0 +1,17 @@
+```bash curl
+curl "https://api.poixe.com/v1beta/models/gemini-2.5-flash:generateContent" \
+  -H "x-goog-api-key: $POIXE_API_KEY" \
+  -H 'Content-Type: application/json' \
+  -X POST \
+  -d '{
+    "contents": [
+      {
+        "parts": [
+          {
+            "text": "Hello!"
+          }
+        ]
+      }
+    ]
+  }'
+```

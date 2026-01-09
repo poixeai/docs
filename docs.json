@@ -26,6 +26,14 @@
       "github": "https://github.com/poixeai/"
     }
   },
+  "styling": {
+    "codeblocks": {
+      "theme": {
+        "light": "min-light",
+        "dark": "min-dark"
+      }
+    }
+  },
   "navigation": {
     "languages": [
       {
@@ -86,7 +94,7 @@
                   "cn/api-reference/introduction/protocols",
                   "cn/api-reference/introduction/model-naming",
                   {
-                    "group": "错误码",
+                    "group": "错误处理",
                     "pages": [
                       "cn/api-reference/introduction/errors/overview",
                       "cn/api-reference/introduction/errors/upstream",
@@ -99,17 +107,30 @@
               {
                 "group": "文本接口",
                 "pages": [
-                  "cn/api-reference/text-api/openai-completions",
-                  "cn/api-reference/text-api/openai-responses",
-                  "cn/api-reference/text-api/anthropic-messages",
-                  "cn/api-reference/text-api/google-gemini-content"
-                ]
-              },
-              {
-                "group": "管理接口",
-                "pages": [
-                  "cn/api-reference/admin-api/dashboard",
-                  "cn/api-reference/admin-api/vendor"
+                  {
+                    "group": "OpenAI Chat Completions",
+                    "pages": [
+                      "cn/api-reference/text-api/openai-completions/overview"
+                    ]
+                  },
+                  {
+                    "group": "OpenAI Responses",
+                    "pages": [
+                      "cn/api-reference/text-api/openai-responses/overview"
+                    ]
+                  },
+                  {
+                    "group": "Anthropic Messages",
+                    "pages": [
+                      "cn/api-reference/text-api/anthropic-messages/overview"
+                    ]
+                  },
+                  {
+                    "group": "Google Gemini Content",
+                    "pages": [
+                      "cn/api-reference/text-api/google-gemini-content/overview"
+                    ]
+                  }
                 ]
               }
             ]

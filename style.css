@@ -1,0 +1,14 @@
+/* 1) 隐藏语言切换按钮左侧旗帜 icon */
+#localization-select-trigger > div.relative.size-4 {
+  display: none !important;
+}
+
+/* 2) 可选：去掉原本 icon 占用的 gap，让文字更贴合 */
+#localization-select-trigger {
+  gap: 0.4rem !important; /* 你也可以改成 0 或 0.25rem */
+}
+
+/* 兜底：隐藏语言菜单项里的旗帜图片（如果存在） */
+#localization-select-content img[src*="/flags/"] {
+  display: none !important;
+}

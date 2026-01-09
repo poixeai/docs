@@ -1,0 +1,135 @@
+---
+title: "Anthropic Messages 协议"
+sidebarTitle: "创建请求"
+---
+
+import MessagesReqCurl from "/snippets/api-reference/messages-req-curl.mdx";
+
+import MessagesResp from "/snippets/api-reference/messages-resp.mdx";
+import MessagesRespStream from "/snippets/api-reference/messages-resp-stream.mdx";
+
+<RequestExample>
+
+<MessagesReqCurl />
+
+</RequestExample>
+
+<ResponseExample>
+
+<MessagesResp />
+<MessagesRespStream />
+
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">POST</Badge>
+  `https://api.poixe.com/v1/messages`
+</div>
+
+这是 Claude（Anthropic）最核心的对话协议，支持文本、多模态、工具调用与 SSE 流式输出。
+
+系统在该路径下对齐 Anthropic 的字段与事件流格式，便于直接复用现有 Claude SDK 或请求结构。
+
+## 鉴权与请求头
+
+所有请求都需要携带 API Key，同时建议固定携带 `anthropic-version` 以保证行为稳定。
+
+<ParamField header="X-Api-Key" type="string" required>
+  Poixe API Key。格式为 `X-Api-Key: YOUR_API_KEY`（等价于 `x-api-key`）。
+</ParamField>
+
+<ParamField header="anthropic-version" type="string" required>
+  Anthropic 版本号，例如：`2023-06-01`。
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  必须设置为 `application/json`。
+</ParamField>
+
+## 核心请求参数
+
+以下为最常用、最通用的一组字段（足够覆盖：普通对话 + 工具调用 + 流式）。
+
+<ParamField body="model" type="string" required>
+  模型 ID，例如：`claude-sonnet-4-5-20250929`。
+</ParamField>
+
+<ParamField body="messages" type="object[]" required>
+  对话消息列表。
+  <Expandable title="messages[] 字段">
+    <ParamField body="role" type="string" required>
+      角色：`user` / `assistant`。
+    </ParamField>
+    <ParamField body="content" type="string or array" required>
+      消息内容。常用为字符串；多模态/结构化场景可使用数组（content blocks）。
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="max_tokens" type="integer" required>
+  本次生成允许的最大输出 Token 数。
+</ParamField>
+
+<ParamField body="stream" type="boolean" default="false">
+  是否开启 SSE 流式输出。为 `true` 时返回 `text/event-stream`。
+</ParamField>
+
+<ParamField body="temperature" type="number">
+  可选：采样温度。越低越稳定，越高越发散（不传则使用模型默认值）。
+</ParamField>
+
+<ParamField body="system" type="string">
+  可选：系统提示词（用于设定助手整体行为）。
+</ParamField>
+
+<ParamField body="tools" type="object[]">
+  可选：工具列表（函数/工具调用）。
+  <Expandable title="tools[] 字段">
+    <ParamField body="name" type="string" required>工具名称</ParamField>
+    <ParamField body="description" type="string">工具描述</ParamField>
+    <ParamField body="input_schema" type="object">参数 Schema（JSON Schema）</ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="tool_choice" type="object">
+  可选：工具调用策略，例如 `{"type":"any"}`（允许调用任意工具）。
+</ParamField>
+
+## 响应结构与流式事件
+
+非流式时，返回一个 `message` 对象；流式时，返回一系列 SSE 事件（`message_start` → content block events → `message_delta` → `message_stop`），其中可能穿插 `ping`。
+
+<ResponseField name="id" type="string">消息 ID，例如 `msg_xxx`</ResponseField>
+<ResponseField name="type" type="string">固定为 `message`</ResponseField>
+<ResponseField name="role" type="string">固定为 `assistant`</ResponseField>
+
+<ResponseField name="content" type="object[]">
+  生成内容数组，常见为 `[{ "type": "text", "text": "..." }]`。
+</ResponseField>
+
+<ResponseField name="stop_reason" type="string">
+  停止原因，常见：`end_turn` / `max_tokens` / `stop_sequence` / `tool_use`（以及少数情况：`pause_turn` / `refusal` / `model_context_window_exceeded` 等）。
+</ResponseField>
+
+<ResponseField name="stop_sequence" type="string | null">
+  命中 stop 序列时返回对应字符串，否则为 `null`。
+</ResponseField>
+
+<ResponseField name="usage" type="object">
+  Token 用量统计。
+  <Expandable title="usage 字段（常见）">
+    <ResponseField name="input_tokens" type="integer">输入消耗</ResponseField>
+    <ResponseField name="output_tokens" type="integer">输出消耗</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<br />
+
+<CardGroup cols={1}>
+  <Card
+    title="官方文档：Create a Message"
+    href="https://platform.claude.com/docs/en/api/messages/create"
+  >
+    查看 Claude Messages API 的完整参数与示例（含工具、多模态与流式事件）。
+  </Card>
+</CardGroup>

@@ -1,0 +1,170 @@
+---
+title: "OpenAI Responses 协议"
+sidebarTitle: "创建请求"
+---
+
+import ResponsesReqCurl from "/snippets/api-reference/responses-req-curl.mdx";
+import ResponsesResp from "/snippets/api-reference/responses-resp.mdx";
+import ResponsesRespStream from "/snippets/api-reference/responses-resp-stream.mdx";
+
+<RequestExample>
+
+<ResponsesReqCurl />
+
+</RequestExample>
+
+<ResponseExample>
+
+<ResponsesResp />
+<ResponsesRespStream />
+
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">POST</Badge>
+  `https://api.poixe.com/v1/responses`
+</div>
+
+这是 OpenAI 新一代的统一响应协议（推荐优先使用），用于替代传统的 [**Chat Completions**](/cn/api-reference/text-api/openai-completions)。
+
+它更适合承载新模型的能力（如更强的工具调用、更一致的多模态输入/输出、更好的结构化输出等）。
+
+## 认证与授权
+
+所有 API 请求都必须在 HTTP Header 中包含您的 API 密钥。
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token。格式为 `Bearer YOUR_API_KEY`。
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  必须设置为 `application/json`。
+</ParamField>
+
+## 请求参数
+
+以下是构建 Responses 请求时最常用的核心参数（覆盖 80% 场景）。
+
+<ParamField body="model" type="string" required>
+  请求的模型名称。例如：`gpt-4.1`、`gpt-4.1-mini` 等。
+</ParamField>
+
+<ParamField body="input" type="string | array" required>
+  输入内容。最常见是字符串文本；也支持结构化输入（例如包含多段内容、图片等的数组）。
+</ParamField>
+
+<ParamField body="instructions" type="string">
+  可选：系统级指令（类似 Chat Completions 的 `system` 消息），用于约束风格/规则。
+</ParamField>
+
+<ParamField body="stream" type="boolean" default="false">
+  是否流式输出。开启后，服务器将通过 SSE (Server-Sent Events) 实时推送增量内容。
+</ParamField>
+
+<ParamField body="temperature" type="number" default="1">
+  采样温度（0~2）。较低更稳定，较高更发散。
+</ParamField>
+
+<ParamField body="top_p" type="number" default="1">
+  核采样（nucleus sampling）。通常与 `temperature` 二选一调整即可。
+</ParamField>
+
+<ParamField body="max_output_tokens" type="integer">
+  最大输出 Token 数限制（用于控制长度与成本）。
+</ParamField>
+
+<ParamField body="tools" type="object[]">
+  工具列表（函数调用 / 内置工具）。
+  <Expandable title="tools[] 字段">
+    <ParamField body="type" type="string" required>
+      常用：`function`（自定义函数工具）
+    </ParamField>
+    <ParamField body="function" type="object">
+      当 `type=function` 时填写函数定义（JSON Schema）。
+      <Expandable title="function 字段">
+        <ParamField body="name" type="string" required>函数名</ParamField>
+        <ParamField body="description" type="string">函数描述</ParamField>
+        <ParamField body="parameters" type="object">参数 Schema</ParamField>
+      </Expandable>
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="tool_choice" type="string | object">
+  工具调用策略：`none` / `auto` / `required`，或强制指定某个工具。
+</ParamField>
+
+<ParamField body="response_format" type="object">
+  输出格式控制（用于结构化输出/严格 JSON）。
+  <Expandable title="response_format 字段">
+    <ParamField body="type" type="string" required>
+      常用：`text` / `json_object` / `json_schema`
+    </ParamField>
+    <ParamField body="json_schema" type="object">
+      当 `type=json_schema` 时可提供 JSON Schema 以约束输出结构。
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="metadata" type="map">
+  可选：自定义元数据（用于标记与检索）。
+</ParamField>
+
+## 响应结构
+
+接口返回一个 Response 对象，包含生成结果、状态与 Token 消耗信息。
+
+<ResponseField name="id" type="string">
+  本次请求的唯一标识符。
+</ResponseField>
+
+<ResponseField name="object" type="string">
+  对象类型，通常为 `response`。
+</ResponseField>
+
+<ResponseField name="created_at" type="integer">
+  创建时间（Unix 秒级时间戳）。
+</ResponseField>
+
+<ResponseField name="model" type="string">
+  实际处理请求的模型名称。
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  请求状态。常见：`completed`（已完成）/ `in_progress`（处理中）/ `failed`（失败）。
+</ResponseField>
+
+<ResponseField name="output" type="object[]">
+  输出内容列表。通常包含模型消息与（可选的）工具调用结果。
+  <Expandable title="output[] 常见形态">
+    <ResponseField name="type" type="string">
+      常见：`message`（模型消息）或工具相关条目（如 tool call / tool result）。
+    </ResponseField>
+    <ResponseField name="role" type="string">
+      当为消息时，一般为 `assistant`。
+    </ResponseField>
+    <ResponseField name="content" type="array">
+      内容块数组。常见内容块为文本（例如 output_text）。
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="usage" type="object">
+  Token 用量统计（如有返回）。
+  <Expandable title="usage 字段">
+    <ResponseField name="input_tokens" type="integer">输入消耗</ResponseField>
+    <ResponseField name="output_tokens" type="integer">输出消耗</ResponseField>
+    <ResponseField name="total_tokens" type="integer">总消耗</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<br />
+
+<CardGroup cols={1}>
+  <Card
+    title="官方文档：Create a model response"
+    href="https://platform.openai.com/docs/api-reference/responses/create"
+  >
+    查看 OpenAI 官方参数说明与示例。
+  </Card>
+</CardGroup>

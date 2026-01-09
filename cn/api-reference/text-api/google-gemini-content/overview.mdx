@@ -1,0 +1,176 @@
+---
+title: "Google Gemini Content 协议"
+sidebarTitle: "创建请求"
+---
+
+import GeminiContentReqCurl from "/snippets/api-reference/gemini-content-req-curl.mdx";
+import GeminiContentResp from "/snippets/api-reference/gemini-content-resp.mdx";
+import GeminiContentRespStream from "/snippets/api-reference/gemini-content-resp-stream.mdx";
+
+<RequestExample>
+
+<GeminiContentReqCurl />
+
+</RequestExample>
+
+<ResponseExample>
+
+<GeminiContentResp />
+<GeminiContentRespStream />
+
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">POST</Badge>
+  <Badge color="blue">非流</Badge>
+  `https://api.poixe.com/v1beta/models/gemini-2.5-flash:generateContent`
+
+  <Badge color="gray">POST</Badge>
+  <Badge color="blue">流式</Badge>
+  `https://api.poixe.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse`
+</div>
+
+这是 Google 面向开发者提供的统一生成式能力接口体系：它用一致的输入/输出结构覆盖文本、多模态与工具增强等场景。
+
+## 流式调用（SSE）
+
+Gemini 的非流式与流式是 **两个不同的接口**，并且 **请求 URL 中包含模型名称**（例如 `.../models/gemini-2.5-flash:xxx`），不是像部分协议那样仅在 body 里填 model。
+
+- **非流式：**`POST ...:generateContent`
+- **流式：**`POST ...:streamGenerateContent?alt=sse`
+
+## 鉴权与请求头
+
+所有请求都必须在 HTTP Header 中携带 API Key。
+
+<ParamField header="x-goog-api-key" type="string" required>
+  Google API Key。格式示例：`$POIXE_API_KEY`。
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  必须设置为 `application/json`。
+</ParamField>
+
+## 请求参数
+
+以下是最常用、最核心的请求字段（覆盖单轮文本、多轮对话、常见采样控制）。
+
+<ParamField body="contents" type="object[]" required>
+  对话内容（或单轮输入）。Gemini 使用 `contents[]` 表示“对话历史 + 本轮输入”。
+  <Expandable title="contents[] 字段">
+    <ParamField body="role" type="string">
+      角色。常见：`user` / `model`。多数情况下你只需要传 `user`；历史回复可用 `model` 回填。
+    </ParamField>
+    <ParamField body="parts" type="object[]" required>
+      内容片段列表。
+      <Expandable title="parts[] 字段">
+        <ParamField body="text" type="string">
+          文本内容（最常用）。
+        </ParamField>
+      </Expandable>
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="systemInstruction" type="object">
+  系统指令（可选）。用于放置“开发者/系统级约束”，本质上也是一个 `Content`（通常只包含 text）。
+</ParamField>
+
+<ParamField body="generationConfig" type="object">
+  生成参数（可选），用于控制采样、长度与输出格式。
+  <Expandable title="generationConfig 字段">
+    <ParamField body="temperature" type="number">
+      采样温度。越低越确定，越高越发散。
+    </ParamField>
+    <ParamField body="topP" type="number">
+      核采样（nucleus sampling）。通常与 `temperature` 二选一调整即可。
+    </ParamField>
+    <ParamField body="maxOutputTokens" type="integer">
+      最大输出 token 数（限制输出长度）。
+    </ParamField>
+    <ParamField body="stopSequences" type="string[]">
+      停止序列（最多 5 个）。命中后将停止生成（停止序列本身不会出现在输出中）。
+    </ParamField>
+    <ParamField body="responseMimeType" type="string">
+      输出 MIME（可选）。常见：`text/plain`（默认） / `application/json`（需要稳定 JSON 输出时）。
+    </ParamField>
+    <ParamField body="responseSchema" type="object">
+      输出 Schema（可选）。配合 `responseMimeType: "application/json"` 使用，用于结构化输出（JSON Schema 子集）。
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="tools" type="object[]">
+  工具列表（可选）。用于函数调用/代码执行等能力（不同模型与能力支持情况可能不同）。
+</ParamField>
+
+<ParamField body="toolConfig" type="object">
+  工具配置（可选）。用于指定工具选择策略、约束等（通常与 `tools` 搭配使用）。
+</ParamField>
+
+<ParamField body="safetySettings" type="object[]">
+  安全设置（可选）。用于覆盖默认的内容安全阈值策略（按类别配置）。
+</ParamField>
+
+## 响应结构
+
+非流式请求返回一个 `GenerateContentResponse` 对象；流式请求会以 SSE 返回**多段** `GenerateContentResponse`（你会持续收到多条 `data: {...}` JSON）。
+
+<ResponseField name="candidates" type="object[]">
+  候选结果列表（通常取 `candidates[0]` 即可）。
+  <Expandable title="candidates[] 字段">
+    <ResponseField name="index" type="integer">候选索引</ResponseField>
+    <ResponseField name="content" type="object">
+      生成内容（`role` + `parts[]`）。
+      <Expandable title="content 字段">
+        <ResponseField name="role" type="string">通常为 `model`</ResponseField>
+        <ResponseField name="parts" type="object[]">
+          输出片段数组，最常见为 `[{ "text": "..." }]`。
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name="finishReason" type="string">
+      结束原因（例如 `STOP`）。
+    </ResponseField>
+    <ResponseField name="safetyRatings" type="object[]">
+      安全评分（如有返回）。
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="promptFeedback" type="object">
+  提示词安全反馈（如有返回）。当 prompt 触发过滤/阻断时通常可从这里定位原因。
+</ResponseField>
+
+<ResponseField name="usageMetadata" type="object">
+  Token 用量统计（输出字段）。Gemini 的计费口径建议按以下方式理解与落库：
+  `input_tokens = promptTokenCount + toolUsePromptTokenCount`，
+  `output_tokens = candidatesTokenCount + thoughtsTokenCount`，
+  `total_tokens = input_tokens + output_tokens`（通常与 totalTokenCount 对齐）。
+  <Expandable title="usageMetadata 字段">
+    <ResponseField name="promptTokenCount" type="integer">提示词输入 Token 数</ResponseField>
+    <ResponseField name="toolUsePromptTokenCount" type="integer">工具回填到上下文的输入 Token 数（如有）</ResponseField>
+    <ResponseField name="candidatesTokenCount" type="integer">可见输出 Token 数</ResponseField>
+    <ResponseField name="thoughtsTokenCount" type="integer">思考 Token 数（如有）</ResponseField>
+    <ResponseField name="totalTokenCount" type="integer">总 Token 数</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="modelVersion" type="string">
+  实际使用的模型版本（输出字段）。
+</ResponseField>
+
+<ResponseField name="responseId" type="string">
+  响应唯一标识（输出字段）。
+</ResponseField>
+
+<br />
+
+<CardGroup cols={1}>
+  <Card
+    title="官方文档：Text generation（Gemini API）"
+    href="https://ai.google.dev/gemini-api/docs/text-generation?hl=zh-cn"
+  >
+    查看 Gemini 文本生成说明、示例与最佳实践。
+  </Card>
+</CardGroup>

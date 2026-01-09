@@ -1,0 +1,18 @@
+```bash curl
+curl https://api.poixe.com/v1/messages \
+  -H "Content-Type: application/json" \
+    -H 'Content-Type: application/json' \
+    -H 'anthropic-version: 2023-06-01' \
+    -H "X-Api-Key: $POIXE_API_KEY" \
+    -d '{
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "role": "user",
+              "content": "Hello!"
+            }
+          ],
+          "model": "claude-sonnet-4-5-20250929",
+          "stream": false
+        }'
+```
