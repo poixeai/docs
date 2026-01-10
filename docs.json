@@ -144,7 +144,15 @@
               },
               {
                 "group": "对话",
-                "pages": ["cn/use-cases/chat/cherry-studio"]
+                "pages": [
+                  "cn/use-cases/chat/cherry-studio"
+                ]
+              },
+              {
+                "group": "编程",
+                "pages": [
+                  "cn/use-cases/code/claude-code"
+                ]
               }
             ]
           },
@@ -154,10 +162,6 @@
               {
                 "group": "帮助支持",
                 "pages": ["cn/help/introduction/overview"]
-              },
-              {
-                "group": "常见问题",
-                "pages": ["cn/help/faq/faq"]
               }
             ]
           }

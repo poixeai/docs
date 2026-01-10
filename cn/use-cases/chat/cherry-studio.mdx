@@ -1,80 +1,83 @@
 ---
 title: "Cherry Studio"
-description: "Start building awesome documentation in minutes"
+sidebarTitle: "Cherry Studio"
+description: "一款集多模型对话、知识库管理、AI 绘画、翻译等功能于一体的全能 AI 助手平台。"
 ---
 
-## Get started in three steps
+## 前言
 
-Get your documentation site running locally and make your first customization.
+Cherry Studio 是一款桌面端 AI 客户端，主打**多模型对话 + 可自定义模型服务商 + 模型管理**，适合把你常用的各类模型统一放在一个聊天界面里用。
 
-### Step 1: Set up your local environment
-
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 2: Deploy your changes
-
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
-
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
-
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 3: Go live
-
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
-
-## Next steps
-
-Now that you have your docs running, explore these key features:
+本节将介绍如何在 Cherry Studio 里配置 Poixe API，并进行对话。
 
 <CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
+  <Card title="Cherry Studio 官网" href="https://www.cherry-ai.com/">
+    下载客户端（Windows/macOS/Linux 等）。
+  </Card>
+  <Card title="Cherry Studio 官方文档" href="https://docs.cherry-ai.com/">
+    查看更完整的功能与配置说明。
+  </Card>
 </CardGroup>
 
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>
+## 使用演示
+
+这里我们演示如何使用 Poixe AI 提供的 AI 模型接口在 Cherry Studio 里进行对话，获取费马大定理的简要证明。
+
+<video
+  controls
+  className="w-full aspect-video rounded-xl"
+  src="/assets/videos/use-cases-cherry-studio.mp4"
+>
+  Your browser does not support the video tag.
+</video>
+
+## 准备工作
+
+- 鉴权密钥 API Key（在控制台创建） → <a href="/cn/docs/dashboard/create-tokens">查看创建方式</a>
+- 接口地址 Base URL（在文档中复制）→ <a href="/cn/api-reference/introduction/base-url">查看接口信息</a>
+- 可用模型 Models（复制模型名称）→ <a href="/cn/docs/models-pricing/models">模型列表</a> / <a href="/cn/api-reference/introduction/model-naming">模型命名</a>
+
+## 在 Cherry Studio 里配置 Poixe（核心步骤）
+
+![cherry studio config](/assets/images/use-cases-cherry-studio-config.png)
+
+<Steps>
+  <Step title="打开设置 → 模型服务">
+    Cherry Studio 左侧导航栏点击齿轮进入设置，然后进入「模型服务」。
+  </Step>
+
+  <Step title="添加一个自定义服务商">
+    在模型服务页点击底部「+ 添加」添加服务商，并给它取个你一眼能认出的名字（比如：Poixe）。
+
+    「提供商类型」一般建议优先选 **OpenAI**（最通用，兼容多数聊天场景）。
+
+  </Step>
+
+  <Step title="配置 Base URL 和 API Key">
+    在你刚添加的服务商配置里填写：
+    - <b>API 密钥</b>：填 Poixe 的 API Key。 
+    - <b>API 地址</b>：填 Poixe 的 Base URL。
+
+    <Callout type="info" icon="info-circle">
+      **需要注意：** API 密钥右侧的「检测」按钮，需要在添加模型后才能成功检测通过，因为检测需要选择一个模型进行测试。
+    </Callout>
+    
+  </Step>
+
+  <Step title="添加模型">
+    提供商配置页面，下方点击「+ 添加」把你要用的模型名称手动加进去（例如：`gpt-4o` / `gpt-5.2` / `gemini-2.5-pro` 等，具体以 Poixe 的模型列表为准）。
+
+    <Callout type="info" icon="info-circle">
+      不确定模型名？回 Poixe 的 <a href="/cn/docs/models-pricing/models">模型列表</a> 查一眼最稳。
+    </Callout>
+
+  </Step>
+
+  <Step title="回到聊天页，选择模型开始对话">
+    回到聊天页面，在模型下拉里切到你刚添加的 Poixe 模型，就可以开始对话了。
+  </Step>
+</Steps>
+
+## 常见问题排查
+
+- **连接失败**：优先检查 API Key 是否正确、Base URL 是否写对。
