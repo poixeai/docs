@@ -1,14 +1,24 @@
-/* 1) 隐藏语言切换按钮左侧旗帜 icon */
-#localization-select-trigger > div.relative.size-4 {
+/* ========== 语言切换：下拉菜单里去掉左侧圆形 flag/icon ========== */
+
+/* 1) 精准隐藏：每个菜单项左侧那个圆形容器（size-4 rounded-full shrink-0） */
+#localization-select-content .size-4.rounded-full.shrink-0,
+#localization-select-content .relative.size-4.rounded-full.shrink-0 {
   display: none !important;
 }
 
-/* 2) 可选：去掉原本 icon 占用的 gap，让文字更贴合 */
-#localization-select-trigger {
-  gap: 0.4rem !important; /* 你也可以改成 0 或 0.25rem */
+/* 2) 拉回缩进：很多实现会给 item 留出左侧空间；把 padding-left 调小 */
+#localization-select-content [role="menuitemradio"],
+#localization-select-content [role="menuitem"] {
+  padding-left: 0.75rem !important; /* 你可以试 0.5rem / 0.625rem */
 }
 
-/* 兜底：隐藏语言菜单项里的旗帜图片（如果存在） */
+/* 3) 收紧 item 内部 gap（避免左侧容器隐藏后还有空隙） */
+#localization-select-content [role="menuitemradio"],
+#localization-select-content [role="menuitem"] {
+  column-gap: 0.5rem !important;
+}
+
+/* 4) 兜底：如果只想隐藏旗帜图片本身（保留其他结构），也可以启用这一条 */
 #localization-select-content img[src*="/flags/"] {
   display: none !important;
 }
