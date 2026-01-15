@@ -22,3 +22,24 @@
 #localization-select-content img[src*="/flags/"] {
   display: none !important;
 }
+
+/* 使用更具体的选择器和 !important */
+html body #localization-select-content .size-4.rounded-full.shrink-0,
+html body #localization-select-content .relative.size-4.rounded-full.shrink-0,
+html body #localization-select-content div[class*="size-4"][class*="rounded-full"] {
+  display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  opacity: 0 !important;
+}
+
+/* 直接隐藏图片 */
+html body #localization-select-content img[src*="flags"],
+html body #localization-select-content img[alt*="CN"],
+html body #localization-select-content img[alt*="US"],
+html body #localization-select-content img[alt*="EN"] {
+  display: none !important;
+  visibility: hidden !important;
+}
+
