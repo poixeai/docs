@@ -6,6 +6,249 @@ description: "Anthropic 推出的终端/IDE 编程代理工具，可在本地代
 
 ## 前言
 
-文档正在编写中，敬请期待！
+Claude Code 是一个运行在你终端里的智能编程工具，能够理解你的代码库，通过自然语言指令帮你更快写代码：它可以执行日常重复任务、解释复杂代码，并处理 Git 工作流等操作。
+
+本节将在几分钟内让您使用 AI 驱动的编码辅助。完成后，您将了解如何使用 Claude Code 完成常见的开发任务。
 
 ![claude code poster](/assets/images/claude-code-poster.png)
+
+![claude code terminal](/assets/images/use-cases-claude-code.gif)
+
+<CardGroup cols={2}>
+  <Card
+    title="Claude Code 官方文档"
+    href="https://code.claude.com/docs/zh-CN/overview"
+  >
+    waiting for content
+  </Card>
+  <Card
+    title="Claude Code Github 仓库"
+    href="https://github.com/anthropics/claude-code"
+  >
+    waiting for content
+  </Card>
+</CardGroup>
+
+## 准备工作
+
+确保您拥有：
+
+- 打开的终端或命令提示符
+- 一个要处理的代码项目
+- 一个支持 [Anthropic Messages 协议](/cn/api-reference/text-api/anthropic-messages/overview) 的 API 令牌（[如何创建令牌](/cn/docs/dashboard/create-tokens)）
+
+确保您的终端环境支持：
+
+```bash
+# node.js
+node -v
+
+# git
+git --version
+```
+
+配置环境变量：
+
+<Tabs>
+  <Tab title="macOS, Linux, WSL">
+    ```bash
+    # manual setup for temporary use
+    export ANTHROPIC_BASE_URL=https://api.poixe.com
+    export ANTHROPIC_API_KEY=$POIXE_API_KEY
+    export ANTHROPIC_MODEL=claude-3-5-haiku-20241022
+
+    # add to shell profile for persistent use (add to ~/.bashrc, ~/.zshrc, etc.)
+    echo 'export ANTHROPIC_BASE_URL="https://api.poixe.com"' >> ~/.bashrc
+    echo 'export ANTHROPIC_API_KEY="$POIXE_API_KEY"' >> ~/.bashrc
+    echo 'export ANTHROPIC_MODEL="claude-3-5-haiku-20241022"' >> ~/.bashrc
+    ```
+  </Tab>
+
+  <Tab title="Windows">
+    ```bash
+    setx ANTHROPIC_BASE_URL "https://api.poixe.com"
+    setx ANTHROPIC_API_KEY "$POIXE_API_KEY"
+    setx ANTHROPIC_MODEL "claude-3-5-haiku-20241022"
+    ```
+  </Tab>
+</Tabs>
+
+## 安装 Claude Code
+
+要安装 Claude Code，请使用以下任一方法：
+
+
+<Tabs>
+  <Tab title="Native Install (Recommended)">
+    **macOS, Linux, WSL:**
+
+    ```bash
+    curl -fsSL https://claude.ai/install.sh | bash
+    ```
+
+    **Windows PowerShell:**
+
+    ```powershell
+    irm https://claude.ai/install.ps1 | iex
+    ```
+
+    **Windows CMD:**
+
+    ```batch
+    curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+    ```
+  </Tab>
+
+  <Tab title="Homebrew">
+    ```sh
+    brew install --cask claude-code
+    ```
+  </Tab>
+
+  <Tab title="WinGet">
+    ```powershell
+    winget install Anthropic.ClaudeCode
+    ```
+  </Tab>
+
+  <Tab title="NPM installation (Deprecated)">
+    ```bash
+    # Use this method only if you can’t use the native installer.
+    # Avoid running it with sudo.
+    npm install -g @anthropic-ai/claude-code
+    ```
+  </Tab>
+</Tabs>
+
+## 验证安装
+
+安装完成后，您可以通过运行以下命令来验证安装是否成功：
+
+```bash
+claude --version
+```
+
+## 启动您的第一个会话
+
+在任何项目目录中打开您的终端并启动 Claude Code：
+
+```bash
+cd /path/to/your/project
+claude
+```
+
+您将看到 Claude Code 欢迎屏幕，其中包含您的会话信息、最近的对话和最新更新。输入 `/help` 查看可用命令或输入 `/resume` 继续之前的对话。
+
+## 提出您的第一个问题
+
+让我们从了解您的代码库开始。尝试以下命令之一：
+
+```bash
+> what does this project do?
+```
+
+![claude code first question](/assets/images/use-cases-claude-docs.png)
+
+## 基本命令
+
+以下是日常使用中最重要的命令：
+
+| 命令                  | 功能             | 示例                                  |
+| ------------------- | -------------- | ----------------------------------- |
+| `claude`            | 启动交互模式         | `claude`                            |
+| `claude "task"`     | 运行一次性任务        | `claude "fix the build error"`      |
+| `claude -p "query"` | 运行一次性查询，然后退出   | `claude -p "explain this function"` |
+| `claude -c`         | 在当前目录中继续最近的对话  | `claude -c`                         |
+| `claude -r`         | 恢复之前的对话        | `claude -r`                         |
+| `claude commit`     | 创建 Git 提交      | `claude commit`                     |
+| `/clear`            | 清除对话历史         | `> /clear`                          |
+| `/help`             | 显示可用命令         | `> /help`                           |
+| `exit` 或 Ctrl+C     | 退出 Claude Code | `> exit`                            |
+
+有关完整的命令列表，请参阅 [CLI 参考](https://code.claude.com/docs/zh-CN/cli-reference)。
+
+## 初学者专业提示
+
+<AccordionGroup>
+  <Accordion title="对您的请求要具体">
+    不要这样说："fix the bug"
+
+    尝试这样说："fix the login bug where users see a blank screen after entering wrong credentials"
+  </Accordion>
+
+  <Accordion title="使用分步说明">
+    将复杂任务分解为步骤：
+
+    ```
+    > 1. create a new database table for user profiles
+    ```
+
+    ```
+    > 2. create an API endpoint to get and update user profiles
+    ```
+
+    ```
+    > 3. build a webpage that allows users to see and edit their information
+    ```
+  </Accordion>
+
+  <Accordion title="让 Claude 先探索">
+    在进行更改之前，让 Claude 了解您的代码：
+
+    ```
+    > analyze the database schema
+    ```
+
+    ```
+    > build a dashboard showing products that are most frequently returned by our UK customers
+    ```
+  </Accordion>
+
+  <Accordion title="使用快捷方式节省时间">
+    * 按 `?` 查看所有可用的键盘快捷方式
+    * 使用 Tab 进行命令补全
+    * 按 ↑ 查看命令历史
+    * 输入 `/` 查看所有斜杠命令
+  </Accordion>
+</AccordionGroup>
+
+## 常见问题解答
+
+
+<AccordionGroup>
+  <Accordion title="出现 Invalid API Key · Please run /login 报错？">
+    这表明 Claude Code 未检测到环境变量。请检查：
+
+    - 是否正确设置了 ANTHROPIC_API_KEY 和 ANTHROPIC_BASE_URL
+    - 环境变量值是否正确（令牌以 sk- 开头）
+    - 如果使用了永久配置，是否重启了终端
+  </Accordion>
+
+  <Accordion title="为什么显示 offline 状态？">
+    Claude Code 通过连接 Google 来判断网络状态。显示 "offline" 不影响正常使用，只是表明无法连接到 Google。
+  </Accordion>
+
+  <Accordion title="为什么浏览网页的 Fetch 会失败？">
+    Claude Code 在访问网页前需要调用 Claude 服务进行安全检查。您需要：
+
+    - 保持稳定的国际互联网连接
+    - 必要时使用全局代理
+  </Accordion>
+
+  <Accordion title="API 报错如何处理？">
+    如果遇到 API 报错：
+
+    - 确认 ANTHROPIC_API_KEY 和 ANTHROPIC_BASE_URL 设置正确
+    - 检查网络连接，确保可以访问 API 端点
+    - 查看报错信息，参考 [错误处理](/cn/api-reference/introduction/errors/overview) 进行排查
+    - 如有需要，[联系团队](/cn/help/introduction/overview) 获取帮助
+  </Accordion>
+
+  <Accordion title="如何退出 Claude Code？">
+    在交互模式下，输入 `exit` 或按两次 Ctrl+C 即可退出 Claude Code。
+  </Accordion>
+
+  <Accordion title="如何更新 Claude Code？">
+    一行命令搞定：`claude update`
+  </Accordion>
+</AccordionGroup>
