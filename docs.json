@@ -48,7 +48,14 @@
                 "pages": [
                   "cn/docs/get-started/overview",
                   "cn/docs/get-started/quickstart",
-                  "cn/docs/get-started/about"
+                  "cn/docs/get-started/about",
+                  {
+                    "group": "计划与赠金",
+                    "pages": [
+                      "cn/programs/campus",
+                      "cn/programs/migration-openkey"
+                    ]
+                  }
                 ]
               },
               {
@@ -144,15 +151,11 @@
               },
               {
                 "group": "对话",
-                "pages": [
-                  "cn/use-cases/chat/cherry-studio"
-                ]
+                "pages": ["cn/use-cases/chat/cherry-studio"]
               },
               {
                 "group": "编程",
-                "pages": [
-                  "cn/use-cases/code/claude-code"
-                ]
+                "pages": ["cn/use-cases/code/claude-code"]
               }
             ]
           },

@@ -1,0 +1,234 @@
+---
+title: "迁移计划（OpenKey 用户）"
+sidebarTitle: "迁移计划"
+description: "Poixe Migration Program"
+---
+
+import {
+  Card,
+  CardGroup,
+  Steps,
+  Step,
+  Callout,
+  Badge,
+  AccordionGroup,
+  Accordion,
+} from "mintlify";
+
+export const CLAIM_URL = "https://poixe.com/programs/migration-openkey";
+export const CLAIM_DEADLINE = "2026年1月20日";
+
+如果你正在使用旧平台 **[OpenKey.Cloud](https://openkey.cloud)**，我们强烈建议你同时注册并开始使用 **[Poixe AI](https://poixe.com)**。
+
+我们早期基于开源项目 **[one-api](https://github.com/songquanpeng/one-api)** 构建了 OpenKey，但随着用户量与需求增长，one-api 架构在**协议支持、扩展能力、可观测性、计费与权益体系**等方面的局限越来越明显，因此我们重新构建了 Poixe —— 扩展了大量能力，并逐步承接 OpenKey 的核心请求链路：**目前 OpenKey 的相当一部分请求已经由 Poixe 处理**，Poixe 在稳定性与能力上都更强。
+
+我们为感谢 **OpenKey 早期用户** 的支持，特推出本迁移计划，帮助用户顺利过渡到 Poixe，并赠送一定的权益。
+
+<Callout type="info" icon="sparkles">
+  <b>迁移说明：</b>OpenKey 仍可继续使用；但后续所有新功能、新模型能力（包括多模态能力）将优先、并逐步仅在 Poixe 上实现。
+</Callout>
+
+<Callout type="info" icon="info-circle">
+  <b>补充说明：</b>本计划内包含的权益都是免费的，没有任何强制要求，不用担心会产生额外费用。
+</Callout>
+
+## 权益介绍
+
+{/* 我们为所有 **{CLAIM_DEADLINE}** 之前注册的 OpenKey 用户，赠送 Poixe 账号余额（Credits）作为迁移奖励，具体额度如下： */}
+
+我们为所有 **{CLAIM_DEADLINE}** 之前注册的 OpenKey 用户，提供两项迁移权益：
+
+1. **赠金（Credits）**：发放到 Poixe 账号余额，用于模型调用抵扣  
+2. **Level 等级评估**：Poixe 的 Level 会随历史充值数据自动评估。迁移用户会同步 OpenKey 的相关历史数据，因此相比新注册用户（默认 Level 0），通常可以更快提升 Level，获得更高调用速率与更优折扣
+
+<CardGroup cols={2}>
+  <Card title="普通用户（OpenKey.Cloud）" icon="gift">
+    赠送 <b>$1 Credits（Poixe AI）</b>
+    <div style={{ marginTop: 8 }}>
+      <Badge>需符合资格 + 手动领取</Badge>
+    </div>
+  </Card>
+
+  <Card title="付费用户（OpenKey.Cloud）" icon="gift">
+    赠送 <b>$5 Credits（Poixe AI）</b>
+    <div style={{ marginTop: 8 }}>
+      <Badge>需符合资格 + 手动领取</Badge>
+    </div>
+  </Card>
+</CardGroup>
+
+<Card title="Level 等级评估（Poixe AI）" icon="badge-check">
+  迁移用户会同步 OpenKey 的相关历史数据，用于 Poixe 的 Level 评估与升级加速（新用户默认 Level 0）。
+  <div style={{ marginTop: 8 }}>
+    <Badge>自动评估，无需手动</Badge>
+  </div>
+</Card>
+
+<Callout type="info" icon="info-circle">
+  <b>付费用户定义：</b>在 OpenKey 有过充值/付费记录的用户，最终以系统记录为准。
+</Callout>
+
+{/* <Callout type="warning" icon="calendar">
+  <b>权益资格：</b>仅限 <b>2026.01.20 之前</b> 在 OpenKey
+  注册的账号（且已绑定邮箱）。权益需要手动领取，不会自动发放。
+</Callout> */}
+
+## Poixe vs OpenKey 对比
+
+下面是新旧两个平台最核心的差异（迁移理由）：
+
+| 维度           | OpenKey（openkey.cloud）                       | Poixe（poixe.com）                                           |
+| -------------- | ---------------------------------------------- | ------------------------------------------------------------ |
+| 协议支持       | 仅支持 <b>[Chat Completions](/cn/api-reference/text-api/openai-completions/overview)</b> | 支持 <b>[4 种主流接口协议](/cn/api-reference/introduction/protocols)</b>（兼容更多工具与客户端）         |
+| 免费模型       | 无                                             | 平台为所有用户提供 [免费模型](https://poixe.com/products/free) 调用，例如：`gpt-5.2:free`    |
+| 消耗可视化     | 仅基础日志                                      | 更清晰的 <b>可视化消耗数据</b>、账单与统计                   |
+| 供应商入驻     | 不支持                                         | 支持 <b>[供应商入驻](https://poixe.com/products/vendor)</b>：为平台提供 API 资源以赚取收益       |
+| 指定模型厂商   | 不支持                                         | 支持按厂商维度选择，例如：`azure/gpt-5.2`，`openai/gpt-5.2`           |
+| 折扣与权益体系 | 价格倍率与充值折扣叠加，理解成本高             | 余额以 <b>美元</b> 展示；官方计价 + 会员等级折扣，规则更清晰 |
+| 新功能/新模型  | 维护为主                                       | <b>优先发布</b>，并逐步仅在 Poixe 实现（含多模态）           |
+
+<Callout type="info" icon="book-open">
+  <b>兼容性：</b>Poixe 支持更多协议与客户端。只要项目支持自定义接口地址，一般都能快速接入。
+</Callout>
+
+## 如何领取权益
+
+权益不是自动发放的，需要你手动完成 3 步：
+
+<Steps>
+  <Step title="确认 OpenKey 账号满足条件">
+    1) OpenKey 账号 <b>已绑定邮箱</b><br/>
+    2) 该 OpenKey 账号为 <b>{CLAIM_DEADLINE} 之前注册</b>
+  </Step>
+
+<Step title="用同一邮箱注册 Poixe">
+  使用 <b>OpenKey 注册邮箱</b> 在 Poixe 注册账号（邮箱必须一致）。
+</Step>
+
+  <Step title="打开权益领取页并点击领取">
+    打开权益页面，并按照提示操作领取：<a href={CLAIM_URL} target="_blank">OpenKey 迁移权益领取页</a><br/>
+    {/* 领取成功后赠金将直接划转到你的 Poixe 账号余额，并通过邮箱通知结果。 */}
+    领取成功后赠金将直接划转到你的 Poixe 账号余额；同时会触发 Level 等级评估（迁移用户会同步 OpenKey 相关历史数据），并通过邮箱通知结果。
+  </Step>
+</Steps>
+
+## 额度迁移说明（不会自动迁移）
+
+由于 OpenKey 与 Poixe 的充值/计费体系不同，本计划不会自动把你的 OpenKey 余额迁移到 Poixe。
+
+你可以先阅读下方差异说明与换算方式，确认理解后再联系支持团队进行人工迁移（我们会协助核对记录并做人工划转）。
+
+## 充值与计费差异（理解换算的关键）
+
+### OpenKey 的计费与折扣（简化理解）
+
+- OpenKey 模型的 输入/输出 tokens [价格](https://openkey.cloud/pricing)，默认为“官方价格的 **12 倍**”
+- OpenKey 额度标价：**1 RMB = 1 USD 的 OK 额度**（实际可能存在折扣，比如 0.5 RMB 买 1 USD OK 额度）
+- 因为存在 12 倍倍率，你看到的 OK 额度并不等价于“官方美元余额”
+
+**举例：老牛花 500 RMB 购买 OK 额度，实际相当于官方多少折？**
+
+- 按照目前 OK 定价，500 RMB 可买 1000 USD OK 额度
+- 1000 USD OK 额度 = 官方可消费 `1000 / 12 = 83.33 USD`
+- 按照目前汇率 1 USD ≈ 7 RMB，500 RMB 为 `500 / 7 ≈ 71.43 USD`
+- 所以“实际支付 / 官方可消费”：
+  - `71.43 USD / 83.33 USD ≈ 0.857`
+  - 即大约 **85.7% ≈ 86 折**
+
+> 这也是为什么 OpenKey 的“倍率 + 充值折扣”叠加后，整体直觉不够清晰。
+
+### Poixe 的计费与折扣（更直观）
+
+- Poixe 充值余额 **直接以美元显示**：你充值多少美元，余额就显示多少美元
+- 模型按官方 token 单价计算出理论消耗后，会乘以你的 [权益等级折扣](https://poixe.com/tiers/user)（level 0–3）
+  - 折扣示例：`1.0`（原价）、`0.8`（8 折）等
+- **余额 = 真实可用金额**（理解成本低）
+
+## 如果我想迁移额度，怎么处理？
+
+额度迁移需要人工处理。采取的方式是：**按你在 OpenKey 剩余额度对应的“实际付款金额”进行划转**。
+
+也就是说，我们会把你 OpenKey 账号的剩余额度折算回“当初实际花了多少钱（RMB）”，再按汇率换算成美元，**直接充值到你的 Poixe 账号余额**。
+
+<Callout type="info" icon="handshake">
+  <b>人工迁移流程：</b>[联系支持团队](https://poixe.com/about/contact)，我们会核对你的 OpenKey 订单记录与当前剩余额度，计算可划转金额，并划转到 Poixe。
+</Callout>
+
+### 你需要提供什么
+
+- OpenKey 账号邮箱 / 用户名
+- Poixe 账号邮箱 / 用户名
+- 你希望迁移额度
+- 订单截图或相关记录（非必须，可加速核对）
+
+### 我们如何计算与划转
+
+1. **核对 OpenKey 历史订单与当前剩余额度**
+2. **计算剩余额度对应的实际付款金额（RMB）**
+3. **按汇率换算为美元，并划转到 Poixe 余额**
+   - `Poixe 入账(USD) = 对应退款金额(RMB) / 汇率(RMB per USD)`
+
+> 划转完成后，Poixe 的余额就是你的真实可用金额；调用消耗按 Poixe 的官方计价与等级折扣结算。
+
+### 举个例子（老牛）
+
+- 老牛花 **500 RMB** 购买了 **1000 USD OK 额度**
+- 假设目前还剩 **600 USD OK 额度**
+
+那么我们按剩余比例折算实际付款金额：
+
+1) 剩余占比：`600 / 1000 = 60%`  
+2) 对应实际付款：`500 RMB × 60% = 300 RMB`  
+3) 按 `1 USD ≈ 7 RMB` 换算：`300 / 7 ≈ 42.86 USD`  
+
+最终：老牛的 Poixe 账号余额将增加约 **$42.86**。
+
+## 常见问题（FAQ）
+
+<AccordionGroup>
+  <Accordion title="我注册 Poixe 了，为什么没有自动到账？">
+    迁移赠金不会自动发放。你需要使用 OpenKey 同一邮箱注册 Poixe 后，打开权益领取页并点击领取：<a href={CLAIM_URL} target="_blank">OpenKey 迁移权益领取页</a>。
+  </Accordion>
+
+<Accordion title="哪些用户有资格领取？">
+  仅限 **{CLAIM_DEADLINE}** 之前注册的 OpenKey 账号，并且该账号已绑定邮箱。领取时 Poixe
+  账号邮箱必须与 OpenKey 注册邮箱一致。
+</Accordion>
+
+<Accordion title="OpenKey 还能继续用吗？会关停吗？">
+  OpenKey 目前仍可继续使用。但新功能、新模型能力（包含多模态）将优先并逐步仅在
+  Poixe 实现。建议尽早迁移到 Poixe 以获得更完整能力与更稳定体验。
+</Accordion>
+
+<Accordion title="我的 OpenKey 余额会自动迁移到 Poixe 吗？">
+  不会自动迁移。两边充值/计费体系不同，需要你理解换算后联系支持团队进行人工迁移与划转。
+</Accordion>
+
+<Accordion title="迁移赠金可以提现吗？">
+  不可以。赠金仅用于 Poixe 平台内 API 消耗抵扣。
+</Accordion>
+
+<Accordion title="Level 等级评估是什么？会影响我提现吗或余额吗？">
+  Level 是 Poixe 的用户权益等级，用于决定调用速率上限、模型价格折扣等权益。
+  
+  迁移用户会同步 OpenKey 的相关历史数据用于 Level 评估与升级加速。
+  
+  <b>说明：</b>Level 评估不等于余额迁移，OpenKey 余额不会自动转入 Poixe；余额迁移仍需人工处理。
+</Accordion>
+
+  <Accordion title="如果我当时 OpenKey 没绑定邮箱怎么办？">
+    请先在 OpenKey 完成邮箱绑定，再用相同邮箱注册 Poixe 并领取；如遇到历史原因无法绑定，请直接联系支持团队说明情况，我们会帮您处理。
+  </Accordion>
+</AccordionGroup>
+
+## 开始迁移
+
+<CardGroup cols={2}>
+  <Card title="OpenKey 迁移权益领取页" href={CLAIM_URL}>
+    点击进入领取页面，领取赠金
+  </Card>
+
+  <Card title="Poixe 官网" href="https://poixe.com">
+    注册并开始使用 Poixe（新功能优先发布）
+  </Card>
+</CardGroup>
