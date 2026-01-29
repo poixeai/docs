@@ -1,0 +1,133 @@
+---
+title: "中断响应找回"
+sidebarTitle: "概览"
+# description: "在非流式请求断连/超时时，找回已生成并计费的响应结果。"
+tag: "INFO"
+icon: "book-open"
+---
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">Base URL</Badge>
+  `https://api.poixe.com/v1/recoveries`
+</div>
+
+Recoveries（中断响应找回）用于解决一种常见情况：你发起了 **非流式请求（stream=false）**，上游模型实际上已经成功生成了结果，但由于连接中断，你在客户端侧没有收到响应。
+
+在这种情况下，请求通常依然会被上游处理并产生计费。为了避免你“立刻重试导致重复扣费”，Poixe 会将该次请求的关键数据与响应结果 **暂存**，你可以在请求失败后尝试把结果找回。
+
+<Callout type="info" icon="info-circle">
+  **提示：** Recoveries 接口不会额外收费，且仅在请求发生中断时才会产生暂存记录。
+</Callout>
+
+## 适用场景
+
+当非流式请求在客户端表现为失败/超时，但你怀疑上游可能已经完成处理时，优先使用 Recoveries：
+
+- 客户端网络断开或波动导致连接中断
+- CDN / 代理层强制超时或断开连接
+- 系统接口短暂波动导致连接被关闭
+- 请求耗时较长，客户端超时先于上游完成
+
+## 场景演示：请求中断后如何找回（核心步骤）
+
+<Steps>
+  <Step title="发起一次非流式请求（stream=false）">
+    例如调用 Chat Completions / Responses 等接口，并使用 `stream=false`（非流式响应）。
+  </Step>
+
+  <Step title="连接中断：客户端显示失败，但上游可能已完成">
+    常见原因包括：客户端网络断开、CDN 强制超时、系统接口短暂波动导致断开连接。
+
+    <Callout type="info" icon="info-circle">
+      **提示：** 非流式请求可能已经被上游正常处理并完成计费，只是结果没能回传到客户端。
+      建议先尝试找回，再决定是否重试，避免重复扣费。
+    </Callout>
+
+  </Step>
+
+  <Step title="系统自动暂存这次请求的结果">
+    Poixe 会将本次请求与响应结果暂存为一条 recovery 记录，供后续找回使用。
+
+    <Callout type="info" icon="info-circle">
+      **提示：** 这一步由系统自动完成，你无需进行任何额外操作。
+    </Callout>
+
+  </Step>
+
+<Step title="获取 request_id（任选其一）">
+    你可以通过以下任意方式获取 `request_id`：
+    
+    - **方式 A：控制台** <a href="https://poixe.com/log" target="_blank">日志页面</a> 查看对应请求日志，直接拿到 `request_id`
+    - **方式 B：调用** <a href="/cn/api-reference/system-api/recoveries/list">列出暂存响应</a> 获取列表中的 `request_id`
+    - **方式 C：调用** <a href="/cn/api-reference/system-api/recoveries/lookup">lookup 反查</a>，提交原始请求 JSON，返回候选记录并拿到 `request_id`
+  </Step>
+
+<Step title="通过 request_id 找回完整内容">
+  使用{" "}
+  <a href="/cn/api-reference/system-api/recoveries/get">获取暂存响应详情</a>：
+  `GET /v1/recoveries/{request_id}`，即可获取原始请求与完整响应体。
+</Step>
+
+  <Step title="可选：清理暂存记录">
+    找回完成后，你可以选择：
+    - 删除单条：<a href="/cn/api-reference/system-api/recoveries/delete">删除一条暂存响应</a>
+    - 删除全部：<a href="/cn/api-reference/system-api/recoveries/delete-all">删除所有暂存响应</a>（支持 `dry_run` 预演）
+  </Step>
+</Steps>
+
+## 接口一览（推荐顺序）
+
+<CardGroup cols={2}>
+  <Card
+    title="列出暂存列表"
+    href="/cn/api-reference/system-api/recoveries/list"
+  >
+    GET /v1/recoveries
+  </Card>
+  <Card
+    title="获取详情（找回响应）"
+    href="/cn/api-reference/system-api/recoveries/get"
+  >
+    GET /v1/recoveries/{request_id}
+  </Card>
+  <Card
+    title="lookup 反查（无 request_id）"
+    href="/cn/api-reference/system-api/recoveries/lookup"
+  >
+    POST /v1/recoveries/lookup
+  </Card>
+  <Card
+    title="删除单条暂存"
+    href="/cn/api-reference/system-api/recoveries/delete"
+  >
+    DELETE /v1/recoveries/{request_id}
+  </Card>
+  <Card
+    title="删除全部暂存（支持 dry_run）"
+    href="/cn/api-reference/system-api/recoveries/delete-all"
+  >
+    DELETE /v1/recoveries?all=true
+  </Card>
+</CardGroup>
+
+## 暂存保留时间与清理策略
+
+Recoveries 暂存记录默认保留 **3 天**，超过保留期将自动清理删除。
+
+如果你希望立即清理，可主动调用删除接口（单条或全部）。
+
+## 数据安全与合规
+
+Poixe 遵守严格的数据与安全规范。Recoveries 暂存数据仅用于帮助你找回中断请求的响应结果，并受鉴权控制（仅当前用户可访问自身记录）。
+
+我们不会将这些数据用于与你业务无关的用途，并会按保留期策略自动清理。
+
+## 长耗时请求的建议（避免 CDN 强制超时）
+
+当你的请求可能耗时较长（例如长输出、复杂工具链、模型思考时间较久等），我们推荐优先使用 **流式（stream=true）** 来降低连接中断风险，并提升体验（边生成边返回）。
+
+如果你必须使用 **非流式（stream=false）**，建议优先使用 **副接口（无 CDN）**，并在客户端配置 **两个裸接口**（dc8 / dc15）做备用切换，以降低因 **CDN 强制超时** 导致的请求中断概率。
+
+<Callout type="info" icon="info-circle">
+  相关背景与选择建议可参考：<a href="/cn/api-reference/introduction/base-url">接口地址（Base URL）</a>
+</Callout>

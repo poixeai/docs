@@ -1,0 +1,90 @@
+---
+title: "获取暂存响应详情"
+sidebarTitle: "获取详情"
+# description: "通过 request_id 获取暂存详情（包含原始请求与完整响应体）。"
+tag: "GET"
+icon: "arrow-down-left"
+---
+
+import GetReq from "/snippets/recoveries/get.req.mdx";
+import GetResp from "/snippets/recoveries/get.resp.mdx";
+
+<RequestExample>
+<GetReq />
+</RequestExample>
+
+<ResponseExample>
+<GetResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://api.poixe.com/v1/recoveries/{request_id}`
+</div>
+
+通过 `request_id` 获取某一条暂存响应的完整详情（包含 **原始请求体** 与 **完整响应体**）。
+
+如果你还没有 `request_id`，可以先使用 [**列出列表**](/cn/api-reference/system-api/recoveries/list) 获取，或用 [**lookup 反查**](/cn/api-reference/system-api/recoveries/lookup) 通过原始请求体反查候选记录。
+
+## 鉴权与请求头
+
+所有 API 请求都必须在 HTTP Header 中包含您的 API 密钥。
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token。格式为 `Bearer YOUR_API_KEY`。
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  必须设置为 `application/json`。
+</ParamField>
+
+## 路径参数
+
+<ParamField path="request_id" type="string" required>
+  暂存记录的请求 ID。通常来自 [**列出列表**](/cn/api-reference/system-api/recoveries/list) 或 [**lookup 反查**](/cn/api-reference/system-api/recoveries/lookup)。
+</ParamField>
+
+## 响应结构
+
+<ResponseField name="request_id" type="string">
+  请求 ID，Poixe AI 系统内部使用的唯一标识。
+</ResponseField>
+
+<ResponseField name="created_at" type="integer">
+  创建时间（Unix 秒级时间戳）。
+</ResponseField>
+
+<ResponseField name="interrupted_reason" type="string">
+  中断原因（如 context canceled）。
+</ResponseField>
+
+<ResponseField name="request" type="object">
+  原始请求信息。
+  <Expandable title="request 字段">
+    <ResponseField name="body_raw" type="string">
+      原始请求 JSON 字符串。若请求体超过 20MB，可能返回占位符。
+    </ResponseField>
+    <ResponseField name="request_body_hash" type="string">
+      请求体 hash（用于 lookup 反查）。
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="response" type="object">
+  暂存的完整响应内容。
+  <Expandable title="response 字段">
+    <ResponseField name="body_raw" type="string">
+      完整响应 JSON 字符串。
+    </ResponseField>
+    <ResponseField name="response_body_size" type="integer">
+      响应体字节大小（byte size）。
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<Callout type="info" icon="info-circle">
+当原始请求体超过 **20MB**，系统不会存储请求体内容，`request.body_raw` 将返回：`__OMITTED_TOO_LARGE__`。
+
+这不会影响找回响应：`response.body_raw` 仍可正常获取。
+</Callout>
+

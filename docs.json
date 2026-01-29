@@ -139,6 +139,26 @@
                     ]
                   }
                 ]
+              },
+              {
+                "group": "系统接口",
+                "pages": [
+                  {
+                    "group": "获取模型列表",
+                    "pages": ["cn/api-reference/system-api/models/overview"]
+                  },
+                  {
+                    "group": "中断响应找回",
+                    "pages": [
+                      "cn/api-reference/system-api/recoveries/overview",
+                      "cn/api-reference/system-api/recoveries/list",
+                      "cn/api-reference/system-api/recoveries/get",
+                      "cn/api-reference/system-api/recoveries/lookup",
+                      "cn/api-reference/system-api/recoveries/delete",
+                      "cn/api-reference/system-api/recoveries/delete-all"
+                    ]
+                  }
+                ]
               }
             ]
           },

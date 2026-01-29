@@ -1,0 +1,11 @@
+```bash curl
+# Dry run (recommended)
+curl -X DELETE "https://api.poixe.com/v1/recoveries?all=true&dry_run=true" \
+  -H "Authorization: Bearer $POIXE_API_KEY" \
+  -H "Content-Type: application/json"
+
+# Real delete
+curl -X DELETE "https://api.poixe.com/v1/recoveries?all=true" \
+  -H "Authorization: Bearer $POIXE_API_KEY" \
+  -H "Content-Type: application/json"
+```

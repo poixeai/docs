@@ -1,0 +1,55 @@
+---
+title: "列出暂存响应"
+sidebarTitle: "列出列表"
+# description: "列出当前用户的全部暂存记录（仅返回关键信息）。"
+tag: "GET"
+icon: "arrow-down-left"
+---
+
+import ListReq from "/snippets/recoveries/list.req.mdx";
+import ListResp from "/snippets/recoveries/list.resp.mdx";
+
+<RequestExample>
+<ListReq />
+</RequestExample>
+
+<ResponseExample>
+<ListResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://api.poixe.com/v1/recoveries`
+</div>
+
+列出当前用户的所有暂存记录。该接口只返回包含 `request_id` 在内的关键信息，不返回暂存的 **响应体**。
+
+可以在获取到 `request_id` 后，使用 [**获取详情**](/cn/api-reference/system-api/recoveries/get) 接口获取完整的暂存内容。
+
+## 鉴权与请求头
+
+所有 API 请求都必须在 HTTP Header 中包含您的 API 密钥。
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token。格式为 `Bearer YOUR_API_KEY`。
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  必须设置为 `application/json`。
+</ParamField>
+
+## 响应结构
+
+<ResponseField name="count" type="integer">
+  暂存记录总数。
+</ResponseField>
+
+<ResponseField name="items" type="object[]">
+  暂存记录列表。
+  <Expandable title="items[] 字段">
+    <ResponseField name="request_id" type="string">请求 ID，Poixe AI 系统内部使用的唯一标识</ResponseField>
+    <ResponseField name="created_at" type="integer">创建时间（Unix 秒级时间戳）</ResponseField>
+    <ResponseField name="interrupted_reason" type="string">中断原因（如 context canceled）</ResponseField>
+    <ResponseField name="request_body_hash" type="string">请求体 hash（用于 lookup 反查）</ResponseField>
+  </Expandable>
+</ResponseField>

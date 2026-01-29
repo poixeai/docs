@@ -1,0 +1,67 @@
+---
+title: "lookup 反查暂存响应"
+sidebarTitle: "lookup 反查"
+# description: "提交原始请求 JSON，反查并返回可能匹配的暂存记录列表。"
+tag: "POST"
+icon: "arrow-up-right"
+---
+
+import LookupReq from "/snippets/recoveries/lookup.req.mdx";
+import LookupResp from "/snippets/recoveries/lookup.resp.mdx";
+
+<RequestExample>
+<LookupReq />
+</RequestExample>
+
+<ResponseExample>
+<LookupResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">POST</Badge>
+  `https://api.poixe.com/v1/recoveries/lookup`
+</div>
+
+当你无法确定 `request_id` 时，可以将当时的 **原始请求 JSON**（不包任何额外字段）提交给本接口，系统会返回可能匹配的暂存记录候选列表。
+
+拿到候选列表中的 `request_id` 后，可以使用 [**获取详情**](/cn/api-reference/system-api/recoveries/get) 获取完整的暂存内容。
+
+## 鉴权与请求头
+
+所有 API 请求都必须在 HTTP Header 中包含您的 API 密钥。
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token。格式为 `Bearer YOUR_API_KEY`。
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  必须设置为 `application/json`。
+</ParamField>
+
+## 请求体
+
+请求体必须是 **合法 JSON**，并尽量与当时发起上游请求的 JSON 保持一致（字段顺序不要求一致）。
+
+<ParamField body="(raw JSON)" type="object" required>
+  原始请求 JSON。例如：`{"model":"gpt-4o-mini","messages":[...],"stream":false}`。
+</ParamField>
+
+## 响应结构
+
+<ResponseField name="items" type="object[]">
+  候选暂存记录列表（不返回响应体）。
+  <Expandable title="items[] 字段">
+    <ResponseField name="request_id" type="string">请求 ID，Poixe AI 系统内部使用的唯一标识</ResponseField>
+    <ResponseField name="created_at" type="integer">创建时间（Unix 秒级时间戳）</ResponseField>
+    <ResponseField name="interrupted_reason" type="string">中断原因（如 context canceled）</ResponseField>
+    <ResponseField name="request_body_hash" type="string">请求体 hash（用于说明匹配依据）</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<Callout type="info" icon="info-circle">
+lookup 会对你提交的请求体生成 `request_body_hash` 并进行匹配：系统会将请求体解析为 JSON 对象后，对 **object key 排序**输出稳定 JSON，再做 `sha256`，最后取 **前 8 bytes（16 位 hex）** 作为 hash。
+
+因此它对这些变化不敏感：JSON 格式化差异（空格/缩进/换行）、object 字段顺序不同。 
+ 
+但对这些变化非常敏感（会导致 hash 改变）：任意字段值变化、字段新增/缺失、数组顺序变化（数组是有序的，不会被排序），例如 `messages` 里多一个空格或 `content` 有细微不同也会改变 hash。
+</Callout>

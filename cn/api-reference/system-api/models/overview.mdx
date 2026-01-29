@@ -1,0 +1,74 @@
+---
+title: "获取模型列表（Models）"
+sidebarTitle: "列出列表"
+# description: "列出当前可用的模型，并返回每个模型的基础信息（id / created / owned_by）。"
+tag: "GET"
+icon: "arrow-down-left"
+---
+
+import ModelsReq from "/snippets/models/list.req.mdx";
+import ModelsResp from "/snippets/models/list.resp.mdx";
+
+<RequestExample>
+  <ModelsReq />
+</RequestExample>
+
+<ResponseExample>
+  <ModelsResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://api.poixe.com/v1/models`
+</div>
+
+列出当前 Poixe API 可用的模型，并返回每个模型的基础信息，例如模型 `id`、创建时间 `created`、所属方 `owned_by` 等。
+
+该接口常用于：
+
+- 在客户端/控制台中动态展示可用模型列表
+- 在自动化脚本中校验某个模型名是否存在
+- 在自定义服务商/第三方客户端（如 Cherry Studio）中快速确认可填入的模型名称
+
+<Callout type="info" icon="info-circle">
+  该接口 **不需要鉴权**，直接请求即可。
+</Callout>
+
+## 响应结构
+
+<ResponseField name="object" type="string">
+  对象类型，固定为 `list`。
+</ResponseField>
+
+<ResponseField name="data" type="object[]">
+  模型对象列表。
+  <Expandable title="data[] 字段（The model object）">
+    <ResponseField name="id" type="string">
+      模型标识符，可直接用于各类 API 请求中的 `model` 字段。
+    </ResponseField>
+    <ResponseField name="object" type="string">
+      对象类型，固定为 `model`。
+    </ResponseField>
+    <ResponseField name="created" type="integer">
+      模型创建时间（Unix 秒级时间戳）。
+    </ResponseField>
+    <ResponseField name="owned_by" type="string">
+      模型所属方（例如 `poixe`）。
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<Callout type="info" icon="info-circle">
+  这是一个 OpenAI 兼容接口，但并不会向 OpenAI 发送请求，而是由 Poixe 系统统计当前可用模型。
+  
+  返回结果会随 Poixe 可用模型的上架/下架而变化。
+</Callout>
+
+<CardGroup cols={1}>
+  <Card
+    title="官方参考：List models"
+    href="https://platform.openai.com/docs/api-reference/models/list"
+  >
+    查看 OpenAI 官方 models/list 的字段与语义说明（Poixe 兼容其结构）。
+  </Card>
+</CardGroup>

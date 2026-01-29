@@ -1,6 +1,8 @@
 ---
 title: "OpenAI Responses 协议"
 sidebarTitle: "创建请求"
+tag: "POST"
+icon: "arrow-up-right"
 ---
 
 import ResponsesReqCurl from "/snippets/api-reference/responses-req-curl.mdx";
@@ -29,7 +31,7 @@ import ResponsesRespStream from "/snippets/api-reference/responses-resp-stream.m
 
 它更适合承载新模型的能力（如更强的工具调用、更一致的多模态输入/输出、更好的结构化输出等）。
 
-## 认证与授权
+## 鉴权与请求头
 
 所有 API 请求都必须在 HTTP Header 中包含您的 API 密钥。
 

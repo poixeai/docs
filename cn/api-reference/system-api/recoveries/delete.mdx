@@ -1,0 +1,67 @@
+---
+title: "删除一条暂存响应"
+sidebarTitle: "删除单条"
+# description: "删除指定 request_id 的暂存记录。"
+tag: "DELETE"
+icon: "x"
+---
+
+import DeleteReq from "/snippets/recoveries/delete.req.mdx";
+import DeleteResp from "/snippets/recoveries/delete.resp.mdx";
+
+<RequestExample>
+<DeleteReq />
+</RequestExample>
+
+<ResponseExample>
+<DeleteResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">DELETE</Badge>
+  `https://api.poixe.com/v1/recoveries/{request_id}`
+</div>
+
+删除指定 `request_id` 的暂存记录。
+
+如果你只是不确定是否已经生成响应，建议先使用 [**获取详情**](/cn/api-reference/system-api/recoveries/get) 确认内容后再删除。
+
+## 鉴权与请求头
+
+所有 API 请求都必须在 HTTP Header 中包含您的 API 密钥。
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token。格式为 `Bearer YOUR_API_KEY`。
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  必须设置为 `application/json`。
+</ParamField>
+
+## 路径参数
+
+<ParamField path="request_id" type="string" required>
+  暂存记录的请求 ID（来自 [**列出列表**](/cn/api-reference/system-api/recoveries/list) / [**lookup 反查**](/cn/api-reference/system-api/recoveries/lookup)）。
+</ParamField>
+
+## 响应结构
+
+<ResponseField name="request_id" type="string">
+  请求 ID，Poixe AI 系统内部使用的唯一标识。
+</ResponseField>
+
+<ResponseField name="deleted" type="boolean">
+  是否删除成功。
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  结果描述。
+</ResponseField>
+
+<ResponseField name="reason" type="string">
+  结果原因（如 `OK` / `RECOVERY_NOT_FOUND`）。
+</ResponseField>
+
+<Callout type="info" icon="info-circle">
+如果记录不存在（例如已过期/已被清理/已删除），通常会返回 `deleted=false`，并给出 `RECOVERY_NOT_FOUND` 相关原因说明。
+</Callout>

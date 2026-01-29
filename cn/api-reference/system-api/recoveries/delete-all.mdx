@@ -1,0 +1,74 @@
+---
+title: "删除所有暂存响应"
+sidebarTitle: "删除全部"
+# description: "删除当前用户的全部暂存记录（需显式确认 all=true，可选 dry_run 预演）。"
+tag: "DELETE"
+icon: "x"
+---
+
+import DeleteAllReq from "/snippets/recoveries/delete-all.req.mdx";
+import DeleteAllResp from "/snippets/recoveries/delete-all.resp.mdx";
+import DryRunResp from "/snippets/recoveries/delete-all.dryrun.resp.mdx";
+
+<RequestExample>
+<DeleteAllReq />
+</RequestExample>
+
+<ResponseExample>
+<DeleteAllResp />
+<DryRunResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">DELETE</Badge>
+  `https://api.poixe.com/v1/recoveries?all=true`
+</div>
+
+删除当前用户的全部暂存记录。该操作为破坏性操作，必须显式携带 `all=true` 作为确认参数（防误触）。
+
+你也可以先使用 `dry_run=true` 进行预演：仅返回预计删除数量，不执行真实删除。
+
+## 鉴权与请求头
+
+所有 API 请求都必须在 HTTP Header 中包含您的 API 密钥。
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token。格式为 `Bearer YOUR_API_KEY`。
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  必须设置为 `application/json`。
+</ParamField>
+
+## Query 参数
+
+<ParamField query="all" type="string" required>
+  必须为 `true`。用于确认执行“删除全部”。
+</ParamField>
+
+<ParamField query="dry_run" type="string">
+  可选：为 `true` 时仅预演，不执行删除；响应会返回 `would_delete`。
+</ParamField>
+
+## 响应结构
+
+<ResponseField name="deleted" type="integer">
+  实际删除数量（dry_run 时通常为 0）。
+</ResponseField>
+
+<ResponseField name="would_delete" type="integer">
+  仅在 dry_run 返回：预计将删除数量。
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  结果描述。
+</ResponseField>
+
+<ResponseField name="reason" type="string">
+  结果原因（如 `OK` / `DRY_RUN` / `CONFIRMATION_REQUIRED`）。
+</ResponseField>
+
+<Callout type="warning" icon="info-circle">
+建议先调用 `DELETE /v1/recoveries?all=true&dry_run=true` 确认数量，再执行真实删除：
+`DELETE /v1/recoveries?all=true`。
+</Callout>

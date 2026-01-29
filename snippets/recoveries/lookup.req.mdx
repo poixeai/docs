@@ -1,0 +1,12 @@
+```bash curl
+curl https://api.poixe.com/v1/recoveries/lookup \
+  -H "Authorization: Bearer $POIXE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-4o-mini",
+    "messages": [
+      { "role": "user", "content": "证明费马大定理." }
+    ],
+    "stream": false
+  }'
+```
