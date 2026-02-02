@@ -1,0 +1,365 @@
+---
+title: "Codex CLI"
+sidebarTitle: "Codex"
+description: "OpenAI 推出的终端编程代理工具"
+---
+
+## 前言
+
+Codex CLI 是 OpenAI 推出的本地编程代理工具，你可以在终端中运行它。它能够在你选定的目录里读取代码、修改文件，并在你的机器上执行代码。它是开源的，并使用 Rust 构建，以获得更高的速度和效率。
+
+![codex cli poster](/assets/images/codex-poster.png)
+
+<CardGroup cols={2}>
+  <Card
+    title="Codex CLI 官方文档"
+    href="https://developers.openai.com/codex/cli/"
+  >
+    安装、使用、命令与配置参考
+  </Card>
+  <Card title="Codex CLI GitHub 仓库" href="https://github.com/openai/codex">
+    源码、Release 二进制与贡献指南
+  </Card>
+</CardGroup>
+
+## 准备工作
+
+确保您拥有：
+
+- 打开的终端或命令提示符
+- 一个要处理的代码项目
+- 一个支持 [OpenAI Responses 协议](/cn/api-reference/text-api/openai-responses/overview) 的 API 令牌（[如何创建令牌](/cn/docs/dashboard/create-tokens)）
+
+确保您的终端环境支持：
+
+```bash
+# node.js
+node -v
+
+# git
+git --version
+```
+
+## 安装 Codex CLI
+
+在终端运行以下命令全局安装：
+
+```bash
+npm install -g @openai/codex
+```
+
+验证安装：
+
+```bash
+# 查看版本
+codex --version
+
+# 查看帮助
+codex --help
+```
+
+## 配置 Codex CLI
+
+通过以下方式创建 codex 配置文件：
+
+<Tabs>
+  <Tab title="macOS/Linux">
+    ```bash
+    # 编辑配置文件：
+    nano ~/.codex/config.toml
+
+    # 如果目录不存在，先创建：
+    mkdir -p ~/.codex
+    ```
+
+  </Tab>
+
+  <Tab title="Windows">
+    ```bash
+    # 创建对应目录下的配置文件：
+    C:\Users\你的用户名\.codex\config.toml
+    ```
+  </Tab>
+</Tabs>
+
+在 `config.toml` 中添加以下内容：
+
+```toml
+model_provider = "codex"
+model = "gpt-5.2-codex" # 选择模型
+model_reasoning_effort = "high"
+disable_response_storage = true
+
+[model_providers.codex]
+name = "codex"
+base_url = "https://api.poixe.com/v1" # Poixe API 接口地址
+wire_api = "responses"
+env_key = "K_CODEX"  # 不要在这里填写密钥，在环境变量中设置
+```
+
+<Callout type="info" icon="info-circle">
+  **模型选择建议（Codex 系列）：**
+
+  <ul>
+    - `gpt-5.2-codex`：默认首选，综合能力最强，适合大多数真实工程任务（重构、排障、跨文件改动、多步骤实现）。
+    - `gpt-5.1-codex`：稳定的通用选择（介于 5.2 与 mini 之间），适合日常开发与团队默认配置。
+    - `gpt-5.1-codex-mini`：性价比优先，适合快修、小改、脚手架生成、简单问题定位。
+    - `gpt-5.1-codex-max`：长任务 / 深度任务优先，适合大规模重构、迁移、复杂调试、长时间 agent loop。
+    - `gpt-5-codex`：更“保守/兼容”的选择，适合你需要对齐旧行为、或成本/稳定性有特殊要求的场景。
+  </ul>
+</Callout>
+
+## 设置环境变量
+
+将 API Key 设置为环境变量：
+
+<Tabs>
+  <Tab title="macOS/Linux">
+    ```bash
+    # macOS (zsh)
+    echo 'export K_CODEX="$POIXE_API_KEY"' >> ~/.zshrc
+    source ~/.zshrc
+
+    # Linux (bash)
+    echo 'export K_CODEX="$POIXE_API_KEY"' >> ~/.bashrc
+    source ~/.bashrc
+    ```
+  </Tab>
+</Tabs>
+
+<Callout type="info" icon="info-circle">
+  配置完成后，建议重启终端以确保环境变量生效。
+</Callout>
+
+## 开始使用
+
+进入你的项目目录并启动 Codex CLI：
+
+```bash
+# 进入项目目录
+cd /path/to/your/project
+
+# 启动 Codex CLI
+codex
+```
+
+## 使用技巧
+
+### 1. 先让它“读懂”再让它“动手”
+
+建议你把一次复杂需求拆成两步：
+
+1. **理解/探索**：让它先概览架构、入口、依赖、关键路径
+2. **实施/验证**：再让它改代码、跑测试、给 diff
+
+例如：
+
+```bash
+codex "先扫描项目结构，找出鉴权和路由入口在哪里，并给出你准备怎么改的计划（不要直接改代码）"
+```
+
+确认计划没问题后，再继续：
+
+```bash
+codex "按刚才的计划实现；改动尽量小；最后跑测试并给出 /diff"
+```
+
+Codex 交互模式会倾向于先讲计划、再执行，并支持在关键步骤让你批准/拒绝。
+
+### 2. 随手 `/diff` + `/review`：把每一轮改动当成 PR 来审
+
+* `/diff`：随时看工作区改动（包括未被 Git 追踪的文件），避免“改了啥我不知道”。
+* `/review`：启动一个专门的 reviewer，读取你选择的 diff 变更并给出优先级建议，而且**不会动你的 working tree**。
+
+### 3. 用 `/permissions` 在“谨慎”和“放手”之间随时切换
+
+Codex 的 Approval modes（审批/权限）分为 Auto、Read-only、Full Access，你可以在会话中用 `/permissions` 动态调整。
+
+### 4. 长对话记得 `/compact`
+
+当你做了很多轮对话（尤其是跨文件重构、排障），上下文会越来越大。
+`/compact` 可以把当前可见对话压缩成摘要，减少 token 压力并保留关键结论。
+
+### 5. 把“仓库长期规则”写进 `AGENTS.md`
+
+`/init` 可以在当前目录生成 `AGENTS.md` 脚手架，用来写“这个仓库的长期偏好/规范/禁区”。
+
+常见写法例如：
+
+* 本项目请始终用中文跟用户交流。
+* 默认用哪套测试命令
+* 代码风格 / lint / commit 规范
+* 不要改动哪些目录/文件
+* 输出格式（必须给 diff、必须给迁移步骤等）
+
+## 基本命令
+
+### 1. 启动与运行
+
+```bash
+# 进入项目目录后启动交互式 TUI
+codex
+
+# 启动时直接带一个任务（仍是交互式）
+codex "fix failing tests and explain the root cause"
+```
+
+首次运行会提示登录：可以用 ChatGPT 账号授权或 API key。
+
+如果用 API key 模式，确保你已设置好 `K_CODEX` 环境变量，并且 `config.toml` 里 `env_key = "K_CODEX"`，`base_url = "https://api.poixe.com/v1"`。
+
+### 2. 常用 CLI flags（启动时就能用）
+
+```bash
+# 指定模型
+codex --model gpt-5-codex
+
+# 传图片作为上下文（例如截图、设计稿）
+codex -i screenshot.png "Explain this UI bug"
+
+# 允许额外目录写权限（多仓库/monorepo 场景很有用）
+codex --add-dir /path/to/another/dir "refactor shared lib"
+
+# 控制命令执行的审批策略（更谨慎或更放手）
+codex --ask-for-approval on-request
+
+# 控制 sandbox 策略（read-only / workspace-write / danger-full-access）
+codex --sandbox workspace-write
+
+# 让 web search 使用 live（默认是 cached）
+codex --search "look up the latest X and summarize"
+```
+
+这些 flags 在官方 [Command Line Options](https://developers.openai.com/codex/cli/reference) 有完整说明。
+
+### 3. 会话恢复（resume）
+
+```bash
+# 打开最近的会话列表选择器
+codex resume
+
+# 直接恢复当前目录最近一次会话
+codex resume --last
+
+# 允许跨目录查找会话
+codex resume --all
+
+# 指定 SESSION_ID 恢复
+codex resume <SESSION_ID>
+```
+
+Codex 会把会话记录保存在本地（例如 `~/.codex/sessions/`），方便你“接着干”。
+
+### 4. 非交互模式（CI/脚本）：`codex exec`
+
+适合自动化：让它跑检查、输出结果到 stdout 或 JSONL、必要时写入文件。
+
+```bash
+# 一次性脚本运行
+codex exec "run lint and propose fixes"
+
+# 输出 JSONL（便于机器解析）
+codex exec --json "summarize repo and output risks"
+
+# 把最终回复写入文件
+codex exec -o result.txt "generate a release checklist"
+
+# 恢复上次 exec 会话继续跑
+codex exec resume --last "continue implementing the plan"
+```
+
+`codex exec` 的参数（如 `--json`、`--output-last-message`、`--output-schema`、`--yolo` 等）在官方文档有细节。
+
+## 会话内斜杠命令（Slash Commands）
+
+在交互式会话里输入 `/` 会弹出命令列表并可搜索。
+
+下面是你最常用的一组：
+
+| 命令                           | 用途                             | 典型用法                        |
+| ---------------------------- | ------------------------------ | --------------------------- |
+| `/model`                     | 切模型（有些模型也支持调 reasoning effort） | “切到更强模型再重构”                 |
+| `/permissions`               | 切换审批/权限模式                      | “先 Read-only 看计划，再 Auto 执行” |
+| `/status`                    | 看当前会话配置、token 使用、可写目录等         | “排查为什么不能写某目录”               |
+| `/diff`                      | 查看 Git diff（含未追踪文件）            | “每轮改完都看一次”                  |
+| `/review`                    | 独立 reviewer 做本地代码审查            | “提交前扫一遍风险点”                 |
+| `/compact`                   | 压缩长对话为摘要                       | “对话太长了先压一下”                 |
+| `/init`                      | 生成 `AGENTS.md` 脚手架             | “把仓库规则固化下来”                 |
+| `/mention`                   | 把指定文件/路径附加进对话上下文               | “指定让它看某个目录/文件”              |
+| `/resume` / `/new` / `/fork` | 恢复/新开/分叉会话                     | “保留当前思路，同时试另一个方案”           |
+| `/logout` / `/quit`          | 退出/登出                          |                             |
+
+上表对应官方 [Slash Commands](https://developers.openai.com/codex/cli/slash-commands) 说明。
+
+## 注意事项
+
+### 1. 权限模式别开太大（尤其是 Full Access）
+
+* **Auto（默认）**：目录内读写执行都比较顺滑，但涉及目录外或网络会再问你
+* **Read-only**：只做顾问，改代码/跑命令前需要你批准
+* **Full Access**：跨机器、含网络，尽量少用，只在你非常信任的仓库/任务下使用
+
+这些模式的行为定义在官方 [Features](https://developers.openai.com/codex/cli/features) 文档里。
+
+### 2. Web search 默认是 cached，不代表“实时网页”
+
+Codex 的 web search 默认启用，但会优先走 **OpenAI 维护的缓存索引（cached）**，而不是实时抓取；你也可以通过参数启用 live search。
+即便如此，也要把 web 结果当作“不可信输入”，避免提示注入。
+
+### 3. Windows 支持是实验性的
+
+官方说明：Codex CLI 在 macOS / Linux 更成熟，Windows 支持仍属实验；更推荐在 WSL 工作区使用。
+### 4. 尽量在 Git 仓库里使用
+
+很多能力（比如 `/diff`、review、变更追踪）都依赖 Git。
+如果你在非 Git 目录跑，需要时可以用 `--skip-git-repo-check`（主要在 `codex exec` 场景）。
+### 5. Poixe 网关下的“行为差异”
+
+Poixe 是转发层，会在稳定性、风控、计费与工具能力上做一些工程取舍。若你遇到某些能力不可用/表现不同，请优先查阅 Poixe 的 [兼容性与差异说明](/cn/api-reference/introduction/differences) 相关章节。
+
+<Callout type="info" icon="info-circle">
+  **特别注意：**
+
+  Poixe 系统会对 OpenAI Responses 接口传入的 `reasoning.encrypted_content` 相关参数做过滤处理，避免因加密推理片段不是跨组织/跨 Key 通用的会话凭证而产生报错。
+
+  详细请参考 Poixe 的 [加密推理内容过滤](/cn/api-reference/introduction/differences/reasoning-encrypted_content) 章节。
+</Callout>
+
+## 常见问题
+
+<AccordionGroup>
+  <Accordion title="启动后提示需要登录 / 没权限？">
+    首次运行会引导登录（ChatGPT OAuth / API key）。如果你用 API key 模式，请确认：
+
+    - 已设置 `K_CODEX` 环境变量
+    - `config.toml` 中 `env_key = "K_CODEX"` 配置正确
+  </Accordion>
+
+  <Accordion title="为什么它不能写某个目录或运行某些命令？">
+    通常是权限或沙箱策略导致。建议按顺序检查：
+
+    1. 当前 `/permissions` 是否为 Read-only
+    2. 是否需要把目录加入可写范围（`--add-dir` 或配置可写 roots）
+    3. sandbox 策略是否限制（例如 `--sandbox read-only` 会阻止写入/执行）
+  </Accordion>
+
+  <Accordion title="为什么 `/review` 没有改我的代码？">
+    这是设计如此：`/review` 会启动“独立 reviewer”，只读 diff 并输出建议，不会修改 working tree。
+
+    你需要自行决定是否采纳建议并手动修改，或让 Codex 以普通任务方式执行改动。
+  </Accordion>
+
+  <Accordion title="如何在脚本/CI 里用 Codex？">
+    使用 `codex exec`。
+
+    - 需要机器可读输出：加 `--json`
+    - 需要把最终结果写入文件：用 `--output-last-message/-o`
+    - 需要续跑：用 `codex exec resume ...`
+  </Accordion>
+
+  <Accordion title="我想要“实时网页”结果，而不是 cached？">
+    启动时加 `--search` 可以把 web_search 从默认 cached 切成 live。
+
+    官方说明：`--search` 会设置 `web_search="live"`。
+  </Accordion>
+</AccordionGroup>

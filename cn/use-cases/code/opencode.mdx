@@ -1,0 +1,187 @@
+---
+title: "OpenCode"
+sidebarTitle: "OpenCode"
+description: "开源终端编程代理工具"
+---
+
+## 前言
+
+OpenCode 是一款开源人工智能编码代理。它可以通过终端界面、桌面应用程序或 IDE 扩展程序使用。
+
+该工具支持多种 AI 提供商和模型，本文将介绍如果何将 Poixe 作为提供商接入 OpenCode，并使用 Poixe 上的 Codex 系列模型来处理代码库中的任务。
+
+![opencode poster](/assets/images/opencode-poster.png)
+
+<CardGroup cols={2}>
+  <Card title="OpenCode 配置文档" href="https://opencode.ai/docs/config/">
+    opencode.json / opencode.jsonc 配置格式
+  </Card>
+  <Card title="OpenCode Github 仓库" href="https://github.com/anomalyco/opencode">
+    源码、版本发布与贡献指南
+  </Card>
+</CardGroup>
+
+## 准备工作
+
+确保你拥有：
+
+- 打开的终端或命令提示符
+- 一个要处理的代码项目
+- 一个有效的 Poixe API Key（[如何创建令牌](/cn/docs/dashboard/create-tokens)）
+
+## 安装 OpenCode
+
+推荐使用官方安装脚本：
+
+```bash
+curl -fsSL https://opencode.ai/install | bash
+```
+
+或使用 npm 全局安装：
+
+```bash
+npm install -g opencode-ai
+```
+
+验证安装：
+
+```bash
+opencode --version
+opencode --help
+```
+
+## 创建配置文件
+
+OpenCode 支持通过 `opencode.json` / `opencode.jsonc` 配置 provider、默认模型、权限等。
+
+下面以 **poixe** 作为一个自定义 provider，并将默认模型设为 **Responses 协议 Codex 模型** 为例。
+
+### 1. 创建配置文件
+
+在你的 OpenCode 配置目录里创建 `opencode.jsonc`（JSONC 支持注释，更适合长期维护）。
+
+> 具体文件路径以 OpenCode 文档/你的系统为准，你也可以在项目根目录为单个项目放一份配置。
+
+<Tabs>
+  <Tab title="macOS/Linux">
+    ```bash
+    # 配置文件
+    ~/.config/opencode/opencode.jsonc
+    ```
+  </Tab>
+</Tabs>
+
+### 2. 编辑配置文件
+
+> 关键点：
+>
+> * `baseURL` 指向 Poixe：`https://api.poixe.com/v1`
+> * `models` 里声明你要用的 `gpt-5.2-codex`（以及你想提供给 UI 选择的其他模型）
+> * 默认模型通常写成 `provider_key/model_key` 格式（例如 `poixe/gpt-5.2-codex`）
+
+```jsonc
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  // 设置默认模型（provider/model）
+  "model": "poixe/gpt-5.2-codex",
+
+  // 是否自动更新（可选）
+  "autoupdate": true,
+
+  "provider": {
+    "poixe": {
+      "npm": "@ai-sdk/openai", // 对应 OpenAI Responses 协议
+      "name": "Poixe AI",
+      "options": {
+        "baseURL": "https://api.poixe.com/v1"
+      },
+      "models": {
+        "gpt-5.2-codex": { "name": "GPT-5.2-Codex" },
+        "gpt-5.1-codex": { "name": "GPT-5.1-Codex" },
+        "gpt-5.1-codex-mini": { "name": "GPT-5.1-Codex mini" },
+        "gpt-5.1-codex-max": { "name": "GPT-5.1-Codex-Max" },
+        "gpt-5-codex": { "name": "GPT-5-Codex" }
+      }
+    }
+  }
+}
+```
+
+## 配置 API Key（鉴权）
+
+OpenCode 通常会通过交互方式引导你接入 provider 并保存凭证（不同版本交互文案可能略有差异）。
+
+推荐做法：
+
+1. 启动 OpenCode：
+
+   ```bash
+   opencode
+   ```
+2. 连接 Poixe provider，在交互界面中输入：
+
+   ```bash
+   # 输入命令
+   /connect
+
+   # 选择 Poixe AI（输入关键词 poixe 查找）
+
+   # 输入你的 Poixe API Key
+
+   # 选择模型
+   ```
+
+## 开始使用
+
+进入项目目录启动：
+
+```bash
+cd /path/to/your/project
+opencode
+```
+
+## 权限与工具（OpenCode 内置工具）
+
+OpenCode 有内置工具（例如执行命令、编辑文件、写文件等），可在配置里通过 `permission` 控制是否允许。
+
+示例（允许执行命令与编辑）：
+
+```jsonc
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "bash": "allow",
+    "edit": "allow"
+  }
+}
+```
+
+> 建议：默认保守（需要时再逐步放开），尤其是涉及安装依赖/执行脚本/大规模改动时。
+
+## 常见问题
+
+<AccordionGroup>
+  <Accordion title="启动后提示需要登录 / 没权限？">
+    - 确认你已走完 OpenCode 的 provider 连接/登录流程，并使用的是 Poixe API Key
+    - 确认配置里的 `baseURL` 指向 `https://api.poixe.com/v1`
+    - 如果你之前绑定过别的 provider/Key，建议重新连接 Poixe provider 后再试
+  </Accordion>
+
+  <Accordion title="为什么它不能写某个目录或运行某些命令？">
+    通常是权限策略导致：
+
+```
+1. 检查 `permission`（例如 `bash`/`edit` 是否允许）
+2. 确认你在一个可写目录（并且你对该目录有系统权限）
+3. 对“危险动作”建议拆解：先让它给 plan + diff，再决定是否执行
+```
+
+  </Accordion>
+
+  <Accordion title="遇到模型/接口相关报错，怎么反馈最有效？">
+    - 提供报错时间点与关键错误信息
+    - 如果响应里包含 Poixe Request ID，请一并提供
+  </Accordion>
+</AccordionGroup>
+```

@@ -108,6 +108,15 @@
                       "cn/api-reference/introduction/errors/system",
                       "cn/api-reference/introduction/errors/unformatted"
                     ]
+                  },
+                  {
+                    "group": "与官方接口的差异",
+                    "pages": [
+                      "cn/api-reference/introduction/differences/overview",
+                      "cn/api-reference/introduction/differences/cache",
+                      "cn/api-reference/introduction/differences/tools",
+                      "cn/api-reference/introduction/differences/reasoning-encrypted_content"
+                    ]
                   }
                 ]
               },
@@ -175,7 +184,12 @@
               },
               {
                 "group": "编程",
-                "pages": ["cn/use-cases/code/claude-code"]
+                "pages": [
+                  "cn/use-cases/code/claude-code",
+                  "cn/use-cases/code/codex",
+                  "cn/use-cases/code/gemini-cli",
+                  "cn/use-cases/code/opencode"
+                ]
               }
             ]
           },

@@ -1,0 +1,93 @@
+---
+title: "加密推理内容过滤"
+sidebarTitle: "加密推理内容过滤"
+---
+
+在 `OpenAI Responses` 协议中，你可能会遇到类似下面的报错（常见于 **Codex CLI / OpenCode** 这类 agent 工具）：
+
+```json
+{
+  "error": {
+    "message": "The encrypted content gAAA...xrM= could not be verified. Reason: Encrypted content organization_id did not match the target organization.",
+    "type": "invalid_request_error",
+    "code": "invalid_encrypted_content"
+  }
+}
+```
+
+这通常与 `reasoning.encrypted_content` 相关。该字段用于在 **无状态（stateless）** 场景下，把“加密的推理状态片段”在多轮请求间传递，从而提升多轮一致性。
+
+## 什么时候会遇到这个问题？
+
+典型触发场景：
+
+* 你使用 **Codex / OpenCode** 等工具调用 `Responses` 接口
+* 工具会自动在请求里加入 `include: ["reasoning.encrypted_content"]`，并在下一轮请求中把上一次返回的 `reasoning.encrypted_content`（或 `type:"reasoning"` item）带回去
+* 而 Poixe 作为聚合网关，为了容量与稳定性会使用**多 Key / 多组织（org/project）**进行调度
+  这会导致“上一轮生成的加密片段”与“下一轮实际命中的组织/Key”不一致，从而触发校验失败（你看到的 `organization_id did not match`）
+
+一句话：**加密推理片段不是跨组织/跨 Key 通用的会话凭证**，在负载均衡/多 Key 代理环境下容易踩坑。
+
+## Poixe 的处理方式：过滤加密推理相关字段
+
+为了避免这类“第二轮开始必炸”的硬错误，Poixe 会对 `Responses` 请求做兼容性取舍，主要包括：
+
+1. **移除请求中的 `include.reasoning.encrypted_content`**（避免上游返回该字段）
+2. **清理请求体中历史 items 里的推理片段**
+
+   * 删除 `type: "reasoning"` 的 item，以及所有的 `encrypted_content` 字段
+
+这意味着：即使 Codex / OpenCode 自动携带了这些参数，进入 Poixe 后也会被**过滤删除**，从而保证在多 Key 调度下不会触发组织不匹配错误。
+
+## 影响与注意事项
+
+* 过滤后不会“删除你的对话内容”，你的 `input/messages` 仍然会正常转发
+* 但在无状态多轮里，少了 `reasoning.encrypted_content` 的“推理续写增强”，某些 agent 任务可能出现：
+
+  * 多轮一致性下降
+  * 计划反复、上下文丢失感变强
+    （这属于上游机制设计与代理架构天然冲突的副作用）
+
+## 需要帮助？
+
+如果你确认 **缺失该字段导致了重大功能问题**（例如 Codex/OpenCode 多轮无法正常工作、效果明显劣化），请联系我们，我们会一起评估更合适的兼容策略。
+
+<CardGroup cols={1}>
+  <Card title="联系我们" href="/cn/help/introduction/overview">
+    反馈兼容性问题或改进建议
+  </Card>
+</CardGroup>
+
+## 参考资料
+
+### 官方文档（建议优先阅读）
+
+- **Responses API：include 参数与相关字段说明**  
+  https://platform.openai.com/docs/api-reference/responses/create#responses_create-include
+
+- **Reasoning 指南：reasoning outputs 与 `encrypted_content` 的用途**  
+  https://platform.openai.com/docs/guides/reasoning#encrypted-reasoning-items
+
+- **迁移到 Responses：何时使用“有状态/无状态”，以及 `encrypted_content` 的说明**  
+  https://platform.openai.com/docs/guides/migrate-to-responses#4-decide-when-to-use-statefulness
+
+- **Cookbook：Reasoning items 示例（Responses API）**  
+  https://developers.openai.com/cookbook/examples/responses_api/reasoning_items
+
+
+### Azure 参考（同概念旁证）
+
+- **Azure OpenAI Responses：无状态多轮与相关字段说明**  
+  https://learn.microsoft.com/zh-cn/azure/ai-foundry/openai/how-to/responses?view=foundry-classic&utm_source=chatgpt.com&tabs=python-key#encrypted-reasoning-items
+
+
+### 社区讨论 / Issue（排查参考）
+
+- **Codex 官方仓库讨论帖（集中讨论相关问题）**  
+  https://github.com/openai/codex/issues/8120
+
+- **OpenCode 社区反馈：第二轮/续聊相关问题（旁证）**  
+  https://github.com/anomalyco/opencode/issues/5104?utm_source=chatgpt.com
+
+- **new-api 项目：建议删除 reasoning 的相关 PR（工程侧处理思路参考）**  
+  https://github.com/QuantumNous/new-api/pull/2662

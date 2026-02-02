@@ -1,0 +1,165 @@
+---
+title: "Gemini CLI"
+sidebarTitle: "Gemini CLI"
+description: "Google 推出的开源终端编程代理工具"
+---
+
+## 前言
+
+Gemini CLI 是一个运行在终端里的本地编程代理工具，面向代码库进行理解、改动与执行，并提供交互式 TUI 与脚本化（headless）使用方式。
+
+本节将介绍 **如何将 Poixe 提供的 AI 大模型接入 Gemini CLI**（不改变任何使用习惯，只替换鉴权与请求目标地址）。
+
+![gemini cli poster](/assets/images/gemini-cli-poster.png)
+
+<CardGroup cols={2}>
+  <Card title="Gemini CLI 官方文档" href="https://geminicli.com/docs/">
+    安装、命令、配置与使用方式参考
+  </Card>
+  <Card
+    title="Gemini CLI GitHub 仓库"
+    href="https://github.com/google-gemini/gemini-cli"
+  >
+    源码、版本发布与贡献指南
+  </Card>
+</CardGroup>
+
+## 准备工作
+
+确保你拥有：
+
+- 打开的终端或命令提示符
+- 一个要处理的代码项目（建议是 Git 仓库）
+- 一个支持 [Google Gemini Content 协议](/cn/api-reference/text-api/google-gemini-content/overview) 的 API 令牌（[如何创建令牌](/cn/docs/dashboard/create-tokens)）
+
+并确认本机环境满足 Gemini CLI 的运行要求（Node.js 版本以官方文档为准）。
+
+## 安装 Gemini CLI
+
+使用 NPM 全局安装（官方仓库与文档均提供此方式）：
+```bash
+npm install -g @google/gemini-cli
+```
+
+验证安装：
+
+```bash
+gemini -v
+gemini --help
+```
+
+## 配置环境变量
+
+<Tabs>
+  <Tab title="macOS / Linux / WSL">
+    ```bash
+    # 让 Gemini CLI 走 Poixe 网关
+    export GOOGLE_GEMINI_BASE_URL="https://api.poixe.com"
+    # 使用 Poixe API Key（建议用你自己的环境变量管理方式）
+    export GEMINI_API_KEY="$POIXE_API_KEY"
+
+    # 可选：写入 shell profile 持久化（zsh 示例）
+    echo 'export GOOGLE_GEMINI_BASE_URL="https://api.poixe.com"' >> ~/.zshrc
+    echo 'export GEMINI_API_KEY="$POIXE_API_KEY"' >> ~/.zshrc
+    # 保存后重新加载配置
+    source ~/.zshrc
+    ```
+  </Tab>
+
+  <Tab title="Windows PowerShell">
+    ```bash
+    setx GOOGLE_GEMINI_BASE_URL "https://api.poixe.com"
+    setx GEMINI_API_KEY "$env:POIXE_API_KEY"
+    ```
+  </Tab>
+</Tabs>
+
+## 初始化配置
+
+
+<Steps>
+  <Step title="启动 Gemini CLI">
+    ```bash
+    gemini
+    ```
+  </Step>
+
+  <Step title="首次认证">
+    在交互界面中输入：
+
+    ```bash
+    /auth
+    ```
+
+    问题：`How would you like to authenticate for this project?`
+    
+    选择：`Use Gemini API Key`
+  </Step>
+
+  <Step title="测试连接">
+    ```bash
+    # 交互模式下直接输入
+    "hi"
+
+    # 或者在终端直接运行
+    gemini "hi"
+    ```
+  </Step>
+</Steps>
+
+## 开始使用
+
+进入你的项目目录后启动：
+
+```bash
+cd /path/to/your/project
+gemini
+```
+
+你可以直接给一个任务（交互式继续追问/执行）：
+
+```bash
+gemini "scan this repo, explain what it does, then propose a minimal plan to add a health check endpoint"
+```
+
+## 注意事项
+
+### 1. 权限与执行风险
+
+Gemini CLI 具备读写与执行能力。请只在你信任的仓库里使用，并谨慎批准涉及删除/批量改动/执行脚本的操作。
+
+### 2. Poixe 网关下的“行为差异”
+
+Poixe 是转发层，会在稳定性、风控、计费与工具能力上做一些工程取舍。若你遇到某些能力不可用/表现不同，请优先查阅 Poixe 的 [兼容性与差异说明](/cn/api-reference/introduction/differences) 相关章节。
+
+## 常见问题
+
+<AccordionGroup>
+  <Accordion title="Q1：启动后提示需要登录 / 没权限？">
+    建议优先使用 API Key 环境变量方式：
+
+- 确认已设置 `GEMINI_API_KEY="$POIXE_API_KEY"`
+- 确认已设置 `GOOGLE_GEMINI_BASE_URL="https://api.poixe.com"`
+- 重启终端让环境变量生效
+
+另外，若你之前走过官方登录态流程，可能会与当前网关目标不一致，建议切到 API Key 方式。
+
+  </Accordion>
+
+  <Accordion title="Q2：为什么它不能写某个目录或运行某些命令？">
+    通常是权限/执行策略导致：
+
+- 先确认当前运行目录是否允许写入
+- 涉及危险命令（删除/安装/执行脚本）时，建议手动审阅并分步批准
+- 必要时把任务拆小：先让它输出计划与 diff，再由你决定是否执行
+
+（具体权限/模式说明以官方文档为准。）
+
+  </Accordion>
+
+  <Accordion title="Q3：出现模型/接口相关报错，怎么排查？">
+    - 优先检查环境变量是否正确（Base URL / API Key）
+    - 复现时尽量提供请求时间与关键报错信息
+    - 如需协助定位，请把 Poixe 的 Request ID 一并提供给团队
+  </Accordion>
+</AccordionGroup>

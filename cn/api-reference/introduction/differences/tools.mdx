@@ -1,0 +1,112 @@
+---
+title: "工具调用限制"
+sidebarTitle: "工具调用限制"
+---
+
+Poixe 支持主流协议中的 **工具调用（Tools / Function calling）**。你可以把它理解为：模型在处理请求过程中触发“函数调用”，由系统去执行某个工具，再把结果喂回模型继续推理。
+
+需要注意的是：**部分厂商提供的内置工具（built-in tools）有独立的计费机制**。其中一些工具在 Poixe 的聚合网关场景下 **计费难度高或不可计费**，因此我们会做限制。
+
+<Callout type="info" icon="info-circle">
+  **原则：能用则用，无法计费/不可控的才禁用。**  
+
+  用户自己定义的 function 工具（自定义函数调用）不受这些限制。
+</Callout>
+
+## 限制范围：仅针对“厂商内置工具（built-in tools）”
+
+* **可用**：用户自己定义的 `function` / 自定义工具（Poixe 不限制）
+* **受限**：厂商内置工具（Poixe 可能禁用其中部分）
+
+原因很直接：
+
+* 上游内置工具通常按“工具调用次数/时长/资源消耗”单独收费
+* 聚合网关很难做到稳定、精确、可解释的分摊计费
+* 为了避免成本不可控与账单争议，我们会禁用一部分工具
+
+## 当前禁用清单（按协议分类）
+
+下面是 Poixe 当前对各协议/厂商的 built-in tools 限制（节选自系统配置，可能随策略更新）。
+
+### 1. OpenAI Responses：禁用部分内置 Tools
+
+在 `openai_responses` 协议下，Poixe 默认禁用：
+
+* `code_interpreter`
+* `computer_use_preview`
+* `file_search`
+* `image_generation`
+
+<CardGroup cols={1}>
+  <Card title="OpenAI Responses 官方文档" href="https://platform.openai.com/docs/guides/tools#page-top">
+    使用 OpenAI API 进行函数调用的相关说明
+  </Card>
+</CardGroup>
+
+<Callout type="info" icon="info-circle">
+  **提示：** OpenAI 的 Responses 协议下，支持常用的 `web_search` 工具，系统已适配对该工具的计费，规则同官方。
+</Callout>
+
+### 2. Anthropic Messages：禁用 Code Execution
+
+在 `anthropic_messages` 协议下，Poixe 禁用 Claude 的内置 **Code Execution** 工具，具体如下：
+
+* `code_execution_20250522`
+* `code_execution_20250825`
+
+Anthropic 官方文档对于 `Code Execution` 工具的说明请参考：
+
+<CardGroup cols={1}>
+  <Card title="Anthropic 官方文档" href="https://platform.claude.com/docs/zh-CN/agents-and-tools/tool-use/code-execution-tool">
+    代码执行工具的相关说明
+  </Card>
+</CardGroup>
+
+<Callout type="info" icon="info-circle">
+  **提示：** Anthropic Claude 的 Messages 协议下，支持常用的 `web_search` 工具，系统已适配对该工具的计费，规则同官方。
+</Callout>
+
+### 3. Google Gemini Content：禁用 Code Execution / File Search
+
+在 `google_gemini_content` 协议下，Poixe 禁用：
+
+* `code_execution`
+* `file_search`
+
+Google Gemini 官方文档对于 `Code Execution / File Search` 工具的说明请参考：
+
+<CardGroup cols={1}>
+  <Card title="Google Gemini 官方文档" href="https://ai.google.dev/gemini-api/docs/function-calling?hl=zh-cn&example=meeting">
+    使用 Gemini API 进行函数调用的相关说明
+  </Card>
+</CardGroup>
+
+<Callout type="info" icon="info-circle">
+  **提示：** Google Gemini 的 Content 协议下，支持常用的 `google_search`, `google_maps` 工具，系统已适配对该工具的计费，规则同官方。
+</Callout>
+
+## 能用哪些工具？
+
+### 1. 不在以上禁用列表中的工具
+
+Poixe 对**不在禁用列表中的内置工具**，均支持正常使用（计费规则同官方）。包括但不限于：
+
+* Web Search（OpenAI / Azure / Claude 等）
+* Google Search、Google Maps（Google Gemini）
+
+主流工具虽然也有上游独立计费，但 Poixe 已完成适配，允许使用。
+
+<Callout type="info" icon="info-circle">
+  换句话说：**主流搜索类工具目前可用**，而成本更难界定的“执行/文件/图像生成/电脑使用”等工具默认禁用。
+</Callout>
+
+### 2. 自定义 Function
+
+即使某些内置工具被禁用，你仍然可以通过 **自定义 function 工具**实现同样的业务能力，例如：
+
+* 你自己的搜索服务 / 内部知识库检索
+* 你自己的代码执行沙箱
+* 你自己的图片生成/处理服务
+* 你自己的文件查询 / 数据库查询
+
+Poixe 对“你自己定义的 function”**不做限制**（只要你的工具服务本身可访问且安全）。
