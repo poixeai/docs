@@ -1,0 +1,324 @@
+---
+title: "Nano Banana 图片生成"
+sidebarTitle: "Nano Banana"
+---
+
+Nano Banana 是 Google 推出的 Gemini 系列 AI 生图模型，支持通过文本、图片或两者结合的方式，以对话形式生成和编辑图片。
+
+该系列包含两个主要模型，分别面向 **速度/吞吐** 与 **画质/表现力** 两个方向：
+
+| 模型别名          | 官方模型名                   | 定位                                 |
+| ----------------- | ---------------------------- | ------------------------------------ |
+| `nano-banana`     | `gemini-2.5-flash-image`     | 速度优先，高吞吐低延迟               |
+| `nano-banana-pro` | `gemini-3-pro-image-preview` | 质量优先，支持 4K 高清与高级文本渲染 |
+
+<Callout type="info" icon="info-circle">
+  Poixe 系统支持使用 **模型别名** 或 **官方原生模型名** 调用。
+  别名仅为内部映射，如官方后续更新/替换模型，我们可能会同步调整别名映射以保持可用。
+</Callout>
+
+## 效果展示
+
+Nano Banana 在文本渲染、复杂构图及东方美学理解上表现优异。
+
+<Tabs>
+  <Tab title="清明上河图">
+    ![nano banana old bridge](/assets/images/nano-banana-old-bridge.png)
+  </Tab>
+  <Tab title="电影分镜">
+    ![nano banana movies](/assets/images/nano-banana-movies.png)
+  </Tab>
+  <Tab title="亚克力板">
+    ![nano banana acrylic board](/assets/images/nano-banana-card.png)
+  </Tab>
+  <Tab title="合照">
+    ![nano banana acrylic board](/assets/images/nano-banana-pose.png)
+  </Tab>
+  <Tab title="抖音截图">
+    ![nano banana douyin](/assets/images/nano-banana-douyin.png)
+  </Tab>
+  <Tab title="人物表情">
+    ![nano banana emoticon](/assets/images/nano-banana-emoticon.png)
+  </Tab>
+  <Tab title="时尚人物">
+    ![nano banana fashion](/assets/images/nano-banana-fashion.png)
+  </Tab>
+  <Tab title="妆面分析">
+    ![nano banana makeup](/assets/images/nano-banana-makeup.png)
+  </Tab>
+  <Tab title="电影海报">
+    ![nano banana poster](/assets/images/nano-banana-poster.png)
+  </Tab>
+</Tabs>
+
+## 模型对比
+
+| 特性         | Nano Banana | Nano Banana Pro                |
+| ------------ | ----------- | ------------------------------ |
+| 生成速度     | ~10秒       | ~20秒                          |
+| 最大分辨率   | 1024×1024   | 4096×4096 (4K)                 |
+| 文本渲染     | 基础        | 优秀                           |
+| 参考图片数量 | 最多 3 张   | 最多 14 张                     |
+| 推理能力     | 标准        | 高级（思考模式）               |
+| 局部编辑     | 基础        | 高级（角度、焦点、色彩、光照） |
+
+**选择建议**：
+
+- 需要快速出图、常规场景 → `nano-banana`
+- 需要高清晰度、文字渲染、专业设计 → `nano-banana-pro`
+
+## 计费标准
+
+Nano Banana 系列遵循 Google 官方的计费逻辑，同时享受 Poixe 平台的用户等级折扣。
+
+模型基础计费分为三部分：提示词输入（Text/Image Input）、文本/思考输出（Text Output）、图像生成输出（Image Output）。
+
+<Tabs>
+  <Tab title="Nano Banana">
+    对应 `nano-banana` 或 `gemini-2.5-flash-image`：
+
+    *   **输入 (文字/图片)**：$0.30 / 1M Tokens
+    *   **输出 (文本)**：$2.50 / 1M Tokens
+    *   **输出 (图片)**：$30.00 / 1M Tokens
+    *   **折算单价**：每张标准图（1024x1024）消耗 1290 tokens，约 **$0.039/张**。
+
+  </Tab>
+
+  <Tab title="Nano Banana Pro">
+    对应 `nano-banana-pro` 或 `gemini-3-pro-image-preview`：
+
+    *   **输入 (文字/图片)**：$2.00 / 1M Tokens
+    *   **输出 (文本/思考)**：$12.00 / 1M Tokens
+    *   **输出 (图片)**：$120.00 / 1M Tokens
+    *   **折算单价**：
+        *   **1K/2K 分辨率**：消耗 1120 tokens，约 **$0.134/张**
+        *   **4K 分辨率**：消耗 2000 tokens，约 **$0.240/张**
+
+  </Tab>
+</Tabs>
+
+<Callout type="info" icon="info-circle">
+  **注意**：以上仅为官方计费标准，Poixe 平台最终价格会在上述官方价格基础上，根据您的权益等级（Level）进行折扣计算。
+</Callout>
+
+## 快速开始
+
+Poixe 通过 **Google Gemini Content 协议** 来提供 Nano Banana 系列模型，这也是官方推荐的调用方式。请参考以下文档了解详情：
+
+<CardGroup cols={1}>
+  <Card
+    title="Google Gemini Content 协议"
+    href="/cn/api-reference/text-api/google-gemini-content/overview"
+  >
+    了解如何通过该协议调用 Nano Banana 系列模型
+  </Card>
+</CardGroup>
+
+### 请求示例
+
+```bash
+curl "https://api.poixe.com/v1beta/models/gemini-3-pro-image-preview:generateContent" \
+  -H "x-goog-api-key: $POIXE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -X POST \
+  -d '{
+    "contents": [
+      {
+        "parts": [
+          {
+            "text": "一只橘猫坐在窗台上看雨，赛博朋克风格"
+          }
+        ]
+      }
+    ],
+    "generationConfig": {
+      "responseModalities": ["Text", "Image"],
+      "imageConfig": {
+        "aspectRatio": "16:9",
+        "imageSize": "2K"
+      }
+    }
+  }'
+```
+
+### 响应示例
+
+```json
+{
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "这是一只橘猫坐在窗台上看雨的赛博朋克风格图片。"
+          },
+          {
+            "inlineData": {
+              "mimeType": "image/png",
+              "data": "iVBORw0KGgoAAAANSUhEUgAA..."
+            },
+            "thoughtSignature": "EtORtgIKzpG2Ag..."
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0
+    }
+  ],
+  "usageMetadata": {
+    "promptTokenCount": 14,
+    "candidatesTokenCount": 1253,
+    "totalTokenCount": 1490,
+    "promptTokensDetails": [
+      {
+        "modality": "TEXT",
+        "tokenCount": 14
+      }
+    ],
+    "candidatesTokensDetails": [
+      {
+        "modality": "IMAGE",
+        "tokenCount": 1120
+      }
+    ],
+    "thoughtsTokenCount": 223
+  },
+  "modelVersion": "gemini-3-pro-image-preview",
+  "responseId": "cKaFae-1Ee307M8Py5OosAE"
+}
+```
+
+### 输出预览
+
+图片数据以 base64 编码返回，解码后即可获得 PNG/JPEG 格式图片。
+
+![nano banana pro output](/assets/images/nano-banana-pro-output.png)
+
+<Callout type="info" icon="info-circle">
+  可以使用在线工具（如 [Base64 Image Viewer](https://base64-image-viewer.poixe.com/)）或编程方式解码 base64 图片数据。
+</Callout>
+
+## 参数配置
+
+### 输出类型
+
+通过 `responseModalities` 控制返回内容：
+
+```json
+{
+  "generationConfig": {
+    "responseModalities": ["Image"] // 仅返回图片，不含文本
+  }
+}
+```
+
+支持的格式：`Text`，`Image`
+
+### 宽高比
+
+通过 `imageConfig.aspectRatio` 设置画幅：
+
+```json
+{
+  "generationConfig": {
+    "imageConfig": {
+      "aspectRatio": "16:9" // 设置画幅为 16:9
+    }
+  }
+}
+```
+
+支持的宽高比：`1:1`、`2:3`、`3:2`、`3:4`、`4:3`、`4:5`、`5:4`、`9:16`、`16:9`、`21:9`
+
+### 分辨率（仅 Nano Banana Pro）
+
+`nano-banana-pro` 支持指定输出分辨率：
+
+```json
+{
+  "generationConfig": {
+    "imageConfig": {
+      "aspectRatio": "16:9",
+      "imageSize": "4K" // 设置分辨率为 4K
+    }
+  }
+}
+```
+
+支持的宽高比： `1K`（1024x1024）、`2K`（2048x2048）、`4K`（4096x4096）
+
+## Nano Banana Pro 独有功能
+
+`nano-banana-pro` (`gemini-3-pro-image-preview`) 提供以下高级特性：
+
+- **4K 高清输出**：支持 1K/2K/4K 三档分辨率
+- **高级文本渲染**：适用于信息图表、菜单、营销素材等场景
+- **思考模式**：模型会先生成构思草图，再输出最终高质量图片
+- **多参考图混合**：最多支持 14 张参考图片（含 6 张高保真对象图 + 5 张人物图）
+- **Google 搜索接地**：可基于实时数据生成图像（天气、股票等）
+
+## 使用限制
+
+- 最佳支持语言：英语、中文、日语、韩语、法语、德语、西班牙语等主流语言
+- 不支持音频或视频输入
+- 所有生成图片包含 [SynthID 水印](https://ai.google.dev/responsible/docs/safeguards/synthid?hl=zh-cn)
+- 文字渲染建议：先让模型生成文字内容，再要求生成包含该文字的图片
+
+## 客户端使用
+
+推荐使用 [Cherry Studio](/cn/use-cases/chat/cherry-studio) 进行调用。配置模型提供商时，选择 [Google Gemini 原生协议](/cn/api-reference/text-api/google-gemini-content/overview)。
+
+## 提示词资源
+
+<CardGroup cols={2}>
+  <Card
+    title="Awesome Nano Banana Images"
+    href="https://github.com/PicoTrex/Awesome-Nano-Banana-images"
+  >
+    社区精选提示词与生成案例
+  </Card>
+  <Card
+    title="Nano Banana Hackathon Kit"
+    href="https://github.com/google-gemini/nano-banana-hackathon-kit"
+  >
+    Google 官方 Hackathon 工具包
+  </Card>
+</CardGroup>
+
+## 常见问题
+
+<AccordionGroup>
+  <Accordion title="应该选择哪个版本？">
+    - 快速出图、常规场景 → `nano-banana` 或 `gemini-2.5-flash-image`
+    - 高清输出、文字渲染、专业设计 → `nano-banana-pro` 或 `gemini-3-pro-image-preview`
+  </Accordion>
+
+<Accordion title="nano-banana 和 gemini-2.5-flash-image 有什么区别？">
+  完全相同。`nano-banana` 是 Poixe 系统内的别名映射，实际调用的是
+  `gemini-2.5-flash-image`。
+  
+  同理，`nano-banana-pro` 对应 `gemini-3-pro-image-preview`，也是完全相同的模型。
+  
+  为保证稳定性，建议直接使用官方模型名。
+</Accordion>
+
+<Accordion title="生成的图片是什么格式？">
+  返回 base64 编码的图片数据，通常为 PNG 或 JPEG 格式，解码后即可使用。
+</Accordion>
+
+<Accordion title="是否支持图片编辑？">
+  支持。可以上传图片并通过对话方式进行编辑，Nano Banana Pro 模型的局部编辑能力更强大。
+</Accordion>
+
+  <Accordion title="为什么生成的图片数量与要求不一致？">
+    模型不一定严格按照用户要求的数量生成图片，这是模型的已知限制。
+  </Accordion>
+</AccordionGroup>
+
+## 相关链接
+
+- [Google Gemini 图片生成文档](https://ai.google.dev/gemini-api/docs/image-generation?hl=zh-cn)
+- [Nano Banana 官方定价](https://ai.google.dev/gemini-api/docs/pricing?hl=zh-cn#gemini-2.5-flash-image)
+- [Nano Banana Pro 官方定价](https://ai.google.dev/gemini-api/docs/pricing?hl=zh-cn#gemini-3-pro-image-preview)
+- [Google Gemini Content API 协议](/cn/api-reference/text-api/google-gemini-content/overview)
