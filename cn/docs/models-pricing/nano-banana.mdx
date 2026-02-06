@@ -114,6 +114,12 @@ Poixe 通过 **Google Gemini Content 协议** 来提供 Nano Banana 系列模型
   </Card>
 </CardGroup>
 
+<Callout type="info" icon="info-circle">
+  **注意**：Nano Banana 系列模型因为涉及图片生成，响应时间通常较长，我们推荐使用无 CDN 长连接更友好的副接口地址，相关配置请参考 [接口地址](/cn/api-reference/introduction/base-url)。
+
+  如果您在调用过程中，连接意外中断，可以参考 [中断响应找回](/cn/api-reference/system-api/recoveries/overview) 文档，使用 Poixe 提供的恢复机制继续获取未完成的响应内容。
+</Callout>
+
 ### 请求示例
 
 ```bash
