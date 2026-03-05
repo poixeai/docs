@@ -250,3 +250,34 @@ claude
     一行命令搞定：`claude update`
   </Accordion>
 </AccordionGroup>
+
+## 一些报错处理
+
+### `Extra inputs are not permitted` 报错如何处理？
+
+在使用 claude code 过程中，您可能会遇到如下报错：
+
+![claude code extra inputs error](/assets/images/claude-code-400-error.png)
+
+报错是 API 400，服务端返回 `context_management: Extra inputs are not permitted`，许多用户反馈版本号 2.1.20 正常、2.1.22/2.1.23 开始立刻挂（输入任何内容都会立刻 400）。
+
+**这类 400 的根因是什么？**
+
+本质是“客户端发了服务端不认识/不允许的字段（或 beta/实验字段）”导致的 schema 校验失败。
+
+Claude Code 新版本在请求里带了某些 context management / beta 相关的输入字段（或对应的 header / schema）
+
+但你所连到的“后端”（常见是 企业网关/代理、Bedrock/Vertex/Gateway、某些中转服务，甚至是被代理改写后的 Anthropic API）没有同步支持这些字段，于是直接按严格 schema 拒绝：`Extra inputs are not permitted`。
+
+**解决方案：**
+
+官方 changelog 里明确写过相关修复点：
+
+在 2.1.27：提到 “Fixed context management validation error for gateway users”，并且强调通过设置 `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1` 可以避开该错误。
+
+相关文档：[https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md)
+
+建议：
+
+- 1. 升级到 2.1.27 或更高版本（如果还没有的话）
+- 2. 设置环境变量 `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1` 来禁用实验性 beta 功能
