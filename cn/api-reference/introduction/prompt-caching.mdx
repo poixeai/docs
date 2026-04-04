@@ -1,0 +1,84 @@
+---
+title: "提示词缓存（缓存亲和性路由）"
+sidebarTitle: "提示词缓存"
+# description: "创建与管理 API Key，并了解使用方式。"
+---
+
+Poixe 实现了一套 **缓存亲和性路由（Cache Affinity Routing）** 机制，用于提高上游 API 的缓存命中率，从而降低实际计费成本。
+
+## 背景
+
+主流模型厂商（OpenAI、Anthropic 等）均提供了 **Prompt Caching** 能力：当连续请求的前缀内容相同或主动标记缓存时，上游会复用已缓存的计算结果，对缓存命中部分给予折扣计费。
+
+但缓存有一个关键约束：**缓存绑定在具体的渠道（API Key / 账户）上，不能跨渠道共享。**
+
+在聚合网关场景下，Poixe 后端接入了多个上游渠道，默认由权重负载均衡模块分配请求。这意味着同一个用户的连续请求可能被分发到不同渠道，导致上游缓存频繁失效。
+
+缓存亲和性路由正是为了解决这个问题。
+
+## 工作原理
+
+<Steps>
+  <Step title="首次请求">
+    用户请求某个模型（如 `claude-opus-4-6`），系统按正常权重逻辑分配到某个上游渠道，请求成功后，系统记录下这个绑定关系：**用户 + 模型 → 渠道**。
+  </Step>
+  <Step title="后续请求">
+    在绑定有效期内，该用户对同一模型的后续请求会 **优先路由到同一渠道**，使上游缓存得以复用。
+  </Step>
+  <Step title="绑定失效">
+    当绑定关系失效后，系统回退到默认的权重负载均衡逻辑，重新分配渠道。
+  </Step>
+</Steps>
+
+## 绑定失效条件
+
+绑定关系是短暂且脆弱的，满足以下任一条件即自动解除：
+
+| 条件 | 说明 |
+|------|------|
+| **TTL 过期** | 绑定创建后 **5 分钟**强制失效，不续期 |
+| **请求次数上限** | 单个绑定最多承载 **100 次**请求，超过后自动解除 |
+| **渠道异常** | 绑定渠道返回任何错误（无论是否为用户请求体问题），立即解除 |
+
+<Callout type="info" icon="info-circle">
+  绑定失效不会导致请求失败。系统会立即回退到权重负载均衡，正常处理请求。
+</Callout>
+
+## 适用范围
+
+缓存亲和性路由 **不是对所有模型生效**，仅对以下协议和厂商的特定模型启用：
+
+| 协议 | 厂商 | 启用模型 |
+|------|------|---------|
+| OpenAI Chat Completions | OpenAI | `gpt-4o`、`gpt-4o-mini`、`...` |
+| OpenAI Responses | OpenAI | `gpt-4o`、`gpt-4o-mini`、`...` |
+| Anthropic Messages | Anthropic | `claude-opus-4-6`、`claude-sonnet-4-6`、`...` |
+
+<Callout type="warning" icon="exclamation-triangle">
+  该列表会随上游厂商的缓存策略调整而更新。不在列表中的模型走默认负载均衡，不受影响。
+</Callout>
+
+## 设计取舍
+
+缓存亲和性路由本质上是在 **缓存命中率** 和 **流量均衡** 之间做权衡：
+
+- **短 TTL + 次数上限**：避免流量长期集中在单一渠道，防止负载倾斜
+- **错误即解绑**：避免将后续请求持续路由到已异常的渠道
+- **尽力而为**：亲和路由是优化手段而非硬性保证，任何环节失败都会静默回退到默认逻辑
+
+## 对用户的影响
+
+- **无需任何配置**，系统自动生效
+- 在编程助手（Claude Code、Codex 等）场景下，连续对话的缓存命中率会显著提升
+- 缓存命中时，上游按折扣价计费，Poixe 的扣费同步降低
+
+## 上游缓存机制参考
+
+<CardGroup cols={2}>
+  <Card title="OpenAI Prompt Caching" href="https://platform.openai.com/docs/guides/prompt-caching">
+    OpenAI 官方 Prompt Caching 文档，包含缓存规则与计费说明
+  </Card>
+  <Card title="Anthropic Prompt Caching" href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching">
+    Anthropic 官方 Prompt Caching 文档，包含缓存规则与计费说明
+  </Card>
+</CardGroup>

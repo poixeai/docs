@@ -101,6 +101,7 @@
                   "cn/api-reference/introduction/api-keys",
                   "cn/api-reference/introduction/protocols",
                   "cn/api-reference/introduction/model-naming",
+                  "cn/api-reference/introduction/prompt-caching",
                   {
                     "group": "错误处理",
                     "pages": [
