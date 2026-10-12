@@ -34,6 +34,16 @@
       }
     }
   },
+  "redirects": [
+    {
+      "source": "/en",
+      "destination": "/en/docs/get-started/overview"
+    },
+    {
+      "source": "/cn",
+      "destination": "/cn/docs/get-started/overview"
+    }
+  ],
   "navigation": {
     "languages": [
       {
