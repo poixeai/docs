@@ -1,0 +1,50 @@
+---
+title: "Cache Hit Differences"
+sidebarTitle: "Cache Hit Differences"
+---
+
+## Is the cache hit rate different from connecting directly to the provider?
+
+Yes, but the gap has narrowed significantly.
+
+Prompt Cache at mainstream providers takes effect **per account**. Poixe's backend connects to multiple upstream accounts to ensure capacity and stability, so consecutive requests from the same user may be assigned to different accounts, preventing the cache from being reused.
+
+To solve this, Poixe has launched **Cache Affinity Routing**: within a certain time window, requests from the same user for the same model are pinned to the same channel, so the upstream cache can accumulate and be hit continuously.
+
+<Card title="Cache Affinity Routing" href="/en/api-reference/introduction/prompt-caching">
+  Learn how affinity routing works, its scope, and its expiration conditions
+</Card>
+
+## How are cache hits billed?
+
+Poixe does not change the providers' cache billing rules:
+
+- **When the upstream actually hits the cache**, Poixe bills at the provider's discounted cache price
+- No extra configuration is needed; the system automatically detects cache hits and settles at the cache price
+
+## Scenarios where a cache miss can still occur
+
+Even with affinity routing enabled, the cache may still miss in the following cases:
+
+| Scenario | Reason |
+|------|------|
+| The affinity binding has expired or reached its limit | The system falls back to weighted load balancing, and the channel may change |
+| The channel is reassigned after an upstream channel error | The binding is released automatically, and the new channel has no cache history |
+| The request prefix changes significantly | This is a limitation of the upstream caching mechanism itself and is unrelated to routing |
+| The requested model is not within the scope of affinity routing | Some models do not have affinity enabled and use default load balancing |
+| **Channel rate too low, affinity not established** | The system proactively declines to establish affinity on low-rate channels, and subsequent requests use default load balancing; we recommend that providers deploy higher-rate accounts |
+
+<Callout type="info" icon="info-circle">
+  Cache affinity routing is a best-effort optimization, not an absolute guarantee. However, for continuous-conversation scenarios such as coding assistants, the hit rate has improved significantly.
+</Callout>
+
+## Upstream caching references
+
+<CardGroup cols={2}>
+  <Card title="OpenAI Prompt Caching" href="https://platform.openai.com/docs/guides/prompt-caching">
+    OpenAI's official caching rules and billing details
+  </Card>
+  <Card title="Anthropic Prompt Caching" href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching">
+    Anthropic's official caching rules and billing details
+  </Card>
+</CardGroup>

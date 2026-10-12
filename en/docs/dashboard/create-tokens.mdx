@@ -1,0 +1,59 @@
+---
+title: "Create a Token"
+---
+
+An API token identifies your calls, and determines your available quota and optional restrictions. You can manage your tokens here:
+
+<CardGroup cols={1}>
+  <Card title="Token Management" href="https://poixe.com/token">
+    Create, view, edit, or delete your API tokens.
+  </Card>
+</CardGroup>
+
+## Create a token
+
+On the token page, click **"Create New Token"** and fill in the following information as needed:
+
+- **Name**: Distinguishes the token's purpose (for example: `prod-backend`, `test-script`)
+- **Expiration**: We recommend a short validity period for temporary testing; choose a longer period for long-running services
+- **Authorized quota**: The budget available to this token (in USD); you can also set unlimited quota if you need it
+- **Quantity**: Create multiple tokens at once (commonly used for multiple environments or applications)
+
+After creation, copy and store the token value promptly. For security reasons, the platform generally does not display the full plaintext token for long.
+
+## Token restrictions (optional)
+
+If you want to keep risk within a smaller scope, you can enable restrictions on a token:
+
+### Rate limits
+
+Set a request rate for this token individually (for example: at most M requests every N seconds). Suitable for:
+
+- Preventing test scripts from accidentally triggering high concurrency
+- Setting a stable upper bound for an internal service
+
+### Model restrictions
+
+Restrict the range of models this token can call. Suitable for:
+
+- Exposing the token to only one category of models (for example, text models only)
+- Avoiding accidental use of high-cost models
+
+> Note: The platform also applies global user-level rate limits; token restrictions are an "additional constraint" on top of those.
+
+## Manage tokens
+
+After creation, you can manage tokens day to day from the list:
+
+- **View information**: See creation time, status, used/remaining quota, request volume, and more
+- **Copy**: Copy the token value or key configuration (depending on the actions the page provides)
+- **Edit**: Adjust quota, expiration, rate/model restrictions, and more
+- **Disable**: Temporarily deactivate a token to stop it from being called
+- **Delete**: Delete tokens you no longer use (cannot be undone)
+
+## Recommended practices
+
+- **Use separate tokens per scenario**: Create separate tokens for production, testing, and scripts to make tracking and risk isolation easier
+- **Least privilege**: Restrict models wherever you can, and rate limit wherever you can
+- **Clean up regularly**: Disable or delete tokens you no longer use
+- **Don't hardcode**: Store tokens in environment variables or a secrets management system, and avoid committing them to repositories

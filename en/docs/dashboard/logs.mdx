@@ -1,0 +1,50 @@
+---
+title: "View Logs"
+---
+
+You can view your recent call logs in the console: [https://poixe.com/log](https://poixe.com/log)
+
+Logs help you verify usage and costs, and troubleshoot request latency and routing. The platform records every request that was **successfully billed**, and retains only the **most recent 3 days** of data (on a rolling basis).
+
+## What's in the logs
+
+Each log entry typically shows the following information (fields may vary slightly across models/protocols):
+
+* **Time**: When the request occurred
+* **Token name**: The API token used for the request
+* **Requested model / Processed model**: The model name you requested, and the model identifier the system actually processed
+* **Requested vendor / Processed vendor**: Whether the default routing was used, and which vendor ultimately handled the request
+* **Token counts**: Prompt, completion, and cache (if any)
+* **Cost information**: Theoretical consumption, actual spend, and discount factor
+* **Latency**: Upstream latency, system latency, and total latency
+* **Response type**: For example, streaming / non-streaming
+
+## How to find a log entry
+
+On the logs page you can filter and search by common fields, for example:
+
+* Filter by **token name** to find the request records of a given application
+* Filter by **model name** to check calls to a particular model
+* Use keywords to quickly locate an abnormal request (for example, long latency or unusual cost)
+
+## View log details
+
+Click **Details** on a log entry to see a fuller request summary, for example:
+
+* Request ID, creation time, and response status
+* Routing information (default routing / specified vendor, and the vendor that ultimately handled it)
+* More complete token and billing details
+* A more precise latency breakdown (system / upstream / total)
+* Request origin information (such as IP)
+
+This information is usually enough for:
+
+* Reconciliation: Verify whether the charge for a call matches your expectations
+* Performance troubleshooting: Determine whether latency mainly occurs upstream or on the network/system side
+* Routing confirmation: Confirm whether the default routing was used and who actually handled the request
+
+## Retention policy
+
+* Logs are retained for the **most recent 3 days** only
+* A rolling policy applies: new records are continuously written, and expired data is removed automatically
+* If you need a longer period for auditing or reconciliation, we recommend saving key fields on your own side (for example, request ID, model, cost, and time)

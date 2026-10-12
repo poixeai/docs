@@ -1,0 +1,172 @@
+---
+title: "OpenAI Responses Protocol"
+sidebarTitle: "Create request"
+tag: "POST"
+icon: "arrow-up-right"
+---
+
+import ResponsesReqCurl from "/snippets/api-reference/responses-req-curl.mdx";
+import ResponsesResp from "/snippets/api-reference/responses-resp.mdx";
+import ResponsesRespStream from "/snippets/api-reference/responses-resp-stream.mdx";
+
+<RequestExample>
+
+<ResponsesReqCurl />
+
+</RequestExample>
+
+<ResponseExample>
+
+<ResponsesResp />
+<ResponsesRespStream />
+
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">POST</Badge>
+  `https://api.poixe.com/v1/responses`
+</div>
+
+This is OpenAI's next-generation unified response protocol (recommended as the first choice), designed to replace the traditional [**Chat Completions**](/en/api-reference/text-api/openai-completions/overview) protocol.
+
+It is better suited to the capabilities of newer models, such as stronger tool calling, more consistent multimodal input and output, and better structured output.
+
+## Authentication and request headers
+
+Every API request must include your API key in the HTTP headers.
+
+<ParamField header="Authorization" type="string" required>
+  Bearer token. The format is `Bearer YOUR_API_KEY`.
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  Must be set to `application/json`.
+</ParamField>
+
+## Request parameters
+
+The following are the core parameters most commonly used when building a Responses request (covering 80% of use cases).
+
+<ParamField body="model" type="string" required>
+  The name of the model to use. For example: `gpt-4.1`, `gpt-4.1-mini`.
+</ParamField>
+
+<ParamField body="input" type="string | array" required>
+  The input content. Most commonly a plain text string; structured input is also supported (for example, an array containing multiple content parts, images, and so on).
+</ParamField>
+
+<ParamField body="instructions" type="string">
+  Optional: system-level instructions (similar to the `system` message in Chat Completions), used to constrain style and rules.
+</ParamField>
+
+<ParamField body="stream" type="boolean" default="false">
+  Whether to stream the output. When enabled, the server pushes incremental content in real time via SSE (Server-Sent Events).
+</ParamField>
+
+<ParamField body="temperature" type="number" default="1">
+  Sampling temperature (0 to 2). Lower values are more stable; higher values are more divergent.
+</ParamField>
+
+<ParamField body="top_p" type="number" default="1">
+  Nucleus sampling. In general, adjust either this or `temperature`, not both.
+</ParamField>
+
+<ParamField body="max_output_tokens" type="integer">
+  The maximum number of output tokens (used to control length and cost).
+</ParamField>
+
+<ParamField body="tools" type="object[]">
+  The list of tools (function calling / built-in tools).
+  <Expandable title="tools[] fields">
+    <ParamField body="type" type="string" required>
+      Commonly: `function` (custom function tool)
+    </ParamField>
+    <ParamField body="function" type="object">
+      Provide the function definition (JSON Schema) when `type=function`.
+      <Expandable title="function fields">
+        <ParamField body="name" type="string" required>Function name</ParamField>
+        <ParamField body="description" type="string">Function description</ParamField>
+        <ParamField body="parameters" type="object">Parameter schema</ParamField>
+      </Expandable>
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="tool_choice" type="string | object">
+  Tool-calling strategy: `none` / `auto` / `required`, or force a specific tool.
+</ParamField>
+
+<ParamField body="response_format" type="object">
+  Output format control (for structured output / strict JSON).
+  <Expandable title="response_format fields">
+    <ParamField body="type" type="string" required>
+      Commonly: `text` / `json_object` / `json_schema`
+    </ParamField>
+    <ParamField body="json_schema" type="object">
+      When `type=json_schema`, you can provide a JSON Schema to constrain the output structure.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="metadata" type="map">
+  Optional: custom metadata (for tagging and retrieval).
+</ParamField>
+
+## Response structure
+
+The endpoint returns a Response object containing the generated result, status, and token usage.
+
+<ResponseField name="id" type="string">
+  The unique identifier of this request.
+</ResponseField>
+
+<ResponseField name="object" type="string">
+  The object type, usually `response`.
+</ResponseField>
+
+<ResponseField name="created_at" type="integer">
+  Creation time (Unix timestamp in seconds).
+</ResponseField>
+
+<ResponseField name="model" type="string">
+  The name of the model that actually processed the request.
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  The request status. Common values: `completed` (finished) / `in_progress` (processing) / `failed` (failed).
+</ResponseField>
+
+<ResponseField name="output" type="object[]">
+  The list of output items. Usually contains model messages and (optionally) tool call results.
+  <Expandable title="output[] common shapes">
+    <ResponseField name="type" type="string">
+      Common values: `message` (model message) or tool-related items (such as tool call / tool result).
+    </ResponseField>
+    <ResponseField name="role" type="string">
+      Usually `assistant` when the item is a message.
+    </ResponseField>
+    <ResponseField name="content" type="array">
+      An array of content blocks. The most common content block is text (for example, output_text).
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="usage" type="object">
+  Token usage statistics (if returned).
+  <Expandable title="usage fields">
+    <ResponseField name="input_tokens" type="integer">Input tokens consumed</ResponseField>
+    <ResponseField name="output_tokens" type="integer">Output tokens consumed</ResponseField>
+    <ResponseField name="total_tokens" type="integer">Total tokens consumed</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<br />
+
+<CardGroup cols={1}>
+  <Card
+    title="Official docs: Create a model response"
+    href="https://platform.openai.com/docs/api-reference/responses/create"
+  >
+    View OpenAI's official parameter descriptions and examples.
+  </Card>
+</CardGroup>

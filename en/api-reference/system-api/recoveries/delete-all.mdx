@@ -1,0 +1,74 @@
+---
+title: "Delete All Stored Responses"
+sidebarTitle: "Delete all"
+# description: "Delete all stored records for the current user (requires explicit confirmation with all=true; dry_run preview is optional)."
+tag: "DELETE"
+icon: "x"
+---
+
+import DeleteAllReq from "/snippets/recoveries/delete-all.req.mdx";
+import DeleteAllResp from "/snippets/recoveries/delete-all.resp.mdx";
+import DryRunResp from "/snippets/recoveries/delete-all.dryrun.resp.mdx";
+
+<RequestExample>
+<DeleteAllReq />
+</RequestExample>
+
+<ResponseExample>
+<DeleteAllResp />
+<DryRunResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">DELETE</Badge>
+  `https://api.poixe.com/v1/recoveries?all=true`
+</div>
+
+Deletes all stored records for the current user. This is a destructive operation, and you must explicitly include `all=true` as a confirmation parameter (to prevent accidental deletion).
+
+You can also run a preview first with `dry_run=true`: it returns only the number of records expected to be deleted and does not actually delete anything.
+
+## Authentication and request headers
+
+Every API request must include your API key in the HTTP headers.
+
+<ParamField header="Authorization" type="string" required>
+  Bearer token. The format is `Bearer YOUR_API_KEY`.
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  Must be set to `application/json`.
+</ParamField>
+
+## Query parameters
+
+<ParamField query="all" type="string" required>
+  Must be `true`. Confirms that you want to "delete all".
+</ParamField>
+
+<ParamField query="dry_run" type="string">
+  Optional: when `true`, only previews and does not delete; the response returns `would_delete`.
+</ParamField>
+
+## Response structure
+
+<ResponseField name="deleted" type="integer">
+  The number of records actually deleted (usually 0 for a dry_run).
+</ResponseField>
+
+<ResponseField name="would_delete" type="integer">
+  Returned only for a dry_run: the number of records that would be deleted.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Result description.
+</ResponseField>
+
+<ResponseField name="reason" type="string">
+  Result reason (such as `OK` / `DRY_RUN` / `CONFIRMATION_REQUIRED`).
+</ResponseField>
+
+<Callout type="warning" icon="info-circle">
+We recommend first calling `DELETE /v1/recoveries?all=true&dry_run=true` to confirm the count, and then performing the actual deletion:
+`DELETE /v1/recoveries?all=true`.
+</Callout>

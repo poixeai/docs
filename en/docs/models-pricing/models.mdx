@@ -1,0 +1,76 @@
+---
+title: "Supported Models"
+sidebarTitle: "Models"
+---
+
+Poixe AI aggregates leading large models from multiple providers and supports several API protocols, so you can choose the right model and cost for each scenario.
+
+## Supported model families
+
+We currently focus on **text chat models**, covering the common model families on the market.
+Models for **image / video / speech generation** are being integrated and will be released gradually.
+
+Model families covered:
+
+* ChatGPT
+* DeepSeek
+* Claude
+* Gemini
+* Grok
+* Doubao
+* Qwen
+* Kimi
+
+> New models and versions are added to these families continuously. Refer to the live list on the pricing page for the latest availability.
+
+## Supported model providers
+
+Poixe AI serves resources through multiple model providers to ensure diversity and stability of service, including (but not limited to):
+
+* OpenAI / Azure OpenAI
+* DeepSeek / Anthropic / Google / xAI
+* Volcengine / Aliyun / SiliconFlow
+* Chutes / Moonshot / Cerebras / Groq
+* Fireworks / Novita / Together / Nebius
+
+Providers differ in **available models, throughput, stability, and billing policies**. We perform basic availability and load management in the background to help you make calls more reliably.
+
+## Supported API protocols
+
+To work with different ecosystems and SDKs, we support several mainstream protocols:
+
+- **OpenAI**: Completions, Responses  
+- **Anthropic**: Messages  
+- **Google Gemini**: generateContent (Gemini Developer API)
+
+<CardGroup cols={2}>
+  <Card title="OpenAI · Chat Completions" href="https://platform.openai.com/docs/api-reference/chat/create">
+    Official documentation
+  </Card>
+  <Card title="OpenAI · Responses" href="https://platform.openai.com/docs/api-reference/responses/create">
+    Official documentation
+  </Card>
+  <Card title="Anthropic · Messages" href="https://platform.claude.com/docs/en/api/messages/create">
+    Official documentation
+  </Card>
+  <Card title="Google · Gemini Content" href="https://ai.google.dev/gemini-api/docs/text-generation?hl=zh-cn">
+    Official documentation
+  </Card>
+</CardGroup>
+
+If you already have working OpenAI/Anthropic/Gemini code, you usually only need to change `base_url` and `api_key` to get started.
+
+## View the full model list and pricing
+
+For the supported models, per-model pricing, and rate limits, refer to the pricing page:
+[https://poixe.com/pricing](https://poixe.com/pricing)
+
+## Check model status
+
+In the dashboard you can view each model's **health statistics, capacity, and load status**:
+[https://poixe.com/model](https://poixe.com/model)
+
+## Free models
+
+We offer some **free models** for testing and light usage: add the `:free` suffix to the model name to call them.
+For details, see: [https://poixe.com/products/free](https://poixe.com/products/free)

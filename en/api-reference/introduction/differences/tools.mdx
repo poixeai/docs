@@ -1,0 +1,112 @@
+---
+title: "Tool Calling Restrictions"
+sidebarTitle: "Tool Calling Restrictions"
+---
+
+Poixe supports **tool calling (Tools / Function calling)** in the mainstream protocols. You can think of it this way: while processing a request, the model triggers a "function call", the system executes a tool, and the result is fed back to the model to continue reasoning.
+
+Note that **some of the built-in tools offered by providers have their own separate billing mechanisms**. Some of these tools are **difficult or impossible to bill** in Poixe's aggregation gateway scenario, so we restrict them.
+
+<Callout type="info" icon="info-circle">
+  **Principle: enable whatever can be enabled; only disable what cannot be billed or controlled.**  
+
+  Function tools you define yourself (custom function calling) are not subject to these restrictions.
+</Callout>
+
+## Scope of restrictions: provider built-in tools only
+
+* **Available**: your own `function` / custom tools (Poixe does not restrict them)
+* **Restricted**: provider built-in tools (Poixe may disable some of them)
+
+The reasons are straightforward:
+
+* Upstream built-in tools are usually billed separately by number of calls / duration / resource consumption
+* An aggregation gateway can hardly provide stable, accurate, and explainable cost allocation
+* To avoid uncontrollable costs and billing disputes, we disable some tools
+
+## Current disabled list (by protocol)
+
+Below are the built-in tool restrictions Poixe currently applies to each protocol/provider (excerpted from system configuration; may change as policies are updated).
+
+### 1. OpenAI Responses: some built-in tools disabled
+
+Under the `openai_responses` protocol, Poixe disables the following by default:
+
+* `code_interpreter`
+* `computer_use_preview`
+* `file_search`
+* `image_generation`
+
+<CardGroup cols={1}>
+  <Card title="OpenAI Responses Official Documentation" href="https://platform.openai.com/docs/guides/tools#page-top">
+    Instructions for function calling with the OpenAI API
+  </Card>
+</CardGroup>
+
+<Callout type="info" icon="info-circle">
+  **Tip:** Under OpenAI's Responses protocol, the commonly used `web_search` tool is supported. The system has adapted billing for this tool, with the same rules as the official ones.
+</Callout>
+
+### 2. Anthropic Messages: Code Execution disabled
+
+Under the `anthropic_messages` protocol, Poixe disables Claude's built-in **Code Execution** tool, specifically:
+
+* `code_execution_20250522`
+* `code_execution_20250825`
+
+For Anthropic's official documentation on the `Code Execution` tool, see:
+
+<CardGroup cols={1}>
+  <Card title="Anthropic Official Documentation" href="https://platform.claude.com/docs/zh-CN/agents-and-tools/tool-use/code-execution-tool">
+    Instructions for the code execution tool
+  </Card>
+</CardGroup>
+
+<Callout type="info" icon="info-circle">
+  **Tip:** Under Anthropic Claude's Messages protocol, the commonly used `web_search` tool is supported. The system has adapted billing for this tool, with the same rules as the official ones.
+</Callout>
+
+### 3. Google Gemini Content: Code Execution / File Search disabled
+
+Under the `google_gemini_content` protocol, Poixe disables:
+
+* `code_execution`
+* `file_search`
+
+For Google Gemini's official documentation on the `Code Execution / File Search` tools, see:
+
+<CardGroup cols={1}>
+  <Card title="Google Gemini Official Documentation" href="https://ai.google.dev/gemini-api/docs/function-calling?hl=zh-cn&example=meeting">
+    Instructions for function calling with the Gemini API
+  </Card>
+</CardGroup>
+
+<Callout type="info" icon="info-circle">
+  **Tip:** Under Google Gemini's Content protocol, the commonly used `google_search` and `google_maps` tools are supported. The system has adapted billing for these tools, with the same rules as the official ones.
+</Callout>
+
+## Which tools can I use?
+
+### 1. Tools not on the disabled list
+
+Poixe supports normal use of all **built-in tools that are not on the disabled list** (billing rules are the same as the official ones). This includes, but is not limited to:
+
+* Web Search (OpenAI / Azure / Claude, etc.)
+* Google Search, Google Maps (Google Gemini)
+
+Although mainstream tools are also billed separately upstream, Poixe has adapted them and allows their use.
+
+<Callout type="info" icon="info-circle">
+  In other words: **mainstream search tools are currently available**, while tools whose costs are harder to define, such as "execution / file / image generation / computer use", are disabled by default.
+</Callout>
+
+### 2. Custom Function
+
+Even if some built-in tools are disabled, you can still achieve the same functionality through **custom function tools**, for example:
+
+* Your own search service / internal knowledge base retrieval
+* Your own code execution sandbox
+* Your own image generation/processing service
+* Your own file lookup / database queries
+
+Poixe places **no restrictions** on "functions you define yourself" (as long as your tool service itself is accessible and secure).

@@ -1,0 +1,31 @@
+---
+title: "Rate Limits"
+---
+
+Poixe AI applies rate limits to API calls to keep the platform stable and ensure fair use. Rate limits are a **global, per-user quota**: all model requests under your account share the same rate allowance, which the system schedules centrally.
+
+## What determines your rate limit
+
+Rate limits are mainly tied to your **user level (Level)**. New users start at Level 0, and as your cumulative top-ups raise your level, you generally get higher request rates and more capacity.
+
+You can view your level and the corresponding rate limits on the benefits page:
+[https://poixe.com/tiers/user](https://poixe.com/tiers/user)
+
+## Key concepts
+
+* **RPM (Requests Per Minute)**: the maximum number of requests allowed per minute
+* **Global quota**: requests across all models and all endpoints are counted together (there is no separate quota per model)
+* **Takes effect immediately**: rate limits update automatically when your level increases, with no action required
+
+## What happens when you hit a limit
+
+If you send too many requests in a short period, the system may return rate-limit errors. We recommend that you:
+
+* Add client-side retries (with exponential backoff)
+* Queue or throttle concurrent requests
+* For high-concurrency workloads, consider raising your level or contacting the team to evaluate your quota
+
+## Check current status
+
+In the dashboard you can view model status and capacity (useful when troubleshooting throttling or congestion):
+[https://poixe.com/model](https://poixe.com/model)

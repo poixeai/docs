@@ -1,0 +1,53 @@
+---
+title: "API Keys"
+sidebarTitle: "API Keys"
+# description: "Create and manage API Keys, and learn how to use them."
+---
+
+Poixe AI uses an **API Key** to identify the caller, and to determine the available quota and optional restrictions (such as rate limits and model scope).
+
+In the console, an API Key is also often called an API Token or simply a token. They all refer to the same concept.
+
+If you haven't created an API Key yet, go to the console to create one first:
+
+<CardGroup cols={1}>
+  <Card title="Create a Token (Console)" icon="key" href="/en/docs/dashboard/create-tokens">
+    Create, view, and manage your API Keys (Tokens) in the console.
+  </Card>
+</CardGroup>
+
+## Key balance and account balance
+
+When you create an API Key, you can set a **Key balance** for it (think of it as the key's "budget cap / available quota").
+
+- **The Key balance is customizable**: you can set it to a very large value, even one that looks "unlimited".
+- **Actual charges are still based on your account balance**: every request is constrained by both the **account balance** and the **Key balance**.
+
+### Two rules (important)
+
+1) **Insufficient account balance**  
+Even if the **Key balance is sufficient**, the request will still fail (insufficient balance error).
+
+2) **Insufficient Key balance**  
+When the **account balance is sufficient** but the **Key balance is not**, the key is **automatically disabled** to prevent it from being called further.
+
+> Recommendation: in production, split keys by service/environment and set a reasonable budget and limits for each key, making them easier to control and track.
+
+## How to use it in requests
+
+Authentication fields differ slightly between protocols (header names and field formats may vary). We recommend filling in authentication details according to the documentation of the protocol you are using:
+
+<CardGroup cols={2}>
+  <Card title="Protocols and Authentication Overview" icon="list" href="/en/api-reference/introduction/protocols">
+    Quickly compare the authentication methods and differences of the 4 protocols.
+  </Card>
+  <Card title="Errors and Troubleshooting" icon="siren" href="/en/api-reference/introduction/errors/overview">
+    Start here when you run into authentication failures, insufficient balance, and similar issues.
+  </Card>
+</CardGroup>
+
+## Recommended practices
+
+- **Split keys by purpose**: create separate keys for production, testing, and scripts to make tracking easier and isolate risk   
+- **Rotate and revoke promptly**: disable or delete keys you no longer use  
+- **Don't hard-code them**: inject them via environment variables or a secrets management system (CI/CD secrets, Vault, etc.)

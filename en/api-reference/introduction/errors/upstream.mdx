@@ -1,0 +1,30 @@
+---
+title: "Upstream Errors"
+sidebarTitle: "Upstream Errors"
+---
+
+Upstream errors come from the model provider or its gateway. They usually mean the request was already forwarded upstream and the upstream returned an error response.
+
+## Common causes
+
+- Request parameters do not meet protocol requirements (missing fields, wrong types, invalid values)
+- Authentication failure (upstream Key/permission issues)
+- Upstream rate limiting or overload
+- Upstream service failure or maintenance
+
+## How to identify
+
+Check the source identifier in the response headers:
+
+```text
+Poixe-Error-Source: upstream
+Poixe-Request-Id: <request_id>
+```
+
+In addition, the response body of an upstream error generally preserves the original error structure of the upstream protocol (which may vary by protocol).
+
+## Recommendations
+
+* For parameter errors: first check the request body fields against the documentation page of the corresponding protocol
+* For rate limiting/overload: implement backoff and retry on the client (and reduce concurrency)
+* For occasional 5xx errors: you can retry; if they persist, contact the team with the Request ID

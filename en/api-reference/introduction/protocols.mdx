@@ -1,0 +1,65 @@
+---
+title: "Text API Protocol Compatibility"
+sidebarTitle: "Protocol Compatibility"
+# description: "Learn how Poixe AI supports the mainstream protocols and where they differ."
+---
+
+Poixe AI is compatible with 4 mainstream text chat protocols. All of them can be called through a unified entry address, but **request structure and authentication strictly follow each protocol's official definition**.
+
+## No protocol conversion
+
+The system does not "translate" one protocol into another.
+
+When a request calls a provider's model using **Chat Completions**, the system goes directly through that provider's **officially provided Chat Completions-compatible implementation**, rather than first calling with another protocol and then converting the result to **Chat Completions**.
+
+## Protocols at a glance
+
+<CardGroup cols={2}>
+  <Card title="OpenAI Chat Completions Protocol" icon="sparkles" href="/en/api-reference/text-api/openai-completions/overview">
+    Compatible with the legacy ecosystem: suited to integrations built on the existing OpenAI ecosystem.
+  </Card>
+  <Card title="OpenAI Responses Protocol" icon="sparkles" href="/en/api-reference/text-api/openai-responses/overview">
+    A more unified content structure with extended support for multimodality and tool calling.
+  </Card>
+  <Card title="Anthropic Messages Protocol" icon="sparkles" href="/en/api-reference/text-api/anthropic-messages/overview">
+    Integrates with the Claude ecosystem: organizes input and output using the Messages structure.
+  </Card>
+  <Card title="Google Gemini Content Protocol" icon="sparkles" href="/en/api-reference/text-api/google-gemini-content/overview">
+    Integrates with the Gemini ecosystem: based on the generateContent / streamGenerateContent structure.
+  </Card>
+</CardGroup>
+
+## Compatibility strategy and boundaries
+
+### 1. OpenAI Chat Completions (best compatibility)
+
+- The most classic protocol with the broadest ecosystem; **almost every major model provider offers this protocol or a compatible implementation**
+- For "regular chat / text generation", it is usually sufficient
+- Poixe AI's integration experience and compatibility handling are also the most mature on this protocol (recommended as the default choice)
+
+### 2. OpenAI Responses (OpenAI's newer protocol)
+
+- A more unified interface shape, suited to organizing more "modern" conversations and multi-turn flows
+- Expresses multimodality and tool extensions more naturally (subject to the official definition)
+- Note: it is only available when the model provider you want to call supports Responses itself (or offers a compatible implementation)
+
+### 3. Anthropic Messages (the Claude protocol)
+
+- Anthropic's official Messages structure (subject to the official definition)
+- Commonly used in scenarios that need Claude's native capabilities (for example, its native tool/workflow capabilities)
+- Likewise limited by whether the model provider offers the Messages protocol
+
+### 4. Google Gemini Content (the Gemini protocol)
+
+- Google's official generateContent / streamGenerateContent structure (subject to the official definition)
+- Commonly used in scenarios that need Gemini's native capabilities (for example, its native tool/workflow capabilities)
+- Likewise limited by whether the model provider offers the Content protocol
+
+> **Summary:** Apart from Chat Completions, the other protocols are essentially supported "as-is per the official protocol", and what is available depends on provider and model support.
+
+## How to choose
+
+- **Regular chat / text generation only, with maximum compatibility and the fewest pitfalls**: prefer **Chat Completions**
+- **You explicitly need OpenAI's Responses ecosystem capabilities** (for example, more unified multi-turn flows / extensions): use **Responses**
+- **You explicitly need Claude's native protocol capabilities**: use **Messages**
+- **You explicitly need Gemini's native protocol capabilities**: use **Content**

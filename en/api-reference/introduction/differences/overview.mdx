@@ -1,0 +1,41 @@
+---
+title: "Compatibility and Differences Between the Poixe API and Official APIs"
+sidebarTitle: "Introduction"
+---
+
+Poixe AI is an **API forwarding and scheduling layer** that aggregates and provides API capabilities from multiple mainstream model providers. Because Poixe must deliver stable forwarding, billing, and risk control across different providers, we make some **engineering trade-offs** in compatibility (for example, billing difficulty, or security and stability policies). As a result, some capabilities may be **restricted, disabled, or behave differently** in the Poixe environment.
+
+This section mainly covers two kinds of content:
+
+* **Poixe's compatibility trade-offs**: which features are restricted or unavailable in the Poixe environment, along with the reasons and suggested alternatives.
+* **Known upstream caveats**: some "gotcha" notes that come from the providers' native APIs (not introduced by Poixe), to help you avoid pitfalls and locate problems quickly. Because upstream implementations and documentation change, these notes may be incomplete and are for reference only.
+
+## Design principle: minimal invasiveness, no protocol conversion
+
+Poixe's core design principle is **Minimal Invasiveness**.
+
+This means:
+
+* We do not **convert a request from one protocol into another** before calling the upstream.
+  For example, we do not convert an `OpenAI Chat Completions` request into the `OpenAI Responses` protocol before forwarding it.
+* Poixe only handles **forwarding, authentication, scheduling, billing, and logging**; upstream calls use the **protocols and behavior natively provided by the provider**.
+
+Therefore, when you choose a protocol for a request, refer to the official documentation for that protocol's implementation details on the **specific provider**:
+
+* If you call an OpenAI model with the `OpenAI Chat Completions` protocol: refer directly to OpenAI's official documentation.
+* If you call Azure OpenAI with the same protocol: refer to Azure's corresponding documentation and parameter constraints.
+* If you want to call a Claude model through the `OpenAI Chat Completions` protocol: refer to Anthropic's corresponding API documentation (including the characteristics and limitations of its compatible endpoint).
+
+<Callout type="info" icon="info-circle">
+  The Poixe system integrates directly with the protocol endpoints provided by each provider, rather than Poixe performing semantic conversion in the middle, so protocol differences should be determined by each provider's documentation.
+</Callout>
+
+## Feedback and improvements
+
+If you discover new compatibility differences, missing documentation, or have any suggestions for improvement while using Poixe, feel free to send us feedback at any time. We will do our best to confirm and add it to this section, helping more users avoid pitfalls.
+
+<CardGroup cols={1}>
+  <Card title="Contact Us" href="/en/help/introduction/overview">
+    Contact the team or share feedback
+  </Card>
+</CardGroup>

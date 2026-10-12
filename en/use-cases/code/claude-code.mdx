@@ -1,0 +1,285 @@
+---
+title: "Claude Code"
+sidebarTitle: "Claude Code"
+description: "Anthropic's terminal/IDE coding agent that understands context in your local codebase, edits files, runs commands, and helps you complete development tasks"
+---
+
+## Introduction
+
+Claude Code is an agentic coding tool that runs in your terminal. It understands your codebase and helps you code faster through natural language commands: it can handle routine tasks, explain complex code, and manage Git workflows.
+
+This section gets you up and running with AI-powered coding assistance in a few minutes. When you finish, you will know how to use Claude Code for common development tasks.
+
+{/* ![claude code poster](/assets/images/claude-code-poster.png) */}
+
+![claude code terminal](/assets/images/use-cases-claude-code.gif)
+
+<CardGroup cols={2}>
+  <Card
+    title="Claude Code documentation"
+    href="https://code.claude.com/docs/zh-CN/overview"
+  >
+    Installation, usage, commands, and configuration reference
+  </Card>
+  <Card
+    title="Claude Code GitHub repository"
+    href="https://github.com/anthropics/claude-code"
+  >
+    Source code, release binaries, and contribution guide
+  </Card>
+</CardGroup>
+
+## Prerequisites
+
+Make sure you have:
+
+- An open terminal or command prompt
+- A code project to work on
+- An API token that supports the [Anthropic Messages protocol](/en/api-reference/text-api/anthropic-messages/overview) ([how to create a token](/en/docs/dashboard/create-tokens))
+
+Make sure your terminal environment supports:
+
+```bash
+# node.js
+node -v
+
+# git
+git --version
+```
+
+Configure environment variables:
+
+<Tabs>
+  <Tab title="macOS, Linux, WSL">
+    ```bash
+    # manual setup for temporary use
+    export ANTHROPIC_BASE_URL=https://api.poixe.com
+    export ANTHROPIC_API_KEY=$POIXE_API_KEY
+    export ANTHROPIC_MODEL=claude-3-5-haiku-20241022
+
+    # add to shell profile for persistent use (add to ~/.bashrc, ~/.zshrc, etc.)
+    echo 'export ANTHROPIC_BASE_URL="https://api.poixe.com"' >> ~/.bashrc
+    echo 'export ANTHROPIC_API_KEY="$POIXE_API_KEY"' >> ~/.bashrc
+    echo 'export ANTHROPIC_MODEL="claude-3-5-haiku-20241022"' >> ~/.bashrc
+    ```
+  </Tab>
+
+  <Tab title="Windows">
+    ```bash
+    setx ANTHROPIC_BASE_URL "https://api.poixe.com"
+    setx ANTHROPIC_API_KEY "$POIXE_API_KEY"
+    setx ANTHROPIC_MODEL "claude-3-5-haiku-20241022"
+    ```
+  </Tab>
+</Tabs>
+
+## Install Claude Code
+
+To install Claude Code, use one of the following methods:
+
+<Tabs>
+  <Tab title="Native Install (Recommended)">
+    **macOS, Linux, WSL:**
+
+    ```bash
+    curl -fsSL https://claude.ai/install.sh | bash
+    ```
+
+    **Windows PowerShell:**
+
+    ```powershell
+    irm https://claude.ai/install.ps1 | iex
+    ```
+
+    **Windows CMD:**
+
+    ```batch
+    curl -fsSL https://claude.ai/install.cmd -o install.cmd && install.cmd && del install.cmd
+    ```
+  </Tab>
+
+  <Tab title="Homebrew">
+    ```sh
+    brew install --cask claude-code
+    ```
+  </Tab>
+
+  <Tab title="WinGet">
+    ```powershell
+    winget install Anthropic.ClaudeCode
+    ```
+  </Tab>
+
+  <Tab title="NPM installation (Deprecated)">
+    ```bash
+    # Use this method only if you can’t use the native installer.
+    # Avoid running it with sudo.
+    npm install -g @anthropic-ai/claude-code
+    ```
+  </Tab>
+</Tabs>
+
+## Verify the installation
+
+After installation, run the following command to verify that it succeeded:
+
+```bash
+claude --version
+```
+
+## Start your first session
+
+Open your terminal in any project directory and start Claude Code:
+
+```bash
+cd /path/to/your/project
+claude
+```
+
+You will see the Claude Code welcome screen with your session information, recent conversations, and the latest updates. Type `/help` to see available commands, or type `/resume` to continue a previous conversation.
+
+## Ask your first question
+
+Let's start by getting to know your codebase. Try one of the following commands:
+
+```bash
+> what does this project do?
+```
+
+![claude code first question](/assets/images/use-cases-claude-docs.png)
+
+## Basic commands
+
+Here are the most important commands for everyday use:
+
+| Command             | What it does                    | Example                             |
+| ------------------- | ------------------------------- | ----------------------------------- |
+| `claude`            | Start interactive mode          | `claude`                            |
+| `claude "task"`     | Run a one-off task              | `claude "fix the build error"`      |
+| `claude -p "query"` | Run a one-off query, then exit  | `claude -p "explain this function"` |
+| `claude -c`         | Continue the most recent conversation in the current directory | `claude -c`  |
+| `claude -r`         | Resume a previous conversation  | `claude -r`                         |
+| `claude commit`     | Create a Git commit             | `claude commit`                     |
+| `/clear`            | Clear conversation history      | `> /clear`                          |
+| `/help`             | Show available commands         | `> /help`                           |
+| `exit` or Ctrl+C    | Exit Claude Code                | `> exit`                            |
+
+For the full list of commands, see the [CLI reference](https://code.claude.com/docs/zh-CN/cli-reference).
+
+## Pro tips for beginners
+
+<AccordionGroup>
+  <Accordion title="Be specific with your requests">
+    Instead of: "fix the bug"
+
+    Try: "fix the login bug where users see a blank screen after entering wrong credentials"
+  </Accordion>
+
+  <Accordion title="Use step-by-step instructions">
+    Break complex tasks into steps:
+
+    ```
+    > 1. create a new database table for user profiles
+    ```
+
+    ```
+    > 2. create an API endpoint to get and update user profiles
+    ```
+
+    ```
+    > 3. build a webpage that allows users to see and edit their information
+    ```
+  </Accordion>
+
+  <Accordion title="Let Claude explore first">
+    Before making changes, let Claude understand your code:
+
+    ```
+    > analyze the database schema
+    ```
+
+    ```
+    > build a dashboard showing products that are most frequently returned by our UK customers
+    ```
+  </Accordion>
+
+  <Accordion title="Save time with shortcuts">
+    * Press `?` to see all available keyboard shortcuts
+    * Use Tab for command completion
+    * Press ↑ to see command history
+    * Type `/` to see all slash commands
+  </Accordion>
+</AccordionGroup>
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Getting an Invalid API Key · Please run /login error?">
+    This indicates that Claude Code did not detect the environment variables. Check the following:
+
+    - ANTHROPIC_API_KEY and ANTHROPIC_BASE_URL are set correctly
+    - The environment variable values are correct (tokens start with sk-)
+    - If you used a persistent configuration, you restarted your terminal
+  </Accordion>
+
+  <Accordion title="Why does it show an offline status?">
+    Claude Code checks network status by connecting to Google. Seeing "offline" does not affect normal use; it only means Google could not be reached.
+  </Accordion>
+
+  <Accordion title="Why does web Fetch fail?">
+    Claude Code needs to call the Claude service for a safety check before accessing a web page. You need to:
+
+    - Maintain a stable international internet connection
+    - Use a global proxy if necessary
+  </Accordion>
+
+  <Accordion title="What should I do about API errors?">
+    If you run into an API error:
+
+    - Confirm that ANTHROPIC_API_KEY and ANTHROPIC_BASE_URL are set correctly
+    - Check your network connection and make sure you can reach the API endpoint
+    - Read the error message and refer to [Error handling](/en/api-reference/introduction/errors/overview) to troubleshoot
+    - If needed, [contact the team](/en/help/introduction/overview) for help
+  </Accordion>
+
+  <Accordion title="How do I exit Claude Code?">
+    In interactive mode, type `exit` or press Ctrl+C twice to exit Claude Code.
+  </Accordion>
+
+  <Accordion title="How do I update Claude Code?">
+    One command does it: `claude update`
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting common errors
+
+### How do I fix the `Extra inputs are not permitted` error?
+
+While using Claude Code, you may run into the following error:
+
+![claude code extra inputs error](/assets/images/claude-code-400-error.png)
+
+The error is an API 400: the server returns `context_management: Extra inputs are not permitted`. Many users report that version 2.1.20 works, but starting with 2.1.22/2.1.23 it fails immediately (any input triggers a 400).
+
+**What causes this 400?**
+
+Essentially, the client sent fields (or beta/experimental fields) that the server does not recognize or allow, which causes schema validation to fail.
+
+Newer versions of Claude Code include certain context management / beta-related input fields (or the corresponding headers / schema) in requests.
+
+But the "backend" you are connected to (commonly an enterprise gateway/proxy, Bedrock/Vertex/Gateway, some relay services, or even an Anthropic API that has been rewritten by a proxy) does not support these fields yet, so it rejects the request under strict schema validation: `Extra inputs are not permitted`.
+
+> Related GitHub issue discussion: [https://github.com/anthropics/claude-code/issues/21612](https://github.com/anthropics/claude-code/issues/21612)
+
+**Solution:**
+
+The official changelog explicitly documents a related fix:
+
+In 2.1.27, it mentions "Fixed context management validation error for gateway users", and notes that setting `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1` avoids the error.
+
+> Related changelog entry: [https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#2127](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#2127)
+
+Recommendations:
+
+- 1. Upgrade to version 2.1.27 or later (if you haven't already)
+- 2. Set the environment variable `CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1` to disable experimental beta features

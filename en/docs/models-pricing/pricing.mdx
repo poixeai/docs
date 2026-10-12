@@ -1,0 +1,55 @@
+---
+title: "Model Pricing"
+sidebarTitle: "Pricing"
+---
+
+Poixe AI's model prices and discount information are all shown on the pricing page:
+
+<CardGroup cols={2}>
+  <Card title="Model Pricing and List" href="https://poixe.com/pricing">
+    View supported models, standard prices, billing units, and the latest changes.
+  </Card>
+  <Card title="User Tiers and Benefits" href="https://poixe.com/tiers/user">
+    View your tier, rate limits, discounts, and free capacity.
+  </Card>
+</CardGroup>
+
+Poixe AI's model costs are not fixed and are affected by several factors. You can understand them with the following logic:
+
+## User level (Level) affects discounts and available resources
+
+New users start at **Level 0**. As your cumulative top-ups and usage grow, your level is raised automatically.
+A higher level usually means:
+
+- **Bigger discounts**: the same model costs less
+- **More capacity**: higher rate limits, concurrency, and so on
+
+> Levels are assigned automatically by the system based on cumulative top-ups, and upgrades take effect immediately.
+
+## Cost per request = standard billing × discount
+
+The cost of a single request is usually calculated using the model's official standard billing method (for example, by input/output tokens), and then your **Level discount** is applied to produce the final charge.
+
+## The same model may have multiple providers, with different standard pricing
+
+The same model name (for example `gpt-5.2`) may be offered by multiple model providers on the platform. The **standard pricing** and **response structure** can differ between providers.
+
+- **No provider specified**: uses the `default` route
+
+  - The system balances requests across multiple providers to improve capacity and availability
+  - The trade-off: response details may differ slightly between providers (refer to the actual response)
+
+- **Provider specified**: for example `openai`
+
+  - Billing and responses follow that provider's standard pricing and response format
+
+## Top-up currency
+
+Top-ups on the platform are priced and settled in **US dollars (USD)**.
+
+---
+
+To quickly check how much a given model will actually cost you, the most direct way is to:
+
+- Open the pricing page to see standard prices and notes: [https://poixe.com/pricing](https://poixe.com/pricing)
+- Check your current level and discount on the benefits page: [https://poixe.com/tiers/user](https://poixe.com/tiers/user)

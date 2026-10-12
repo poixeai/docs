@@ -1,0 +1,135 @@
+---
+title: "Interrupted Response Recovery"
+sidebarTitle: "Overview"
+# description: "When a non-streaming request is disconnected or times out, recover the response that was already generated and billed."
+tag: "INFO"
+icon: "book-open"
+---
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">Base URL</Badge>
+  `https://api.poixe.com/v1/recoveries`
+</div>
+
+Recoveries (interrupted response recovery) addresses a common situation: you send a **non-streaming request (stream=false)**, and the upstream model actually generates the result successfully, but the connection is interrupted, so your client never receives the response.
+
+In this case, the request is usually still completed by the upstream provider and billed. To avoid wasting resources and money on duplicate requests, Poixe **temporarily stores** the key data and response of that request, so you can try to recover the result after the request fails.
+
+<Callout type="info" icon="info-circle">
+  **Note:** The Recoveries endpoints are free of charge. A stored record is created only when a request is interrupted.
+</Callout>
+
+## Use cases
+
+When a non-streaming request appears to fail or time out on the client, but you suspect the upstream provider may have finished processing it, try Recoveries first:
+
+- The client network drops or fluctuates, interrupting the connection
+- A CDN or proxy layer forces a timeout or closes the connection
+- A brief system interface fluctuation causes the connection to be closed
+- The request takes a long time, and the client times out before the upstream provider finishes
+
+## Walkthrough: how to recover after an interruption (core steps)
+
+<Steps>
+  <Step title="Send a non-streaming request (stream=false)">
+    For example, call an endpoint such as Chat Completions or Responses with `stream=false` (non-streaming response).
+  </Step>
+
+  <Step title="The connection is interrupted: the client shows a failure, but the upstream may have finished">
+    Common causes include a dropped client network, a CDN-enforced timeout, or a brief system interface fluctuation that closes the connection.
+
+    <Callout type="info" icon="info-circle">
+      **Note:** A non-streaming request may already have been processed and billed normally by the upstream provider, with only the result failing to reach the client.
+      We recommend trying to recover it first and then deciding whether to retry, to avoid being charged twice.
+    </Callout>
+
+  </Step>
+
+  <Step title="The system automatically stores the result of this request">
+    Poixe stores the request and response as a recovery record for later retrieval.
+
+    <Callout type="info" icon="info-circle">
+      **Note:** This step is completed automatically by the system. You do not need to do anything extra.
+    </Callout>
+
+  </Step>
+
+<Step title="Get the request_id (choose any one)">
+    You can get the `request_id` in any of the following ways:
+    
+    - **Option A: Console.** Check the corresponding request log on the <a href="https://poixe.com/log" target="_blank">Logs page</a> and get the `request_id` directly
+    - **Option B: Call** <a href="/en/api-reference/system-api/recoveries/list">List stored responses</a> to get the `request_id` from the list
+    - **Option C: Call** <a href="/en/api-reference/system-api/recoveries/lookup">lookup</a>, submit the original request JSON, and receive candidate records along with the `request_id`
+  </Step>
+
+<Step title="Recover the full content by request_id">
+  Use{" "}
+  <a href="/en/api-reference/system-api/recoveries/get">Get stored response details</a>:
+  `GET /v1/recoveries/{request_id}` to retrieve the original request and the complete response body.
+</Step>
+
+  <Step title="Optional: clean up stored records">
+    After recovery, you can choose to:
+    - Delete a single record: <a href="/en/api-reference/system-api/recoveries/delete">Delete a stored response</a>
+    - Delete all records: <a href="/en/api-reference/system-api/recoveries/delete-all">Delete all stored responses</a> (supports a `dry_run` preview)
+  </Step>
+</Steps>
+
+## Endpoint overview (recommended order)
+
+<CardGroup cols={2}>
+  <Card
+    title="List stored responses"
+    href="/en/api-reference/system-api/recoveries/list"
+  >
+    GET /v1/recoveries
+  </Card>
+  <Card
+    title="Get details (recover a response)"
+    href="/en/api-reference/system-api/recoveries/get"
+  >
+    GET /v1/recoveries/{request_id}
+  </Card>
+  <Card
+    title="lookup (without a request_id)"
+    href="/en/api-reference/system-api/recoveries/lookup"
+  >
+    POST /v1/recoveries/lookup
+  </Card>
+  <Card
+    title="Delete a single stored response"
+    href="/en/api-reference/system-api/recoveries/delete"
+  >
+    DELETE /v1/recoveries/{request_id}
+  </Card>
+  <Card
+    title="Delete all stored responses (supports dry_run)"
+    href="/en/api-reference/system-api/recoveries/delete-all"
+  >
+    DELETE /v1/recoveries?all=true
+  </Card>
+</CardGroup>
+
+## Retention period and cleanup policy
+
+Recoveries records are kept for **3 days** by default and are automatically deleted after the retention period expires.
+
+If you want to clean them up immediately, you can call a delete endpoint (single or all).
+
+## Data security and compliance
+
+Poixe follows strict data and security standards. Recoveries data is used only to help you recover the responses of interrupted requests, and is protected by authentication (only the current user can access their own records).
+
+We do not use, process, or analyze this data in any way, and it is not used for any purpose. The data is stored temporarily according to the retention policy and is automatically cleaned up when it expires.
+
+## Recommendation for long-running requests: use a direct endpoint to avoid CDN-enforced timeouts
+
+The main endpoint is forwarded through a CDN, which has a fixed connection timeout policy. For requests that may take a long time (for example, long outputs, complex tool chains, or extended reasoning), the CDN may close the connection before the response is returned.
+
+To avoid such interruptions, you can replace the main endpoint with a **direct endpoint (no CDN)**. Poixe provides two direct endpoints (dc8 / dc15) that you can use directly as alternative addresses for the main endpoint, so they are not affected by CDN-enforced timeouts.
+
+If you have higher availability requirements, we recommend configuring **both dc8 and dc15** in your client and switching automatically when a request fails, to improve stability.
+  
+<Callout type="info" icon="info-circle">
+  For background and guidance on choosing, see: <a href="/en/api-reference/introduction/base-url">Base URL</a>
+</Callout>

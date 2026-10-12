@@ -1,0 +1,90 @@
+---
+title: "Get Stored Response Details"
+sidebarTitle: "Get details"
+# description: "Get stored details by request_id (including the original request and the full response body)."
+tag: "GET"
+icon: "arrow-down-left"
+---
+
+import GetReq from "/snippets/recoveries/get.req.mdx";
+import GetResp from "/snippets/recoveries/get.resp.mdx";
+
+<RequestExample>
+<GetReq />
+</RequestExample>
+
+<ResponseExample>
+<GetResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://api.poixe.com/v1/recoveries/{request_id}`
+</div>
+
+Gets the full details of a single stored response by `request_id` (including the **original request body** and the **full response body**).
+
+If you don't have a `request_id` yet, first use [**List**](/en/api-reference/system-api/recoveries/list) to get one, or use [**lookup**](/en/api-reference/system-api/recoveries/lookup) to find candidate records from the original request body.
+
+## Authentication and request headers
+
+Every API request must include your API key in the HTTP headers.
+
+<ParamField header="Authorization" type="string" required>
+  Bearer token. The format is `Bearer YOUR_API_KEY`.
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  Must be set to `application/json`.
+</ParamField>
+
+## Path parameters
+
+<ParamField path="request_id" type="string" required>
+  The request ID of the stored record. Usually obtained from [**List**](/en/api-reference/system-api/recoveries/list) or [**lookup**](/en/api-reference/system-api/recoveries/lookup).
+</ParamField>
+
+## Response structure
+
+<ResponseField name="request_id" type="string">
+  Request ID, the unique identifier used internally by the Poixe AI system.
+</ResponseField>
+
+<ResponseField name="created_at" type="integer">
+  Creation time (Unix timestamp in seconds).
+</ResponseField>
+
+<ResponseField name="interrupted_reason" type="string">
+  Interruption reason (such as context canceled).
+</ResponseField>
+
+<ResponseField name="request" type="object">
+  The original request information.
+  <Expandable title="request fields">
+    <ResponseField name="body_raw" type="string">
+      The original request JSON string. If the request body exceeds 20MB, a placeholder may be returned.
+    </ResponseField>
+    <ResponseField name="request_body_hash" type="string">
+      Request body hash (used for lookup).
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="response" type="object">
+  The full stored response content.
+  <Expandable title="response fields">
+    <ResponseField name="body_raw" type="string">
+      The full response JSON string.
+    </ResponseField>
+    <ResponseField name="response_body_size" type="integer">
+      The size of the response body in bytes.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<Callout type="info" icon="info-circle">
+When the original request body exceeds **20MB**, the system does not store the request body content, and `request.body_raw` returns: `__OMITTED_TOO_LARGE__`.
+
+This does not affect response recovery: `response.body_raw` can still be retrieved normally.
+</Callout>
+

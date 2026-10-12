@@ -1,0 +1,82 @@
+---
+title: "Deploy Resources"
+---
+
+Create your model vendor API resources as **channels** to connect them to Poixe AI. Once a channel is available, the system dispatches user requests to these channels, generating revenue for you.
+
+## Entry point
+
+* Vendor panel → **Channel Management**
+* Click **Add New Channel** in the upper right corner
+
+## Create a channel
+
+Channels can be added in two ways: **Automatic** / **Manual**.
+
+### Automatic (recommended)
+
+Suitable for most cases.
+
+1. Select **Automatic**
+2. Select the **model series** and **API vendor**
+3. Paste your keys (one per line; batch supported)
+
+   * For Azure resources, follow the on-page instructions (usually each line contains the Endpoint and Key, separated by a space)
+4. Set the **price** (your buyback price)
+5. Set the **maximum consumption limit** (controls how much balance/quota this channel can consume at most)
+6. Click **Create**
+
+The system automatically:
+
+* Connects to and validates your API
+* Detects available models
+* Adds the available models to the channel
+
+> Note: Automatic detection and addition incur a small amount of consumption (used to probe and fetch model capabilities).
+
+### Manual
+
+For cases where you only want to provide **specific models** or a special configuration.
+
+1. Select **Manual**
+2. Fill in the name, API endpoint, model series, and API vendor
+3. Select/enter the models and keys
+4. Set the price and maximum consumption
+5. Create
+
+Note:
+
+* With manual addition, you must ensure the **models are actually available**.
+  If a model is unavailable, you lack permission, or the configuration is wrong, the channel may be disabled automatically by the system.
+
+## Update channel models (Tools panel)
+
+When a vendor releases new models (for example, new OpenAI releases), you can use the **Tools panel** to sync the models a channel supports in bulk:
+
+1. Channel Management → **Tools Panel** in the upper right
+2. Select **Update Channel Models**
+3. Click **Start Update**
+
+The system runs this asynchronously:
+
+* Scans the models the channel currently supports
+* Adds newly available models to the channel (per system rules)
+
+Update results are recorded in the **Channel Management Log**.
+
+## Channel Management Log
+
+Automated actions related to channels (for example, model updates, disabling/enabling, and status changes) are all recorded here for troubleshooting and auditing.
+
+Common entries include:
+
+* Automatic channel model updates
+* Channel disabled/enabled (with a reason note)
+* Automatic disabling due to insufficient balance / exhausted quota
+* Model not found or no permission (detected by the system, then flagged and handled)
+
+## Day-to-day recommendations
+
+* **Prefer automatic addition**: It's easier, and model syncing is more reliable.
+* **Set a maximum consumption limit**: Prevents a single channel from consuming too much if something goes wrong.
+* **Check channel status and logs regularly**: Balance, error reasons, and whether the system has disabled a channel can all be quickly located here.

@@ -1,0 +1,137 @@
+---
+title: "Anthropic Messages Protocol"
+sidebarTitle: "Create request"
+tag: "POST"
+icon: "arrow-up-right"
+---
+
+import MessagesReqCurl from "/snippets/api-reference/messages-req-curl.mdx";
+
+import MessagesResp from "/snippets/api-reference/messages-resp.mdx";
+import MessagesRespStream from "/snippets/api-reference/messages-resp-stream.mdx";
+
+<RequestExample>
+
+<MessagesReqCurl />
+
+</RequestExample>
+
+<ResponseExample>
+
+<MessagesResp />
+<MessagesRespStream />
+
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">POST</Badge>
+  `https://api.poixe.com/v1/messages`
+</div>
+
+This is the core chat protocol for Claude (Anthropic), supporting text, multimodal input, tool calling, and SSE streaming output.
+
+On this path, the system aligns with Anthropic's field and event stream formats, so you can reuse existing Claude SDKs or request structures directly.
+
+## Authentication and request headers
+
+Every request must carry an API key. We also recommend always sending `anthropic-version` to keep behavior stable.
+
+<ParamField header="X-Api-Key" type="string" required>
+  Poixe API key. The format is `X-Api-Key: YOUR_API_KEY` (equivalent to `x-api-key`).
+</ParamField>
+
+<ParamField header="anthropic-version" type="string" required>
+  The Anthropic version number, for example: `2023-06-01`.
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  Must be set to `application/json`.
+</ParamField>
+
+## Core request parameters
+
+The following are the most commonly used and most general fields (enough to cover regular chat, tool calling, and streaming).
+
+<ParamField body="model" type="string" required>
+  The model ID, for example: `claude-sonnet-4-5-20250929`.
+</ParamField>
+
+<ParamField body="messages" type="object[]" required>
+  The list of conversation messages.
+  <Expandable title="messages[] fields">
+    <ParamField body="role" type="string" required>
+      The role: `user` / `assistant`.
+    </ParamField>
+    <ParamField body="content" type="string or array" required>
+      The message content. Usually a string; for multimodal or structured scenarios, you can use an array (content blocks).
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="max_tokens" type="integer" required>
+  The maximum number of output tokens allowed for this generation.
+</ParamField>
+
+<ParamField body="stream" type="boolean" default="false">
+  Whether to enable SSE streaming output. When `true`, the response is `text/event-stream`.
+</ParamField>
+
+<ParamField body="temperature" type="number">
+  Optional: sampling temperature. Lower values are more stable; higher values are more divergent (if omitted, the model default is used).
+</ParamField>
+
+<ParamField body="system" type="string">
+  Optional: the system prompt (used to set the assistant's overall behavior).
+</ParamField>
+
+<ParamField body="tools" type="object[]">
+  Optional: the list of tools (function/tool calling).
+  <Expandable title="tools[] fields">
+    <ParamField body="name" type="string" required>Tool name</ParamField>
+    <ParamField body="description" type="string">Tool description</ParamField>
+    <ParamField body="input_schema" type="object">Parameter schema (JSON Schema)</ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="tool_choice" type="object">
+  Optional: tool-calling strategy, for example `{"type":"any"}` (allows calling any tool).
+</ParamField>
+
+## Response structure and streaming events
+
+For non-streaming requests, a `message` object is returned. For streaming requests, a series of SSE events is returned (`message_start` → content block events → `message_delta` → `message_stop`), and `ping` events may be interspersed.
+
+<ResponseField name="id" type="string">Message ID, for example `msg_xxx`</ResponseField>
+<ResponseField name="type" type="string">Always `message`</ResponseField>
+<ResponseField name="role" type="string">Always `assistant`</ResponseField>
+
+<ResponseField name="content" type="object[]">
+  The array of generated content, commonly `[{ "type": "text", "text": "..." }]`.
+</ResponseField>
+
+<ResponseField name="stop_reason" type="string">
+  The reason generation stopped. Common values: `end_turn` / `max_tokens` / `stop_sequence` / `tool_use` (and, in rare cases, `pause_turn` / `refusal` / `model_context_window_exceeded`, and so on).
+</ResponseField>
+
+<ResponseField name="stop_sequence" type="string | null">
+  The matched stop sequence string if one was hit; otherwise `null`.
+</ResponseField>
+
+<ResponseField name="usage" type="object">
+  Token usage statistics.
+  <Expandable title="usage fields (common)">
+    <ResponseField name="input_tokens" type="integer">Input tokens consumed</ResponseField>
+    <ResponseField name="output_tokens" type="integer">Output tokens consumed</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<br />
+
+<CardGroup cols={1}>
+  <Card
+    title="Official docs: Create a Message"
+    href="https://platform.claude.com/docs/en/api/messages/create"
+  >
+    View the complete parameters and examples for the Claude Messages API (including tools, multimodal input, and streaming events).
+  </Card>
+</CardGroup>

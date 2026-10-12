@@ -1,0 +1,191 @@
+---
+title: "OpenAI Chat Completions Protocol"
+sidebarTitle: "Create request"
+tag: "POST"
+icon: "arrow-up-right"
+---
+
+import CompletionsReqCurl from "/snippets/api-reference/completions-req-curl.mdx";
+import CompletionsReqJs from "/snippets/api-reference/completions-req-js.mdx";
+import CompletionsReqPy from "/snippets/api-reference/completions-req-py.mdx";
+import CompletionsReqGo from "/snippets/api-reference/completions-req-go.mdx";
+
+import CompletionsResp from "/snippets/api-reference/completions-resp.mdx";
+import CompletinosRespStream from "/snippets/api-reference/completions-resp-stream.mdx";
+
+<RequestExample>
+
+<CompletionsReqCurl />
+<CompletionsReqJs />
+<CompletionsReqPy />
+<CompletionsReqGo />
+
+</RequestExample>
+
+<ResponseExample>
+
+<CompletionsResp />
+<CompletinosRespStream />
+
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">POST</Badge>
+  `https://api.poixe.com/v1/chat/completions`
+</div>
+
+This is OpenAI's original and most widely used chat protocol. It currently has the best compatibility, and almost every provider and SDK supports it.
+
+However, its capabilities are relatively limited. Many new features of OpenAI's newer models are offered in the [**Responses** protocol](/en/api-reference/text-api/openai-responses/overview) instead. If you only need lightweight chat and basic streaming output, this protocol is sufficient.
+
+
+## Authentication and request headers
+
+Every API request must include your API key in the HTTP headers.
+
+<ParamField header="Authorization" type="string" required>
+  Bearer token. The format is `Bearer YOUR_API_KEY`.
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  Must be set to `application/json`.
+</ParamField>
+
+## Request parameters
+
+The following are the core parameters most commonly used when building a chat request.
+
+<ParamField body="model" type="string" required>
+  The name of the model to use. For example: `gpt-4o`, `gpt-4o-mini`.
+</ParamField>
+
+<ParamField body="messages" type="object[]" required>
+  The list of conversation messages.
+  <Expandable title="messages[] fields">
+    <ParamField body="role" type="string" required>
+      The role. Allowed values: `system` (system prompt), `user` (user), `assistant` (model reply), `tool` (tool result).
+    </ParamField>
+    <ParamField body="content" type="string or array" required>
+      The message content. For multimodal models, this can be an array containing text and image URLs.
+    </ParamField>
+    <ParamField body="name" type="string">
+      Optional: the participant name, used to distinguish different senders with the same role (or the tool name).
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="stream" type="boolean" default="false">
+  Whether to stream the output. When enabled, the server sends tokens incrementally via SSE (Server-Sent Events).
+</ParamField>
+
+<ParamField body="temperature" type="number" default="1">
+  Sampling temperature (0 to 2). Lower values (such as 0.2) make the output more focused and deterministic; higher values (such as 0.8) make it more creative and random.
+</ParamField>
+
+<ParamField body="top_p" type="number" default="1">
+  Nucleus sampling. In general, adjust either this or `temperature`, not both.
+</ParamField>
+
+<ParamField body="max_completion_tokens" type="integer">
+  The maximum number of tokens the model can generate (including reasoning tokens). Recommended as a replacement for the deprecated `max_tokens`.
+</ParamField>
+
+<ParamField body="n" type="integer" default="1">
+  How many candidate replies (choices) to return. Keep this at `1` to reduce cost.
+</ParamField>
+
+<ParamField body="presence_penalty" type="number" default="0">
+  Presence penalty (-2 to 2): encourages the model to introduce new topics (less repetition).
+</ParamField>
+
+<ParamField body="frequency_penalty" type="number" default="0">
+  Frequency penalty (-2 to 2): reduces the likelihood of repeating the same words or sentences.
+</ParamField>
+
+<ParamField body="tools" type="object[]">
+  The list of tools (function calling).
+  <Expandable title="tools[] fields">
+    <ParamField body="type" type="string" required>
+      Commonly: `function`
+    </ParamField>
+    <ParamField body="function" type="object" required>
+      The function definition (JSON Schema).
+      <Expandable title="function fields">
+        <ParamField body="name" type="string" required>Function name</ParamField>
+        <ParamField body="description" type="string">Function description</ParamField>
+        <ParamField body="parameters" type="object">Parameter schema</ParamField>
+      </Expandable>
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="tool_choice" type="string | object">
+  Tool-calling strategy: `none` / `auto` / `required`, or force a specific tool.
+</ParamField>
+
+<ParamField body="response_format" type="object">
+  Output format control.
+  <Expandable title="response_format fields">
+    <ParamField body="type" type="string" required>
+      Commonly: `text` / `json_object` (use when you need stable JSON)
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+## Response structure
+
+The endpoint returns an object containing the generated result and usage statistics.
+
+<ResponseField name="id" type="string">
+  The unique identifier of this request.
+</ResponseField>
+
+<ResponseField name="object" type="string">
+  The object type, usually `chat.completion`.
+</ResponseField>
+
+<ResponseField name="created" type="integer">
+  Creation time (Unix timestamp in seconds).
+</ResponseField>
+
+<ResponseField name="model" type="string">
+  The name of the model that actually processed the request.
+</ResponseField>
+
+<ResponseField name="choices" type="object[]">
+  The list of generated results (usually just one).
+  <Expandable title="choices[] fields">
+    <ResponseField name="index" type="integer">Candidate index</ResponseField>
+    <ResponseField name="message" type="object">
+      The model reply message object.
+      <Expandable title="message fields">
+        <ResponseField name="role" type="string">Usually `assistant`</ResponseField>
+        <ResponseField name="content" type="string">The generated text content</ResponseField>
+        <ResponseField name="tool_calls" type="object[]">Tool call requests (if any)</ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name="finish_reason" type="string">
+      Reason the generation stopped: `stop` / `length` / `tool_calls`
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="usage" type="object">
+  Token usage statistics (if returned).
+  <Expandable title="usage fields">
+    <ResponseField name="prompt_tokens" type="integer">Input tokens consumed</ResponseField>
+    <ResponseField name="completion_tokens" type="integer">Output tokens consumed</ResponseField>
+    <ResponseField name="total_tokens" type="integer">Total tokens consumed</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<br />
+
+<CardGroup cols={1}>
+  <Card
+    title="Official docs: Create chat completion"
+    href="https://platform.openai.com/docs/api-reference/chat/create"
+  >
+    View OpenAI's official parameter descriptions and examples.
+  </Card>
+</CardGroup>

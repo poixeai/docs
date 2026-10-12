@@ -1,0 +1,321 @@
+---
+title: "Model Naming"
+sidebarTitle: "Model Naming"
+---
+
+Poixe AI does not modify official model names; by default they match the upstream. On top of that, we add a small number of extension identifiers to enable capabilities such as multi-provider routing and free model calls.
+
+You can think of the request handling flow like this:
+
+1. **Request received** → first determine the **API protocol** you are using (Chat Completions / Responses / Messages / Gemini Content)
+2. Read the **model** in the request → parse out routing information (whether a provider is specified, whether it is a free model, and so on)
+3. Based on the parsed result, select an available upstream and complete the call using the corresponding protocol
+
+## Model name structure
+
+A model name consists of three parts:
+
+- **Prefix (optional)**: determines the routing method (default routing or a specified provider)
+- **Base Model (required)**: the model's own name (for example, `gpt-4o`)
+- **Suffix (optional)**: currently only `:free` is supported
+
+The format is:
+
+```text
+[prefix/]<base_model>[:free]
+````
+
+---
+
+## 1. Prefix: determines routing (default / specified provider)
+
+### Default routing (recommended)
+
+Omitting the prefix, or using `default/`, both mean **default routing** (the system automatically selects an available upstream).
+
+```bash
+# No prefix
+gpt-4o
+
+# Using the default prefix
+default/gpt-4o
+```
+
+### Provider-specific routing
+
+You can also explicitly specify a provider using the `provider/base_model` form:
+
+```bash
+# gpt-4o provided by openai
+openai/gpt-4o
+
+# gpt-5.2 provided by azure
+azure/gpt-5.2
+
+# claude-sonnet-4-5-20250929 provided by anthropic
+anthropic/claude-sonnet-4-5-20250929
+
+# gemini-2.5-flash provided by google
+google/gemini-2.5-flash
+```
+
+> Note: specifying a provider means you want the request to always use that provider's upstream capacity. If that provider is currently unavailable, or the model does not support the corresponding protocol, the request will fail.
+
+---
+
+## 2. Base Model: the model's own name
+
+`base_model` is the name of the model you actually want to call, for example:
+
+```bash
+# Default routing: the system automatically selects a suitable provider based on current load
+gpt-4o
+gpt-5.2
+claude-sonnet-4-5-20250929
+gemini-2.5-flash
+```
+
+The range of `base_model` values supported by each protocol depends on the capabilities of the corresponding provider and model family.
+
+---
+
+## 3. Suffix: free models `:free`
+
+Use the fixed suffix `:free` to mark a "free model" request:
+
+```bash
+# Free model
+gpt-4o:free
+```
+
+**Rules:**
+
+* `:free` only means using the free models provided by the platform; **not every model supports free calls**
+* `:free` **can only use default routing** (specifying a provider is not allowed)
+* `:free` **can only use the OpenAI Chat Completions endpoint** (other protocols are not yet supported)
+
+For details on the free model program (availability and scope are as shown on the page):
+
+* [https://poixe.com/products/free](https://poixe.com/products/free)
+
+## Supported parameter sets (reference)
+
+These are the "parameter sets" the system uses internally for routing and compatibility. This does not mean any combination will work; actual availability still depends on protocol capabilities, provider support, and whether the specific model is live.
+
+### API protocol (Protocol)
+
+```bash
+# OpenAI Chat Completions
+openai_completions
+
+# OpenAI Responses
+openai_responses
+
+# Anthropic Messages
+anthropic_messages
+
+# Google Gemini Content
+google_gemini_content
+```
+
+### Model family (Family)
+
+```bash
+# ChatGPT family
+chatgpt
+
+# DeepSeek family
+deepseek
+
+# Claude family
+claude
+
+# Gemini family
+gemini
+
+# Grok family
+grok
+
+# Doubao family
+doubao
+
+# Qwen family
+qwen
+
+# Kimi family
+kimi
+```
+
+### Model provider (Provider)
+
+```bash
+# Default routing
+default
+
+# OpenAI
+openai
+
+# Azure
+azure
+
+# DeepSeek
+deepseek
+
+# Anthropic
+anthropic
+
+# Google
+google
+
+# XAI
+xai
+
+# Volcengine
+volcengine
+
+# Aliyun
+aliyun
+
+# SiliconFlow
+siliconflow
+
+# Chutes
+chutes
+
+# Moonshot
+moonshot
+
+# Cerebras
+cerebras
+
+# Groq
+groq
+
+# Fireworks
+fireworks
+
+# Novita
+novita
+
+# Together
+together
+
+# Nebius
+nebius
+```
+
+## Provider Model Mapping
+
+By default, the system uses the **official model name** as the `base_model`.
+
+However, on some third-party upstreams (such as SiliconFlow / Chutes / Fireworks), the same model is often written as an ID with a **namespace, prefix, or different format** (for example, `deepseek-ai/DeepSeek-R1`).
+
+To keep the **model field concise, stable, and minimally invasive** when integrating, the system maintains a **"model name → real upstream model ID"** mapping table:
+
+* In your requests you always use the **standard `base_model`** (for example, `deepseek-r1`)
+* When you specify an upstream provider (for example, `chutes/`), Poixe automatically maps the `base_model` to that provider's real model ID (for example, `deepseek-ai/DeepSeek-R1`) and then forwards the call
+
+### Model mapping configuration
+
+```json
+{
+  "siliconflow": {
+    "deepseek-r1": "Pro/deepseek-ai/DeepSeek-R1",
+    "deepseek-v3": "Pro/deepseek-ai/DeepSeek-V3",
+    "qwen3-235b-a22b": "Qwen/Qwen3-235B-A22B",
+    "qwen3-30b-a3b": "Qwen/Qwen3-30B-A3B",
+    "qwen3-32b": "Qwen/Qwen3-32B",
+    "qwen3-14b": "Qwen/Qwen3-14B",
+    "qwen3-8b": "Qwen/Qwen3-8B",
+    "kimi-k2-0711-preview": "Pro/moonshotai/Kimi-K2-Instruct"
+  },
+  "chutes": {
+    "deepseek-r1": "deepseek-ai/DeepSeek-R1",
+    "deepseek-r1-250528": "deepseek-ai/DeepSeek-R1-0528",
+    "deepseek-v3": "deepseek-ai/DeepSeek-V3",
+    "deepseek-v3-250324": "deepseek-ai/DeepSeek-V3-0324",
+    "qwen3-235b-a22b": "Qwen/Qwen3-235B-A22B",
+    "qwen3-30b-a3b": "Qwen/Qwen3-30B-A3B",
+    "qwen3-32b": "Qwen/Qwen3-32B",
+    "qwen3-14b": "Qwen/Qwen3-14B",
+    "qwen3-8b": "Qwen/Qwen3-8B",
+    "kimi-k2-0711-preview": "moonshotai/Kimi-K2-Instruct",
+    "gpt-oss-120b": "openai/gpt-oss-120b"
+  },
+  "aliyun": {
+    "kimi-k2-0711-preview": "Moonshot-Kimi-K2-Instruct"
+  },
+  "groq": {
+    "gpt-oss-120b": "openai/gpt-oss-120b",
+    "gpt-oss-20b": "openai/gpt-oss-20b"
+  },
+  "fireworks": {
+    "gpt-oss-120b": "accounts/fireworks/models/gpt-oss-120b",
+    "gpt-oss-20b": "accounts/fireworks/models/gpt-oss-20b"
+  },
+  "novita": {
+    "gpt-oss-120b": "openai/gpt-oss-120b",
+    "gpt-oss-20b": "openai/gpt-oss-20b"
+  },
+  "together": {
+    "gpt-oss-120b": "openai/gpt-oss-120b"
+  },
+  "nebius": {
+    "gpt-oss-120b": "openai/gpt-oss-120b",
+    "gpt-oss-20b": "openai/gpt-oss-20b"
+  }
+}
+```
+
+### Example: DeepSeek-R1 on Chutes
+
+Mapping table (configuration):
+
+```json
+"chutes": {
+  "deepseek-r1": "deepseek-ai/DeepSeek-R1"
+}
+```
+
+Correct usage (using the standard Poixe name):
+
+```text
+chutes/deepseek-r1
+```
+
+Incorrect usage (putting the real upstream ID directly into model):
+
+```text
+chutes/deepseek-ai/DeepSeek-R1
+```
+
+Reason: Poixe's `model` field only accepts the `provider/<base_model>` structure. The `base_model` must be Poixe's standard model name (the key on the left side of the mapping table); otherwise the mapping cannot be matched and the request will be treated as unsupported.
+
+## Common usage examples
+
+### Default routing (most common)
+
+```text
+gpt-4o
+```
+
+### Specifying a provider
+
+```text
+openai/gpt-4o
+azure/gpt-5.2
+```
+
+### Free model
+
+```text
+gpt-4o:free
+```
+
+---
+
+## Recommendations
+
+* When you are unsure which provider to use, prefer **default routing** (less hassle)
+* Use a **provider prefix** only when you need a fixed upstream or have requirements for stability and consistent behavior
+* Free models are only for promotional models that support `:free`, and can only use default routing

@@ -1,0 +1,83 @@
+---
+title: "Cherry Studio"
+sidebarTitle: "Cherry Studio"
+description: "An all-in-one AI assistant platform that combines multi-model chat, knowledge base management, AI image generation, translation, and more."
+---
+
+## Introduction
+
+Cherry Studio is a desktop AI client built around **multi-model chat, customizable model providers, and model management**, so you can use all your favorite models in a single chat interface.
+
+This section explains how to configure the Poixe API in Cherry Studio and start chatting.
+
+<CardGroup cols={2}>
+  <Card title="Cherry Studio website" href="https://www.cherry-ai.com/">
+    Download the client (Windows/macOS/Linux, etc.).
+  </Card>
+  <Card title="Cherry Studio documentation" href="https://docs.cherry-ai.com/">
+    See the full feature and configuration reference.
+  </Card>
+</CardGroup>
+
+## Demo
+
+In this demo, we use the AI model API provided by Poixe AI to chat in Cherry Studio and ask for a brief proof of Fermat's Last Theorem.
+
+<video
+  controls
+  className="w-full aspect-video rounded-xl"
+  src="/assets/videos/use-cases-cherry-studio.mp4"
+>
+  Your browser does not support the video tag.
+</video>
+
+## Prerequisites
+
+- API Key for authentication (create one in the console) → <a href="/en/docs/dashboard/create-tokens">How to create one</a>
+- Base URL (copy it from the docs) → <a href="/en/api-reference/introduction/base-url">View API information</a>
+- Available models (copy the model name) → <a href="/en/docs/models-pricing/models">Model list</a> / <a href="/en/api-reference/introduction/model-naming">Model naming</a>
+
+## Configure Poixe in Cherry Studio (core steps)
+
+![cherry studio config](/assets/images/use-cases-cherry-studio-config.png)
+
+<Steps>
+  <Step title="Open Settings → Model Service">
+    In Cherry Studio, click the gear icon in the left sidebar to open Settings, then go to "Model Service" (模型服务).
+  </Step>
+
+  <Step title="Add a custom provider">
+    On the Model Service page, click "+ Add" (添加) at the bottom to add a provider, and give it a name you can recognize at a glance (for example, Poixe).
+
+    For "Provider Type" (提供商类型), we recommend choosing **OpenAI** first (the most universal option, compatible with most chat scenarios).
+
+  </Step>
+
+  <Step title="Configure the Base URL and API Key">
+    In the provider you just added, fill in:
+    - <b>API Key</b> (API 密钥): Enter your Poixe API Key. 
+    - <b>API URL</b> (API 地址): Enter the Poixe Base URL.
+
+    <Callout type="info" icon="info-circle">
+      **Note:** The "Check" (检测) button to the right of the API Key only succeeds after you add a model, because the check needs a model to test against.
+    </Callout>
+    
+  </Step>
+
+  <Step title="Add models">
+    On the provider configuration page, click "+ Add" (添加) at the bottom and manually add the model names you want to use (for example, `gpt-4o` / `gpt-5.2` / `gemini-2.5-pro`; refer to the Poixe model list for the exact names).
+
+    <Callout type="info" icon="info-circle">
+      Not sure about a model name? The safest option is to check Poixe's <a href="/en/docs/models-pricing/models">model list</a>.
+    </Callout>
+
+  </Step>
+
+  <Step title="Go back to the chat page, select a model, and start chatting">
+    Return to the chat page, switch to the Poixe model you just added in the model dropdown, and you can start chatting.
+  </Step>
+</Steps>
+
+## Troubleshooting
+
+- **Connection failed**: First check that your API Key is correct and your Base URL is entered correctly.

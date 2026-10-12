@@ -1,0 +1,67 @@
+---
+title: "Delete a Stored Response"
+sidebarTitle: "Delete one"
+# description: "Delete the stored record with the specified request_id."
+tag: "DELETE"
+icon: "x"
+---
+
+import DeleteReq from "/snippets/recoveries/delete.req.mdx";
+import DeleteResp from "/snippets/recoveries/delete.resp.mdx";
+
+<RequestExample>
+<DeleteReq />
+</RequestExample>
+
+<ResponseExample>
+<DeleteResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">DELETE</Badge>
+  `https://api.poixe.com/v1/recoveries/{request_id}`
+</div>
+
+Deletes the stored record with the specified `request_id`.
+
+If you are just unsure whether a response has been generated, we recommend using [**Get details**](/en/api-reference/system-api/recoveries/get) to confirm the content before deleting.
+
+## Authentication and request headers
+
+Every API request must include your API key in the HTTP headers.
+
+<ParamField header="Authorization" type="string" required>
+  Bearer token. The format is `Bearer YOUR_API_KEY`.
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  Must be set to `application/json`.
+</ParamField>
+
+## Path parameters
+
+<ParamField path="request_id" type="string" required>
+  The request ID of the stored record (from [**List**](/en/api-reference/system-api/recoveries/list) / [**lookup**](/en/api-reference/system-api/recoveries/lookup)).
+</ParamField>
+
+## Response structure
+
+<ResponseField name="request_id" type="string">
+  Request ID, the unique identifier used internally by the Poixe AI system.
+</ResponseField>
+
+<ResponseField name="deleted" type="boolean">
+  Whether the deletion succeeded.
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Result description.
+</ResponseField>
+
+<ResponseField name="reason" type="string">
+  Result reason (such as `OK` / `RECOVERY_NOT_FOUND`).
+</ResponseField>
+
+<Callout type="info" icon="info-circle">
+If the record does not exist (for example, it has expired, been cleaned up, or already been deleted), the response usually returns `deleted=false` along with a reason related to `RECOVERY_NOT_FOUND`.
+</Callout>

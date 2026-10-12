@@ -1,0 +1,165 @@
+---
+title: "Poixe Getting Started Guide"
+sidebarTitle: "Quickstart"
+description: "Make your first Poixe API call: send a message to ChatGPT and get a response."
+---
+
+import QuickstartCurlRequest from "/snippets/quickstart/curl-req.mdx";
+import QuickstartCurlResponse from "/snippets/quickstart/curl-resp.mdx";
+
+import QuickStartTsRequest from "/snippets/quickstart/ts-req.mdx";
+import QuickStartTsResponse from "/snippets/quickstart/ts-resp.mdx";
+
+import QuickStartPyRequest from "/snippets/quickstart/python-req.mdx";
+import QuickStartPyResponse from "/snippets/quickstart/python-resp.mdx";
+
+import QuickStartGoRequest from "/snippets/quickstart/golang-req.mdx";
+import QuickStartGoResponse from "/snippets/quickstart/golang-resp.mdx";
+
+## Prerequisites
+
+- A [Poixe account](https://poixe.com/dashboard)
+- An [API key](https://poixe.com/token)
+
+## Call the API
+
+<Tabs>
+  <Tab title="cURL">
+    <Steps>
+      <Step title="Set your API key">
+        Get your API key from the [Poixe dashboard](https://poixe.com/dashboard) and set it as an environment variable:
+
+        ```bash
+        export POIXE_API_KEY='your-api-key-here'
+        ```
+      </Step>
+
+      <Step title="Make your first API call">
+        Run this command to send your first Poixe API request:
+
+        <QuickstartCurlRequest />
+
+        **Example output:**
+
+        <QuickstartCurlResponse />
+      </Step>
+    </Steps>
+  </Tab>
+
+  <Tab title="TypeScript">
+    <Steps>
+      <Step title="Set your API key">
+        Get your API key from the [Poixe dashboard](https://poixe.com/dashboard) and set it as an environment variable:
+
+        ```bash
+        export POIXE_API_KEY='your-api-key-here'
+        ```
+      </Step>
+
+      <Step title="Install the SDK">
+        Install the OpenAI TypeScript SDK:
+
+        ```bash
+        npm install openai
+        ```
+      </Step>
+
+      <Step title="Create your code">
+        Save this as `quickstart.ts`:
+
+        <QuickStartTsRequest />
+      </Step>
+
+      <Step title="Run your code">
+        ```bash
+        npx tsx quickstart.ts
+        ```
+
+        **Example output:**
+        <QuickStartTsResponse />
+      </Step>
+    </Steps>
+
+  </Tab>
+
+  <Tab title="Python">
+    <Steps>
+      <Step title="Set your API key">
+        Get your API key from the [Poixe dashboard](https://poixe.com/dashboard) and set it as an environment variable:
+
+        ```bash
+        export POIXE_API_KEY='your-api-key-here'
+        ```
+      </Step>
+
+      <Step title="Install the SDK">
+        Install the OpenAI Python SDK:
+
+        ```bash
+        pip install openai
+        ```
+      </Step>
+
+      <Step title="Create your code">
+        Save this as `quickstart.py`:
+
+        <QuickStartPyRequest />
+      </Step>
+
+      <Step title="Run your code">
+        ```bash
+        python quickstart.py
+        ```
+
+        **Example output:**
+        <QuickStartPyResponse />
+      </Step>
+    </Steps>
+
+  </Tab>
+
+  <Tab title="Golang">
+    <Steps>
+      <Step title="Set your API key">
+        Get your API key from the [Poixe dashboard](https://poixe.com/dashboard) and set it as an environment variable:
+
+        ```bash
+        export POIXE_API_KEY='your-api-key-here'
+        ```
+      </Step>
+
+      <Step title="Initialize a Go module (optional)">
+        If you are working in a new directory, initialize a Go module first:
+
+        ```bash
+        mkdir poixe-go-quickstart && cd poixe-go-quickstart
+        go mod init main
+        ```
+      </Step>
+
+      <Step title="Install the SDK">
+        Install the OpenAI-compatible Go SDK (go-openai):
+
+        ```bash
+        go get github.com/sashabaranov/go-openai
+        ```
+      </Step>
+
+      <Step title="Create your code">
+        Save this as `main.go`:
+
+        <QuickStartGoRequest />
+      </Step>
+
+      <Step title="Run your code">
+        ```bash
+        go run main.go
+        ```
+
+        **Example output:**
+        <QuickStartGoResponse />
+      </Step>
+    </Steps>
+
+  </Tab>
+</Tabs>

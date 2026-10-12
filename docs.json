@@ -211,7 +211,167 @@
         "tabs": [
           {
             "tab": "Docs",
-            "groups": [{ "group": "Getting started", "pages": ["en/index"] }]
+            "groups": [
+              {
+                "group": "Get started",
+                "pages": [
+                  "en/docs/get-started/overview",
+                  "en/docs/get-started/quickstart",
+                  "en/docs/get-started/about",
+                  {
+                    "group": "Programs & credits",
+                    "pages": [
+                      "en/programs/campus",
+                      "en/programs/migration-openkey"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Models & pricing",
+                "pages": [
+                  "en/docs/models-pricing/models",
+                  "en/docs/models-pricing/pricing",
+                  "en/docs/models-pricing/rate-limits",
+                  "en/docs/models-pricing/provider-routing",
+                  "en/docs/models-pricing/nano-banana"
+                ]
+              },
+              {
+                "group": "Dashboard",
+                "pages": [
+                  "en/docs/dashboard/create-tokens",
+                  "en/docs/dashboard/top-up",
+                  "en/docs/dashboard/logs"
+                ]
+              },
+              {
+                "group": "Vendors",
+                "pages": [
+                  "en/docs/vendor/onboarding",
+                  "en/docs/vendor/integration",
+                  "en/docs/vendor/payouts"
+                ]
+              },
+              {
+                "group": "Enterprise",
+                "pages": ["en/docs/enterprise/invoicing"]
+              }
+            ]
+          },
+          {
+            "tab": "API Reference",
+            "groups": [
+              {
+                "group": "API Reference",
+                "pages": [
+                  "en/api-reference/introduction/overview",
+                  "en/api-reference/introduction/base-url",
+                  "en/api-reference/introduction/api-keys",
+                  "en/api-reference/introduction/protocols",
+                  "en/api-reference/introduction/model-naming",
+                  "en/api-reference/introduction/prompt-caching",
+                  {
+                    "group": "Error handling",
+                    "pages": [
+                      "en/api-reference/introduction/errors/overview",
+                      "en/api-reference/introduction/errors/upstream",
+                      "en/api-reference/introduction/errors/system",
+                      "en/api-reference/introduction/errors/unformatted"
+                    ]
+                  },
+                  {
+                    "group": "Differences from official APIs",
+                    "pages": [
+                      "en/api-reference/introduction/differences/overview",
+                      "en/api-reference/introduction/differences/cache",
+                      "en/api-reference/introduction/differences/tools",
+                      "en/api-reference/introduction/differences/reasoning-encrypted_content"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Text APIs",
+                "pages": [
+                  {
+                    "group": "OpenAI Chat Completions",
+                    "pages": [
+                      "en/api-reference/text-api/openai-completions/overview"
+                    ]
+                  },
+                  {
+                    "group": "OpenAI Responses",
+                    "pages": [
+                      "en/api-reference/text-api/openai-responses/overview"
+                    ]
+                  },
+                  {
+                    "group": "Anthropic Messages",
+                    "pages": [
+                      "en/api-reference/text-api/anthropic-messages/overview"
+                    ]
+                  },
+                  {
+                    "group": "Google Gemini Content",
+                    "pages": [
+                      "en/api-reference/text-api/google-gemini-content/overview"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "System APIs",
+                "pages": [
+                  {
+                    "group": "List models",
+                    "pages": ["en/api-reference/system-api/models/overview"]
+                  },
+                  {
+                    "group": "Interrupted response recovery",
+                    "pages": [
+                      "en/api-reference/system-api/recoveries/overview",
+                      "en/api-reference/system-api/recoveries/list",
+                      "en/api-reference/system-api/recoveries/get",
+                      "en/api-reference/system-api/recoveries/lookup",
+                      "en/api-reference/system-api/recoveries/delete",
+                      "en/api-reference/system-api/recoveries/delete-all"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Use Cases",
+            "groups": [
+              {
+                "group": "Use cases",
+                "pages": ["en/use-cases/introduction/overview"]
+              },
+              {
+                "group": "Chat",
+                "pages": ["en/use-cases/chat/cherry-studio"]
+              },
+              {
+                "group": "Coding",
+                "pages": [
+                  "en/use-cases/code/claude-code",
+                  "en/use-cases/code/codex",
+                  "en/use-cases/code/gemini-cli",
+                  "en/use-cases/code/opencode"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "Help & Support",
+            "groups": [
+              {
+                "group": "Help & Support",
+                "pages": ["en/help/introduction/overview"]
+              }
+            ]
           }
         ]
       }

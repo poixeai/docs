@@ -1,0 +1,42 @@
+---
+title: "Specifying a Model Provider (Routing)"
+sidebarTitle: "Specify Provider"
+---
+
+You can specify the upstream provider with a **model name prefix**. This is typically used when you want to pin a specific provider's AI models or have explicit requirements for consistent behavior.
+
+## Default routing (no provider specified)
+
+When you don't add a prefix, the system uses the **default route**: it automatically selects an available upstream.
+
+```text
+gpt-4o
+```
+
+## Specify a provider (add a prefix to the model name)
+
+Specify the provider using the `provider/<base_model>` format:
+
+```text
+openai/gpt-4o
+azure/gpt-5.2
+anthropic/claude-sonnet-4-5-20250929
+google/gemini-2.5-flash
+```
+
+## Note: specifying a provider may change the price
+
+- Billing prices for the **default route** and a **specified provider** may differ
+- Before using this in production, confirm the price and availability of the model at that provider before pinning it
+
+## Further reading
+
+<CardGroup cols={1}>
+  <Card
+    title="Model Naming (prefix / base model / :free)"
+    icon="tag"
+    href="/en/api-reference/introduction/model-naming"
+  >
+    See the full model naming rules, the free-model :free suffix, and more examples.
+  </Card>
+</CardGroup>

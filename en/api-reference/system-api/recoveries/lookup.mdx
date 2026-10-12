@@ -1,0 +1,67 @@
+---
+title: "Look Up Stored Responses (lookup)"
+sidebarTitle: "lookup"
+# description: "Submit the original request JSON to look up and return a list of possibly matching stored records."
+tag: "POST"
+icon: "arrow-up-right"
+---
+
+import LookupReq from "/snippets/recoveries/lookup.req.mdx";
+import LookupResp from "/snippets/recoveries/lookup.resp.mdx";
+
+<RequestExample>
+<LookupReq />
+</RequestExample>
+
+<ResponseExample>
+<LookupResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">POST</Badge>
+  `https://api.poixe.com/v1/recoveries/lookup`
+</div>
+
+When you can't determine the `request_id`, you can submit the **original request JSON** from that time (without any extra fields) to this endpoint, and the system returns a list of candidate stored records that may match.
+
+After you get a `request_id` from the candidate list, use [**Get details**](/en/api-reference/system-api/recoveries/get) to retrieve the full stored content.
+
+## Authentication and request headers
+
+Every API request must include your API key in the HTTP headers.
+
+<ParamField header="Authorization" type="string" required>
+  Bearer token. The format is `Bearer YOUR_API_KEY`.
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  Must be set to `application/json`.
+</ParamField>
+
+## Request body
+
+The request body must be **valid JSON** and should match the JSON originally sent in the upstream request as closely as possible (field order does not need to match).
+
+<ParamField body="(raw JSON)" type="object" required>
+  The original request JSON. For example: `{"model":"gpt-4o-mini","messages":[...],"stream":false}`.
+</ParamField>
+
+## Response structure
+
+<ResponseField name="items" type="object[]">
+  The list of candidate stored records (response bodies are not returned).
+  <Expandable title="items[] fields">
+    <ResponseField name="request_id" type="string">Request ID, the unique identifier used internally by the Poixe AI system</ResponseField>
+    <ResponseField name="created_at" type="integer">Creation time (Unix timestamp in seconds)</ResponseField>
+    <ResponseField name="interrupted_reason" type="string">Interruption reason (such as context canceled)</ResponseField>
+    <ResponseField name="request_body_hash" type="string">Request body hash (indicates the basis for the match)</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<Callout type="info" icon="info-circle">
+lookup generates a `request_body_hash` for the request body you submit and matches on it: the system parses the request body into a JSON object, outputs stable JSON with the **object keys sorted**, computes a `sha256`, and finally takes the **first 8 bytes (16 hex characters)** as the hash.
+
+It is therefore insensitive to these changes: JSON formatting differences (spaces, indentation, line breaks) and different object field order. 
+ 
+But it is highly sensitive to these changes (which alter the hash): any change in a field value, added or missing fields, and changes in array order (arrays are ordered and are not sorted). For example, an extra space in `messages` or a slight difference in `content` will change the hash.
+</Callout>

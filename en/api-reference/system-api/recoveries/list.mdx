@@ -1,0 +1,55 @@
+---
+title: "List Stored Responses"
+sidebarTitle: "List"
+# description: "List all stored records for the current user (key information only)."
+tag: "GET"
+icon: "arrow-down-left"
+---
+
+import ListReq from "/snippets/recoveries/list.req.mdx";
+import ListResp from "/snippets/recoveries/list.resp.mdx";
+
+<RequestExample>
+<ListReq />
+</RequestExample>
+
+<ResponseExample>
+<ListResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://api.poixe.com/v1/recoveries`
+</div>
+
+Lists all stored records for the current user. This endpoint returns only key information, including the `request_id`, and does not return the stored **response body**.
+
+After you get a `request_id`, use the [**Get details**](/en/api-reference/system-api/recoveries/get) endpoint to retrieve the full stored content.
+
+## Authentication and request headers
+
+Every API request must include your API key in the HTTP headers.
+
+<ParamField header="Authorization" type="string" required>
+  Bearer token. The format is `Bearer YOUR_API_KEY`.
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  Must be set to `application/json`.
+</ParamField>
+
+## Response structure
+
+<ResponseField name="count" type="integer">
+  The total number of stored records.
+</ResponseField>
+
+<ResponseField name="items" type="object[]">
+  The list of stored records.
+  <Expandable title="items[] fields">
+    <ResponseField name="request_id" type="string">Request ID, the unique identifier used internally by the Poixe AI system</ResponseField>
+    <ResponseField name="created_at" type="integer">Creation time (Unix timestamp in seconds)</ResponseField>
+    <ResponseField name="interrupted_reason" type="string">Interruption reason (such as context canceled)</ResponseField>
+    <ResponseField name="request_body_hash" type="string">Request body hash (used for lookup)</ResponseField>
+  </Expandable>
+</ResponseField>

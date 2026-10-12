@@ -1,0 +1,168 @@
+---
+title: "Prompt Caching (Cache Affinity Routing)"
+sidebarTitle: "Prompt Caching"
+# description: "Create and manage API Keys, and learn how to use them."
+---
+
+Poixe implements a **Cache Affinity Routing** mechanism to increase the cache hit rate of upstream APIs and thereby reduce actual billing costs.
+
+## Background
+
+Mainstream model providers (OpenAI, Anthropic, etc.) all offer **Prompt Caching**: when consecutive requests share the same prefix, or when caching is explicitly marked, the upstream reuses previously cached computation results and bills the cache-hit portion at a discount.
+
+But caching has a key constraint: **a cache is bound to a specific channel (API Key / account) and cannot be shared across channels.**
+
+In an aggregation gateway scenario, Poixe's backend connects to multiple upstream channels, and requests are allocated by default by a weighted load balancing module. This means consecutive requests from the same user may be distributed to different channels, causing the upstream cache to be invalidated frequently.
+
+Cache affinity routing exists to solve this problem.
+
+## How it works
+
+<Steps>
+  <Step title="First request">
+    A user requests a model (such as `claude-opus-4-6`). The system assigns it to an upstream channel using the normal weighting logic. After the request succeeds, the system records the binding: **user + model → channel**.
+  </Step>
+  <Step title="Subsequent requests">
+    While the binding is valid, that user's subsequent requests for the same model are **preferentially routed to the same channel**, so the upstream cache can be reused.
+  </Step>
+  <Step title="Binding expires">
+    Once the binding expires, the system falls back to the default weighted load balancing logic and reassigns a channel.
+  </Step>
+</Steps>
+
+## Binding expiration conditions
+
+Bindings are short-lived and fragile. They are automatically released when any of the following conditions is met:
+
+| Condition | Description |
+|------|------|
+| **TTL expiry** | A binding is forcibly invalidated **5 minutes** after creation, with no renewal |
+| **Request count limit** | A single binding carries at most **100** requests and is released automatically after that |
+| **Channel error** | If the bound channel returns any error (whether or not it is caused by the user's request body), the binding is released immediately |
+| **Insufficient channel rate** | After a request completes, if the channel's TPM / RPM is too low, the system declines to establish an affinity, prioritizing request health over caching benefits |
+
+<Callout type="info" icon="info-circle">
+  An expired binding does not cause requests to fail. The system immediately falls back to weighted load balancing and handles the request normally.
+</Callout>
+
+<Callout type="warning" icon="exclamation-triangle">
+    **Why proactively decline affinity when the rate is insufficient?** If affinity is established on a channel whose rate is already running short, the next request can easily trigger a rate limit and enter the retry phase, significantly increasing latency or even causing the request to fail. Following the principle of **request health over cache cost**, the system proactively gives up affinity in this case.
+</Callout>
+
+## Scope
+
+Cache affinity routing **does not apply to all models**. It is enabled only for specific models of the following protocols and providers:
+
+| Protocol | Provider | Enabled models |
+|------|------|---------|
+| OpenAI Chat Completions | OpenAI | `gpt-4o`, `gpt-4o-mini`, `...` |
+| OpenAI Responses | OpenAI | `gpt-4o`, `gpt-4o-mini`, `...` |
+| Anthropic Messages | Anthropic | `claude-opus-4-6`, `claude-sonnet-4-6`, `...` |
+
+<Callout type="warning" icon="exclamation-triangle">
+  This list is updated as upstream providers adjust their caching policies. Models not on the list use default load balancing and are unaffected.
+</Callout>
+
+## Actual savings
+Below is a real request example using **Claude Code + claude-opus-4-6**, showing how cache hits affect cost:
+<Tabs>
+  <Tab title="Request summary">
+    Open `claude` in a terminal and enter `hi` over several turns to trigger chat requests. The tokens actually billed by the upstream are as follows:
+
+    | Item | Tokens |
+    |------|---------|
+    | Input tokens | 1 |
+    | Output tokens | 146 |
+    | Cache write (5min) | 321 |
+    | **Cache hit** | **25,648** |
+
+    This is a typical Claude Code chat request: most of the prompt content (system prompt, project context, conversation history) was already cached by the previous request and is hit directly this time.
+  </Tab>
+
+  <Tab title="Cost comparison">
+    **claude-opus-4-6 official pricing ($/MTok)**
+
+    | Type | Unit price |
+    |------|------|
+    | Input | $5 |
+    | Output | $25 |
+    | Cache write (5min) | $6.25 |
+    | **Cache hit** | **$0.50** |
+
+    **Without caching: all 25,648 tokens billed at the input price**
+    | Item | Calculation | Cost |
+    |------|------|------|
+    | Input (including 25,648) | 25,970 × $5 / 1M | $0.12985 |
+    | Output | 146 × $25 / 1M | $0.00365 |
+    | **Total** | | **$0.13350** |
+
+    **With caching: 25,648 tokens hit the cache, billed at $0.50**
+
+    | Item | Calculation | Cost |
+    |------|------|------|
+    | Input | 1 × $5 / 1M | $0.000005 |
+    | Cache write | 321 × $6.25 / 1M | $0.00201 |
+    | Cache hit | 25,648 × $0.50 / 1M | $0.01282 |
+    | Output | 146 × $25 / 1M | $0.00365 |
+    | **Total** | | **$0.01849** |
+  </Tab>
+</Tabs>
+
+<CardGroup cols={3}>
+  <Card title="Savings per request" icon="piggy-bank">
+    <span style={{fontSize: "1.5rem", fontWeight: "bold"}}>86%</span>
+    <br />
+    \$0.1335 → \$0.0185
+  </Card>
+  <Card title="Cache hit price" icon="arrow-down">
+    <span style={{fontSize: "1.5rem", fontWeight: "bold"}}>1/10</span>
+    <br />
+    {/* $5.00 → $0.50 / MTok */}
+    {/* &#36;5.00 → &#36;0.50 / MTok */}
+    \$5.00 → \$0.50 / MTok
+  </Card>
+  <Card title="Claude Code scenario" icon="repeat">
+    <span style={{fontSize: "1.5rem", fontWeight: "bold"}}>~90%+</span>
+    <br />
+    Prompt cache hit rate in continuous conversations
+  </Card>
+</CardGroup>
+<Callout type="info" icon="calculator">
+  In a typical Claude Code workflow, every turn carries the full system prompt and project context (usually 20K~100K tokens), which stays almost unchanged between consecutive requests. **Cache affinity routing ensures these requests hit the cache of the same channel as often as possible**, reducing the unit price of these tokens from \$5/MTok to \$0.50/MTok.
+</Callout>
+
+## Design trade-offs
+
+Cache affinity routing is essentially a trade-off between **cache hit rate** and **traffic balance**:
+
+- **Short TTL + request limit**: prevents traffic from concentrating on a single channel for long periods and avoids load skew
+- **Unbind on error**: avoids continuing to route subsequent requests to a channel that has become unhealthy
+- **Best effort**: affinity routing is an optimization, not a hard guarantee; a failure at any step silently falls back to the default logic
+
+## Impact on users
+
+- **No configuration required**; it takes effect automatically
+- In coding assistant scenarios (Claude Code, Codex, etc.), the cache hit rate of continuous conversations improves significantly
+- When the cache is hit, the upstream bills at the discounted price, and Poixe's charges decrease accordingly
+
+## Recommendations for providers
+
+We recommend deploying **accounts with sufficiently high rate limits** for model channels. Accounts with insufficient rate limits carry the following cascading risks:
+
+- After a request completes, the system declines to establish affinity because the channel's rate is running short, wasting the caching opportunity of up to the next **100** consecutive requests
+- From a data-plane perspective, between a low-rate account and a high-rate account, **the worst case can produce nearly a 100x difference in effective cached traffic**
+
+<Callout type="warning" icon="exclamation-triangle">
+  **Where the 100x difference comes from**: a single affinity binding can carry up to 100 requests. If insufficient rate prevents affinity from being established, all 100 of those requests fall back to default load balancing and cannot keep hitting the same channel's cache; an account with sufficient rate can fully use the 100-request window. The maximum gap in cache utilization between the two is therefore ~100x.
+</Callout>
+
+## Upstream caching references
+
+<CardGroup cols={2}>
+  <Card title="OpenAI Prompt Caching" href="https://platform.openai.com/docs/guides/prompt-caching">
+    OpenAI's official Prompt Caching documentation, including caching rules and billing details
+  </Card>
+  <Card title="Anthropic Prompt Caching" href="https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching">
+    Anthropic's official Prompt Caching documentation, including caching rules and billing details
+  </Card>
+</CardGroup>

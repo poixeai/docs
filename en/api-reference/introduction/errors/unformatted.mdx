@@ -1,0 +1,23 @@
+---
+title: "Unformatted Errors"
+sidebarTitle: "Unformatted Errors"
+---
+
+Unformatted errors usually occur on the "client ↔ system" communication path. Their defining trait is that the response body may not be JSON, but plain text or an HTML page.
+
+## Common forms
+
+- HTML error pages (for example, error pages from a gateway/proxy/CDN)
+- Pages returned because of a request timeout
+- Network interruptions, connection resets, and similar (the client errors out directly, with no response body)
+
+## Typical example: CDN timeout page
+
+When a request goes through a CDN and hits a forced timeout (for example, 120 seconds), the client may receive an HTML page instead of standard JSON.
+
+## Recommendations
+
+- Clients should handle both:
+  - JSON errors (parseable)
+  - Non-JSON responses (log them as text and report them)
+- For troubleshooting: record the response headers whenever possible (such as `Poixe-Request-Id`, if available), and keep a fragment of the raw response content

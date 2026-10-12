@@ -1,0 +1,234 @@
+---
+title: "Migration Program (OpenKey Users)"
+sidebarTitle: "Migration Program"
+description: "Poixe Migration Program"
+---
+
+import {
+  Card,
+  CardGroup,
+  Steps,
+  Step,
+  Callout,
+  Badge,
+  AccordionGroup,
+  Accordion,
+} from "mintlify";
+
+export const CLAIM_URL = "https://poixe.com/programs/migration-openkey";
+export const CLAIM_DEADLINE = "January 20, 2026";
+
+If you are using the legacy platform **[OpenKey.Cloud](https://openkey.cloud)**, we strongly recommend that you also sign up for and start using **[Poixe AI](https://poixe.com)**.
+
+We originally built OpenKey on the open-source project **[one-api](https://github.com/songquanpeng/one-api)**. As our user base and requirements grew, the one-api architecture showed increasing limitations in **protocol support, extensibility, observability, billing, and the benefits system**. So we rebuilt Poixe from the ground up, adding many capabilities and gradually taking over OpenKey's core request path: **a considerable share of OpenKey's requests is already handled by Poixe**, which is stronger in both stability and capabilities.
+
+To thank **early OpenKey users** for their support, we are launching this migration program to help you transition smoothly to Poixe, with some benefits included.
+
+<Callout type="info" icon="sparkles">
+  <b>Migration note:</b> OpenKey remains available. However, all new features and new model capabilities (including multimodal capabilities) will be implemented on Poixe first, and gradually only on Poixe.
+</Callout>
+
+<Callout type="info" icon="info-circle">
+  <b>Additional note:</b> All benefits in this program are free, with no mandatory requirements. You won't incur any extra charges.
+</Callout>
+
+## Benefits
+
+{/* For all OpenKey users who registered before **{CLAIM_DEADLINE}**, we grant Poixe account balance (Credits) as a migration reward, with amounts as follows: */}
+
+For all OpenKey users who registered before **{CLAIM_DEADLINE}**, we offer two migration benefits:
+
+1. **Credits**: granted to your Poixe account balance and used to offset model calls
+2. **Level assessment**: Your Poixe Level is assessed automatically from historical top-up data. Migrating users have their relevant OpenKey history synced, so compared with newly registered users (default Level 0), you can usually raise your Level faster and get higher request rates and better discounts
+
+<CardGroup cols={2}>
+  <Card title="Regular users (OpenKey.Cloud)" icon="gift">
+    Get <b>$1 Credits (Poixe AI)</b>
+    <div style={{ marginTop: 8 }}>
+      <Badge>Eligibility required + manual claim</Badge>
+    </div>
+  </Card>
+
+  <Card title="Paid users (OpenKey.Cloud)" icon="gift">
+    Get <b>$5 Credits (Poixe AI)</b>
+    <div style={{ marginTop: 8 }}>
+      <Badge>Eligibility required + manual claim</Badge>
+    </div>
+  </Card>
+</CardGroup>
+
+<Card title="Level assessment (Poixe AI)" icon="badge-check">
+  Migrating users have their relevant OpenKey history synced for Poixe Level assessment and faster upgrades (new users default to Level 0).
+  <div style={{ marginTop: 8 }}>
+    <Badge>Automatic assessment, no action needed</Badge>
+  </div>
+</Card>
+
+<Callout type="info" icon="info-circle">
+  <b>Definition of paid user:</b> A user with any top-up/payment record on OpenKey. System records are final.
+</Callout>
+
+{/* <Callout type="warning" icon="calendar">
+  <b>Eligibility:</b> Only accounts registered on OpenKey <b>before 2026.01.20</b>
+  (with a bound email). Benefits must be claimed manually and are not granted automatically.
+</Callout> */}
+
+## Poixe vs OpenKey
+
+Here are the key differences between the two platforms (the reasons to migrate):
+
+| Dimension      | OpenKey (openkey.cloud)                        | Poixe (poixe.com)                                            |
+| -------------- | ---------------------------------------------- | ------------------------------------------------------------ |
+| Protocol support | Only <b>[Chat Completions](/en/api-reference/text-api/openai-completions/overview)</b> | Supports <b>[4 mainstream API protocols](/en/api-reference/introduction/protocols)</b> (compatible with more tools and clients)         |
+| Free models    | None                                           | The platform offers [free models](https://poixe.com/products/free) to all users, for example: `gpt-5.2:free`    |
+| Usage visibility | Basic logs only                              | Clearer <b>visual usage data</b>, billing, and statistics    |
+| Vendor onboarding | Not supported                               | Supports <b>[vendor onboarding](https://poixe.com/products/vendor)</b>: provide API resources to the platform and earn revenue       |
+| Choose model provider | Not supported                         | Supports selecting by provider, for example: `azure/gpt-5.2`, `openai/gpt-5.2`           |
+| Discounts and benefits | Price multipliers and top-up discounts stack, which is costly to understand | Balance is shown in <b>USD</b>; official pricing plus membership-level discounts, with clearer rules |
+| New features / new models | Mostly maintenance                  | <b>Released first</b>, and gradually only on Poixe (including multimodal)           |
+
+<Callout type="info" icon="book-open">
+  <b>Compatibility:</b> Poixe supports more protocols and clients. As long as a project supports a custom endpoint URL, you can generally get started quickly.
+</Callout>
+
+## How to claim your benefits
+
+Benefits are not granted automatically. You need to complete 3 steps manually:
+
+<Steps>
+  <Step title="Confirm your OpenKey account is eligible">
+    1) The OpenKey account <b>has a bound email</b><br/>
+    2) The OpenKey account was <b>registered before {CLAIM_DEADLINE}</b>
+  </Step>
+
+<Step title="Register on Poixe with the same email">
+  Register a Poixe account using your <b>OpenKey registration email</b> (the email must match).
+</Step>
+
+  <Step title="Open the claim page and click Claim">
+    Open the benefits page and follow the prompts to claim: <a href={CLAIM_URL} target="_blank">OpenKey migration benefits claim page</a><br/>
+    {/* After a successful claim, the credits are transferred directly to your Poixe account balance, and the result is sent by email. */}
+    After a successful claim, the credits are transferred directly to your Poixe account balance; a Level assessment is also triggered (migrating users have their relevant OpenKey history synced), and the result is sent to you by email.
+  </Step>
+</Steps>
+
+## Balance migration (not automatic)
+
+Because OpenKey and Poixe use different top-up and billing systems, this program does not automatically migrate your OpenKey balance to Poixe.
+
+You can first read the explanation of the differences and the conversion method below, and once you understand them, contact the support team for manual migration (we will help verify your records and make a manual transfer).
+
+## Top-up and billing differences (key to understanding the conversion)
+
+### OpenKey billing and discounts (simplified)
+
+- OpenKey's input/output token [prices](https://openkey.cloud/pricing) default to "**12x the official price**"
+- OpenKey credit is priced at: **1 RMB = 1 USD of OK credit** (there may be discounts in practice, for example 0.5 RMB for 1 USD of OK credit)
+- Because of the 12x multiplier, the OK credit you see is not equivalent to an "official USD balance"
+
+**Example: Alex spent 500 RMB on OK credit. What discount off the official price is that effectively?**
+
+- At current OK pricing, 500 RMB buys 1000 USD of OK credit
+- 1000 USD of OK credit = `1000 / 12 = 83.33 USD` of official spend
+- At the current exchange rate of 1 USD ≈ 7 RMB, 500 RMB is `500 / 7 ≈ 71.43 USD`
+- So "actually paid / official spend":
+  - `71.43 USD / 83.33 USD ≈ 0.857`
+  - That is about **85.7% of the official price, roughly a 14% discount**
+
+> This is also why OpenKey's "multiplier + top-up discount" combination is not very intuitive overall.
+
+### Poixe billing and discounts (more intuitive)
+
+- Poixe top-up balance is **shown directly in USD**: whatever USD amount you top up is the balance you see
+- After the theoretical cost is computed from the official per-token price, it is multiplied by your [benefit level discount](https://poixe.com/tiers/user) (level 0–3)
+  - Discount examples: `1.0` (full price), `0.8` (20% off), and so on
+- **Balance = real usable amount** (easy to understand)
+
+## How do I migrate my balance?
+
+Balance migration is handled manually. The approach is: **transfer based on the "actual amount paid" corresponding to your remaining OpenKey balance**.
+
+In other words, we convert the remaining balance on your OpenKey account back to "how much you actually paid (RMB)", then convert it to USD at the exchange rate and **top up your Poixe account balance directly**.
+
+<Callout type="info" icon="handshake">
+  <b>Manual migration process:</b> [Contact the support team](https://poixe.com/about/contact). We will verify your OpenKey order records and current remaining balance, calculate the transferable amount, and transfer it to Poixe.
+</Callout>
+
+### What you need to provide
+
+- OpenKey account email / username
+- Poixe account email / username
+- The balance you want to migrate
+- Order screenshots or related records (optional, but they speed up verification)
+
+### How we calculate and transfer
+
+1. **Verify your OpenKey order history and current remaining balance**
+2. **Calculate the actual amount paid (RMB) corresponding to the remaining balance**
+3. **Convert to USD at the exchange rate and transfer to your Poixe balance**
+   - `Poixe credit (USD) = corresponding refund amount (RMB) / exchange rate (RMB per USD)`
+
+> After the transfer, your Poixe balance is your real usable amount; usage is settled at Poixe's official pricing and level discounts.
+
+### An example (Alex)
+
+- Alex spent **500 RMB** on **1000 USD of OK credit**
+- Suppose **600 USD of OK credit** is still left
+
+We then convert the actual amount paid in proportion to what remains:
+
+1) Remaining share: `600 / 1000 = 60%`  
+2) Corresponding actual payment: `500 RMB × 60% = 300 RMB`  
+3) Convert at `1 USD ≈ 7 RMB`: `300 / 7 ≈ 42.86 USD`  
+
+Result: Alex's Poixe account balance will increase by about **$42.86**.
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="I registered on Poixe. Why didn't the credits arrive automatically?">
+    Migration credits are not granted automatically. After registering on Poixe with the same email as your OpenKey account, open the claim page and click Claim: <a href={CLAIM_URL} target="_blank">OpenKey migration benefits claim page</a>.
+  </Accordion>
+
+<Accordion title="Who is eligible to claim?">
+  Only OpenKey accounts registered before **{CLAIM_DEADLINE}** that have a bound email. When claiming, the Poixe
+  account email must match the OpenKey registration email.
+</Accordion>
+
+<Accordion title="Can I keep using OpenKey? Will it be shut down?">
+  OpenKey is still available for now. However, new features and new model capabilities (including multimodal) will be implemented on
+  Poixe first, and gradually only on Poixe. We recommend migrating to Poixe early for fuller capabilities and a more stable experience.
+</Accordion>
+
+<Accordion title="Will my OpenKey balance be migrated to Poixe automatically?">
+  No. The top-up and billing systems differ, so you need to understand the conversion and then contact the support team for manual migration and transfer.
+</Accordion>
+
+<Accordion title="Can the migration credits be withdrawn?">
+  No. Credits can only be used to offset API usage on the Poixe platform.
+</Accordion>
+
+<Accordion title="What is Level assessment? Will it affect my balance or withdrawals?">
+  Level is Poixe's user benefit tier, which determines benefits such as rate limits and model price discounts.
+  
+  Migrating users have their relevant OpenKey history synced for Level assessment and faster upgrades.
+  
+  <b>Note:</b> Level assessment is not a balance migration. Your OpenKey balance is not transferred to Poixe automatically; balance migration still requires manual handling.
+</Accordion>
+
+  <Accordion title="What if my OpenKey account had no bound email?">
+    Please bind an email in OpenKey first, then register on Poixe with the same email and claim. If you cannot bind one for historical reasons, contact the support team directly and explain your situation, and we will help you.
+  </Accordion>
+</AccordionGroup>
+
+## Start migrating
+
+<CardGroup cols={2}>
+  <Card title="OpenKey Migration Benefits Claim Page" href={CLAIM_URL}>
+    Open the claim page to claim your credits
+  </Card>
+
+  <Card title="Poixe Website" href="https://poixe.com">
+    Sign up and start using Poixe (new features are released first)
+  </Card>
+</CardGroup>

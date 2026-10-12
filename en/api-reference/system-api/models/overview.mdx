@@ -1,0 +1,74 @@
+---
+title: "List Models"
+sidebarTitle: "List models"
+# description: "List the currently available models and return basic information for each one (id / created / owned_by)."
+tag: "GET"
+icon: "arrow-down-left"
+---
+
+import ModelsReq from "/snippets/models/list.req.mdx";
+import ModelsResp from "/snippets/models/list.resp.mdx";
+
+<RequestExample>
+  <ModelsReq />
+</RequestExample>
+
+<ResponseExample>
+  <ModelsResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://api.poixe.com/v1/models`
+</div>
+
+Lists the models currently available on the Poixe API and returns basic information for each model, such as the model `id`, the creation time `created`, and the owner `owned_by`.
+
+This endpoint is commonly used to:
+
+- Dynamically display the list of available models in a client or console
+- Verify that a model name exists in automation scripts
+- Quickly confirm which model names can be entered in custom providers or third-party clients (such as Cherry Studio)
+
+<Callout type="info" icon="info-circle">
+  This endpoint **does not require authentication**. You can call it directly.
+</Callout>
+
+## Response structure
+
+<ResponseField name="object" type="string">
+  The object type, always `list`.
+</ResponseField>
+
+<ResponseField name="data" type="object[]">
+  The list of model objects.
+  <Expandable title="data[] fields (The model object)">
+    <ResponseField name="id" type="string">
+      The model identifier, which can be used directly as the `model` field in various API requests.
+    </ResponseField>
+    <ResponseField name="object" type="string">
+      The object type, always `model`.
+    </ResponseField>
+    <ResponseField name="created" type="integer">
+      The model creation time (Unix timestamp in seconds).
+    </ResponseField>
+    <ResponseField name="owned_by" type="string">
+      The model owner (for example `poixe`).
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<Callout type="info" icon="info-circle">
+  This is an OpenAI-compatible endpoint, but it does not send requests to OpenAI. Instead, the Poixe system compiles the list of currently available models.
+  
+  The results change as models are added to or removed from Poixe.
+</Callout>
+
+<CardGroup cols={1}>
+  <Card
+    title="Official reference: List models"
+    href="https://platform.openai.com/docs/api-reference/models/list"
+  >
+    View the fields and semantics of OpenAI's official models/list endpoint (Poixe is compatible with its structure).
+  </Card>
+</CardGroup>
