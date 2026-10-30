@@ -24,7 +24,7 @@ import DeleteResp from "/snippets/recoveries/delete.resp.mdx";
 
 Deletes the stored record with the specified `request_id`.
 
-If you are just unsure whether a response has been generated, we recommend using [**Get details**](/en/api-reference/system-api/recoveries/get) to confirm the content before deleting.
+If you are just unsure whether a response has been generated, we recommend using [**Get details**](/en/api-reference/extension-api/recoveries/get) to confirm the content before deleting.
 
 ## Authentication and request headers
 
@@ -41,7 +41,7 @@ Every API request must include your API key in the HTTP headers.
 ## Path parameters
 
 <ParamField path="request_id" type="string" required>
-  The request ID of the stored record (from [**List**](/en/api-reference/system-api/recoveries/list) / [**lookup**](/en/api-reference/system-api/recoveries/lookup)).
+  The request ID of the stored record (from [**List**](/en/api-reference/extension-api/recoveries/list) / [**lookup**](/en/api-reference/extension-api/recoveries/lookup)).
 </ParamField>
 
 ## Response structure

@@ -1,0 +1,67 @@
+---
+title: "获取账户余额（Balance）"
+sidebarTitle: "获取余额"
+tag: "GET"
+icon: "arrow-down-left"
+---
+
+import BalanceReq from "/snippets/balance/get.req.mdx";
+import BalanceResp from "/snippets/balance/get.resp.mdx";
+
+<RequestExample>
+  <BalanceReq />
+</RequestExample>
+
+<ResponseExample>
+  <BalanceResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://sys.poixe.com/api/account/balance`
+</div>
+
+查询当前账户的总余额与用户等级。
+
+该接口常用于：
+
+- 在自己的监控 / 告警系统中定时检查余额，余额不足时提醒
+- 在内部管理后台中展示账户余额
+
+<Callout type="warning" icon="triangle-exclamation">
+  该接口使用 **系统令牌**（`sys-` 开头），域名为 `sys.poixe.com`。`sk-` 开头的业务令牌（API 令牌）无法调用该接口。
+  系统令牌的创建与区别请参考 [系统令牌](/cn/docs/dashboard/system-tokens)。
+</Callout>
+
+## 鉴权与请求头
+
+<ParamField header="Authorization" type="string" required>
+  Bearer Token。格式为 `Bearer YOUR_SYSTEM_TOKEN`，其中令牌以 `sys-` 开头。
+</ParamField>
+
+<ParamField header="Content-Type" type="string">
+  可选。如设置，使用 `application/json`。
+</ParamField>
+
+## 响应结构
+
+<ResponseField name="balance" type="number">
+  账户总余额（单位 USD）。
+</ResponseField>
+
+<ResponseField name="level" type="integer">
+  用户等级。
+</ResponseField>
+
+<ResponseField name="timestamp" type="integer">
+  响应生成时间（Unix 秒级时间戳）。
+</ResponseField>
+
+## 错误响应
+
+| 状态码 | 说明 |
+|---|---|
+| `401` | 令牌无效、已过期或已被禁用 |
+| `403` | 权限不足 |
+
+更多说明见 [系统接口概览](/cn/api-reference/system-api/overview)。

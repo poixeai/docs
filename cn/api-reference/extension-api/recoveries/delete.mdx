@@ -24,7 +24,7 @@ import DeleteResp from "/snippets/recoveries/delete.resp.mdx";
 
 删除指定 `request_id` 的暂存记录。
 
-如果你只是不确定是否已经生成响应，建议先使用 [**获取详情**](/cn/api-reference/system-api/recoveries/get) 确认内容后再删除。
+如果你只是不确定是否已经生成响应，建议先使用 [**获取详情**](/cn/api-reference/extension-api/recoveries/get) 确认内容后再删除。
 
 ## 鉴权与请求头
 
@@ -41,7 +41,7 @@ import DeleteResp from "/snippets/recoveries/delete.resp.mdx";
 ## 路径参数
 
 <ParamField path="request_id" type="string" required>
-  暂存记录的请求 ID（来自 [**列出列表**](/cn/api-reference/system-api/recoveries/list) / [**lookup 反查**](/cn/api-reference/system-api/recoveries/lookup)）。
+  暂存记录的请求 ID（来自 [**列出列表**](/cn/api-reference/extension-api/recoveries/list) / [**lookup 反查**](/cn/api-reference/extension-api/recoveries/lookup)）。
 </ParamField>
 
 ## 响应结构

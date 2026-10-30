@@ -24,7 +24,7 @@ import GetResp from "/snippets/recoveries/get.resp.mdx";
 
 Gets the full details of a single stored response by `request_id` (including the **original request body** and the **full response body**).
 
-If you don't have a `request_id` yet, first use [**List**](/en/api-reference/system-api/recoveries/list) to get one, or use [**lookup**](/en/api-reference/system-api/recoveries/lookup) to find candidate records from the original request body.
+If you don't have a `request_id` yet, first use [**List**](/en/api-reference/extension-api/recoveries/list) to get one, or use [**lookup**](/en/api-reference/extension-api/recoveries/lookup) to find candidate records from the original request body.
 
 ## Authentication and request headers
 
@@ -41,7 +41,7 @@ Every API request must include your API key in the HTTP headers.
 ## Path parameters
 
 <ParamField path="request_id" type="string" required>
-  The request ID of the stored record. Usually obtained from [**List**](/en/api-reference/system-api/recoveries/list) or [**lookup**](/en/api-reference/system-api/recoveries/lookup).
+  The request ID of the stored record. Usually obtained from [**List**](/en/api-reference/extension-api/recoveries/list) or [**lookup**](/en/api-reference/extension-api/recoveries/lookup).
 </ParamField>
 
 ## Response structure

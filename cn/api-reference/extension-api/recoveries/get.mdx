@@ -24,7 +24,7 @@ import GetResp from "/snippets/recoveries/get.resp.mdx";
 
 通过 `request_id` 获取某一条暂存响应的完整详情（包含 **原始请求体** 与 **完整响应体**）。
 
-如果你还没有 `request_id`，可以先使用 [**列出列表**](/cn/api-reference/system-api/recoveries/list) 获取，或用 [**lookup 反查**](/cn/api-reference/system-api/recoveries/lookup) 通过原始请求体反查候选记录。
+如果你还没有 `request_id`，可以先使用 [**列出列表**](/cn/api-reference/extension-api/recoveries/list) 获取，或用 [**lookup 反查**](/cn/api-reference/extension-api/recoveries/lookup) 通过原始请求体反查候选记录。
 
 ## 鉴权与请求头
 
@@ -41,7 +41,7 @@ import GetResp from "/snippets/recoveries/get.resp.mdx";
 ## 路径参数
 
 <ParamField path="request_id" type="string" required>
-  暂存记录的请求 ID。通常来自 [**列出列表**](/cn/api-reference/system-api/recoveries/list) 或 [**lookup 反查**](/cn/api-reference/system-api/recoveries/lookup)。
+  暂存记录的请求 ID。通常来自 [**列出列表**](/cn/api-reference/extension-api/recoveries/list) 或 [**lookup 反查**](/cn/api-reference/extension-api/recoveries/lookup)。
 </ParamField>
 
 ## 响应结构

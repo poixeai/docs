@@ -42,6 +42,22 @@
     {
       "source": "/cn",
       "destination": "/cn/docs/get-started/overview"
+    },
+    {
+      "source": "/cn/api-reference/system-api/models/:slug*",
+      "destination": "/cn/api-reference/extension-api/models/:slug*"
+    },
+    {
+      "source": "/cn/api-reference/system-api/recoveries/:slug*",
+      "destination": "/cn/api-reference/extension-api/recoveries/:slug*"
+    },
+    {
+      "source": "/en/api-reference/system-api/models/:slug*",
+      "destination": "/en/api-reference/extension-api/models/:slug*"
+    },
+    {
+      "source": "/en/api-reference/system-api/recoveries/:slug*",
+      "destination": "/en/api-reference/extension-api/recoveries/:slug*"
     }
   ],
   "navigation": {
@@ -82,6 +98,7 @@
                 "group": "控制台",
                 "pages": [
                   "cn/docs/dashboard/create-tokens",
+                  "cn/docs/dashboard/system-tokens",
                   "cn/docs/dashboard/top-up",
                   "cn/docs/dashboard/logs"
                 ]
@@ -162,22 +179,32 @@
                 ]
               },
               {
-                "group": "系统接口",
+                "group": "扩展接口",
                 "pages": [
                   {
                     "group": "获取模型列表",
-                    "pages": ["cn/api-reference/system-api/models/overview"]
+                    "pages": ["cn/api-reference/extension-api/models/overview"]
                   },
                   {
                     "group": "中断响应找回",
                     "pages": [
-                      "cn/api-reference/system-api/recoveries/overview",
-                      "cn/api-reference/system-api/recoveries/list",
-                      "cn/api-reference/system-api/recoveries/get",
-                      "cn/api-reference/system-api/recoveries/lookup",
-                      "cn/api-reference/system-api/recoveries/delete",
-                      "cn/api-reference/system-api/recoveries/delete-all"
+                      "cn/api-reference/extension-api/recoveries/overview",
+                      "cn/api-reference/extension-api/recoveries/list",
+                      "cn/api-reference/extension-api/recoveries/get",
+                      "cn/api-reference/extension-api/recoveries/lookup",
+                      "cn/api-reference/extension-api/recoveries/delete",
+                      "cn/api-reference/extension-api/recoveries/delete-all"
                     ]
+                  }
+                ]
+              },
+              {
+                "group": "系统接口",
+                "pages": [
+                  "cn/api-reference/system-api/overview",
+                  {
+                    "group": "获取账户余额",
+                    "pages": ["cn/api-reference/system-api/balance/overview"]
                   }
                 ]
               }
@@ -251,6 +278,7 @@
                 "group": "Dashboard",
                 "pages": [
                   "en/docs/dashboard/create-tokens",
+                  "en/docs/dashboard/system-tokens",
                   "en/docs/dashboard/top-up",
                   "en/docs/dashboard/logs"
                 ]
@@ -331,22 +359,32 @@
                 ]
               },
               {
-                "group": "System APIs",
+                "group": "Extension APIs",
                 "pages": [
                   {
                     "group": "List models",
-                    "pages": ["en/api-reference/system-api/models/overview"]
+                    "pages": ["en/api-reference/extension-api/models/overview"]
                   },
                   {
                     "group": "Interrupted response recovery",
                     "pages": [
-                      "en/api-reference/system-api/recoveries/overview",
-                      "en/api-reference/system-api/recoveries/list",
-                      "en/api-reference/system-api/recoveries/get",
-                      "en/api-reference/system-api/recoveries/lookup",
-                      "en/api-reference/system-api/recoveries/delete",
-                      "en/api-reference/system-api/recoveries/delete-all"
+                      "en/api-reference/extension-api/recoveries/overview",
+                      "en/api-reference/extension-api/recoveries/list",
+                      "en/api-reference/extension-api/recoveries/get",
+                      "en/api-reference/extension-api/recoveries/lookup",
+                      "en/api-reference/extension-api/recoveries/delete",
+                      "en/api-reference/extension-api/recoveries/delete-all"
                     ]
+                  }
+                ]
+              },
+              {
+                "group": "System APIs",
+                "pages": [
+                  "en/api-reference/system-api/overview",
+                  {
+                    "group": "Get account balance",
+                    "pages": ["en/api-reference/system-api/balance/overview"]
                   }
                 ]
               }

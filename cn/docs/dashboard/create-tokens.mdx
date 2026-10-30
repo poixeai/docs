@@ -2,13 +2,17 @@
 title: "创建令牌"
 ---
 
-API 令牌用于标识你的调用身份，并决定可用额度与可选限制。你可以在这里管理令牌：
+API 令牌（业务令牌）用于标识你的调用身份，并决定可用额度与可选限制，**用于调用模型**（`api.poixe.com`，令牌以 `sk-` 开头）。你可以在这里管理令牌：
 
 <CardGroup cols={1}>
   <Card title="令牌管理" href="https://poixe.com/token">
     创建、查看、编辑或删除你的 API 令牌。
   </Card>
 </CardGroup>
+
+<Callout type="info" icon="info-circle">
+  如果你需要通过接口 **管理账户**（例如查询账户余额），请使用另一种令牌：[系统令牌](/cn/docs/dashboard/system-tokens)。两种令牌不能互换。
+</Callout>
 
 ## 创建令牌
 

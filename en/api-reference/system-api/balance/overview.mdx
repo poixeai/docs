@@ -1,0 +1,67 @@
+---
+title: "Get Account Balance"
+sidebarTitle: "Get balance"
+tag: "GET"
+icon: "arrow-down-left"
+---
+
+import BalanceReq from "/snippets/balance/get.req.mdx";
+import BalanceResp from "/snippets/balance/get.resp.mdx";
+
+<RequestExample>
+  <BalanceReq />
+</RequestExample>
+
+<ResponseExample>
+  <BalanceResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://sys.poixe.com/api/account/balance`
+</div>
+
+Returns the total balance and the user level of the current account.
+
+This endpoint is commonly used to:
+
+- Check the balance periodically from your own monitoring or alerting system, and get notified when it runs low
+- Display the account balance in an internal admin dashboard
+
+<Callout type="warning" icon="triangle-exclamation">
+  This endpoint uses a **system token** (starts with `sys-`) and the `sys.poixe.com` domain. API tokens (business tokens) starting with `sk-` cannot call it.
+  See [System Tokens](/en/docs/dashboard/system-tokens) for how to create one and how it differs from an API token.
+</Callout>
+
+## Authentication and headers
+
+<ParamField header="Authorization" type="string" required>
+  Bearer token. The format is `Bearer YOUR_SYSTEM_TOKEN`, where the token starts with `sys-`.
+</ParamField>
+
+<ParamField header="Content-Type" type="string">
+  Optional. If set, use `application/json`.
+</ParamField>
+
+## Response structure
+
+<ResponseField name="balance" type="number">
+  Total account balance (in USD).
+</ResponseField>
+
+<ResponseField name="level" type="integer">
+  The user level.
+</ResponseField>
+
+<ResponseField name="timestamp" type="integer">
+  The time the response was generated (Unix timestamp in seconds).
+</ResponseField>
+
+## Error responses
+
+| Status code | Description |
+|---|---|
+| `401` | The token is invalid, expired, or disabled |
+| `403` | Insufficient permissions |
+
+See the [System APIs overview](/en/api-reference/system-api/overview) for more.

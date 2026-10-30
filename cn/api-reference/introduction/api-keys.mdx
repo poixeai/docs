@@ -16,6 +16,10 @@ Poixe AI 使用 **API Key** 来标识调用身份，并决定可用额度与可�
   </Card>
 </CardGroup>
 
+<Callout type="info" icon="info-circle">
+  API Key（`sk-` 开头）仅用于调用模型（`api.poixe.com`）。如果你需要通过接口管理账户（例如查询余额），请使用 [系统令牌](/cn/docs/dashboard/system-tokens)（`sys-` 开头）与 [系统接口](/cn/api-reference/system-api/overview)。
+</Callout>
+
 ## Key 余额与账户余额
 
 创建 API Key 时，你可以为它设置一个 **Key 余额**（可理解为该 Key 的“预算上限/可用额度”）。

@@ -1,0 +1,59 @@
+---
+title: "System Tokens"
+---
+
+A System Token is used to **manage your account**, for example to query your account balance. It is a different kind of token from the [API token (business token)](/en/docs/dashboard/create-tokens) used to call models, so be careful not to mix them up.
+
+<CardGroup cols={1}>
+  <Card title="System Token Management" href="https://poixe.com/setting/system">
+    Create, view, and manage your system tokens.
+  </Card>
+</CardGroup>
+
+## System tokens vs. API tokens
+
+| | API token (business token) | System token |
+|---|---|---|
+| **Purpose** | Call models (chat, generation, etc.) | Manage account information and system operations |
+| **API domain** | `api.poixe.com` | `sys.poixe.com` |
+| **Token prefix** | `sk-` | `sys-` |
+| **Where to create** | [Token Management](https://poixe.com/token) | [System Tokens](https://poixe.com/setting/system) |
+| **Quota & restrictions** | Authorized quota, rate limits, and model restrictions | No quota; cannot be used to call models |
+| **Related docs** | [Text APIs](/en/api-reference/text-api/openai-completions/overview), [Extension APIs](/en/api-reference/extension-api/models/overview) | [System APIs](/en/api-reference/system-api/overview) |
+
+<Callout type="warning" icon="triangle-exclamation">
+  The two token types are **not interchangeable**: an API token starting with `sk-` cannot access the System APIs, and a system token cannot be used to call models.
+</Callout>
+
+## Create a system token
+
+Go to **Account Settings → System Tokens** and click **"Create New System Token"** on the right.
+
+The list shows the following information for each system token:
+
+- **Created at**, **ID**, and **Name**
+- **Status**, for example "Enabled"
+- **Expires at**: the token's validity period
+- **Note**: lets you record what the token is used for
+- **Actions**: click `···` on the right to manage the token
+
+<Callout type="info" icon="info-circle">
+  Each account can create up to **5** system tokens. Once you reach the limit, delete an old token before creating a new one.
+</Callout>
+
+## Available System APIs
+
+System tokens currently support the following feature only, with more to be added over time:
+
+<CardGroup cols={1}>
+  <Card title="Get account balance" icon="wallet" href="/en/api-reference/system-api/balance/overview">
+    GET https://sys.poixe.com/api/account/balance
+  </Card>
+</CardGroup>
+
+## Security recommendations
+
+- **Never expose it in frontend code**: system tokens manage your account, so use them only in your own backend services or local scripts
+- **Don't share it**: don't commit it to a repository, or paste it into tickets, chats, or screenshots
+- **Don't hard-code it**: inject it through environment variables or a secrets manager (CI/CD secrets, Vault, etc.)
+- **Clean up regularly**: delete tokens you no longer use; if you suspect a leak, delete the token immediately and create a new one

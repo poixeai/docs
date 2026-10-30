@@ -1,0 +1,59 @@
+---
+title: "系统令牌"
+---
+
+系统令牌（System Token）用于 **管理你的账户**，例如查询账户余额。它与用于调用模型的 [API 令牌（业务令牌）](/cn/docs/dashboard/create-tokens) 是两种不同的令牌，请注意区分。
+
+<CardGroup cols={1}>
+  <Card title="系统令牌管理" href="https://poixe.com/setting/system">
+    创建、查看与管理你的系统令牌。
+  </Card>
+</CardGroup>
+
+## 系统令牌与业务令牌的区别
+
+| | 业务令牌（API 令牌） | 系统令牌 |
+|---|---|---|
+| **用途** | 调用模型（对话、生成等） | 管理账户信息与系统操作 |
+| **接口域名** | `api.poixe.com` | `sys.poixe.com` |
+| **令牌前缀** | `sk-` | `sys-` |
+| **创建位置** | [令牌管理](https://poixe.com/token) | [系统令牌](https://poixe.com/setting/system) |
+| **额度与限制** | 可设置授权额度、速率与模型限制 | 无额度概念，不能用于调用模型 |
+| **对应文档** | [文本接口](/cn/api-reference/text-api/openai-completions/overview)、[扩展接口](/cn/api-reference/extension-api/models/overview) | [系统接口](/cn/api-reference/system-api/overview) |
+
+<Callout type="warning" icon="triangle-exclamation">
+  两种令牌 **不能互换**：`sk-` 开头的业务令牌无法访问系统接口，系统令牌也无法用于调用模型。
+</Callout>
+
+## 创建系统令牌
+
+进入 **账户设置 → 系统令牌** 页面，点击右侧的 **“创建新的系统令牌”**。
+
+列表中会展示每个系统令牌的以下信息：
+
+- **创建时间**、**ID**、**名称**
+- **状态**：例如“已启用”
+- **失效时间**：令牌的有效期
+- **备注**：便于你记录用途
+- **操作**：点击右侧 `···` 对令牌进行管理
+
+<Callout type="info" icon="info-circle">
+  每个账户最多可创建 **5 个** 系统令牌。超出限制时，需要先删除旧的令牌。
+</Callout>
+
+## 当前可用的系统接口
+
+目前系统令牌仅开放了以下功能，后续会陆续增加：
+
+<CardGroup cols={1}>
+  <Card title="获取账户余额" icon="wallet" href="/cn/api-reference/system-api/balance/overview">
+    GET https://sys.poixe.com/api/account/balance
+  </Card>
+</CardGroup>
+
+## 安全建议
+
+- **不要暴露在前端代码中**：系统令牌用于管理账户，请只在你自己的服务端或本地脚本中使用
+- **不要对外分享**：不要提交到代码仓库，不要贴在工单、聊天或截图里
+- **不要硬编码**：用环境变量或密钥管理系统（CI/CD Secret、Vault 等）注入
+- **定期清理**：不再使用的令牌及时删除；怀疑泄露时，立即删除并重新创建

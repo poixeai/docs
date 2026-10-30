@@ -2,13 +2,17 @@
 title: "Create a Token"
 ---
 
-An API token identifies your calls, and determines your available quota and optional restrictions. You can manage your tokens here:
+An API token (business token) identifies your calls and determines your available quota and optional restrictions. It is used to **call models** (`api.poixe.com`, and the token starts with `sk-`). You can manage your tokens here:
 
 <CardGroup cols={1}>
   <Card title="Token Management" href="https://poixe.com/token">
     Create, view, edit, or delete your API tokens.
   </Card>
 </CardGroup>
+
+<Callout type="info" icon="info-circle">
+  If you need to **manage your account** through an API (for example, to query your account balance), use a different kind of token: [System Tokens](/en/docs/dashboard/system-tokens). The two token types are not interchangeable.
+</Callout>
 
 ## Create a token
 

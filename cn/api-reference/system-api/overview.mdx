@@ -1,0 +1,53 @@
+---
+title: "系统接口概览"
+sidebarTitle: "概览"
+tag: "INFO"
+icon: "book-open"
+---
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">Base URL</Badge>
+  `https://sys.poixe.com`
+</div>
+
+系统接口用于 **管理你的账户**（例如查询账户余额），使用 **系统令牌**（System Token）进行鉴权。
+
+<Callout type="warning" icon="triangle-exclamation">
+  系统接口（`sys.poixe.com`）与调用模型的接口（`api.poixe.com`）是两套独立的服务，所使用的令牌也不同，请注意区分。
+</Callout>
+
+## 与其他接口的区别
+
+| | 系统接口 | 文本接口 / 扩展接口 |
+|---|---|---|
+| **用途** | 管理账户 | 调用模型、使用平台扩展功能 |
+| **域名** | `https://sys.poixe.com` | `https://api.poixe.com` |
+| **令牌** | 系统令牌（`sys-` 开头） | 业务令牌 / API 令牌（`sk-` 开头） |
+
+## 鉴权
+
+所有系统接口都需要在 HTTP Header 中携带系统令牌：
+
+```text
+Authorization: Bearer sys-xxxxxxxxxxxxxxxx
+```
+
+- 系统令牌必须以 `sys-` 开头
+- `sk-` 开头的令牌是业务令牌（API 令牌），**不能** 用于访问系统接口
+- 系统令牌可在 [系统令牌管理页面](https://poixe.com/setting/system) 创建，详见 [系统令牌](/cn/docs/dashboard/system-tokens)
+
+## 通用错误码
+
+| 状态码 | 说明 |
+|---|---|
+| `401` | 令牌无效、已过期或已被禁用 |
+| `403` | 权限不足 |
+| `404` | 资源不存在 |
+
+## 接口一览
+
+<CardGroup cols={1}>
+  <Card title="获取账户余额" href="/cn/api-reference/system-api/balance/overview">
+    GET /api/account/balance
+  </Card>
+</CardGroup>

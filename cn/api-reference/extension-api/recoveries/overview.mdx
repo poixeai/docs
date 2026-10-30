@@ -25,7 +25,7 @@ Recoveries（中断响应找回）用于解决一种常见情况：你发起了 
 
 - 客户端网络断开或波动导致连接中断
 - CDN / 代理层强制超时或断开连接
-- 系统接口短暂波动导致连接被关闭
+- 服务端短暂波动导致连接被关闭
 - 请求耗时较长，客户端超时先于上游完成
 
 ## 场景演示：请求中断后如何找回（核心步骤）
@@ -36,7 +36,7 @@ Recoveries（中断响应找回）用于解决一种常见情况：你发起了 
   </Step>
 
   <Step title="连接中断：客户端显示失败，但上游可能已完成">
-    常见原因包括：客户端网络断开、CDN 强制超时、系统接口短暂波动导致断开连接。
+    常见原因包括：客户端网络断开、CDN 强制超时、服务端短暂波动导致断开连接。
 
     <Callout type="info" icon="info-circle">
       **提示：** 非流式请求可能已经被上游正常处理并完成计费，只是结果没能回传到客户端。
@@ -58,20 +58,20 @@ Recoveries（中断响应找回）用于解决一种常见情况：你发起了 
     你可以通过以下任意方式获取 `request_id`：
     
     - **方式 A：控制台** <a href="https://poixe.com/log" target="_blank">日志页面</a> 查看对应请求日志，直接拿到 `request_id`
-    - **方式 B：调用** <a href="/cn/api-reference/system-api/recoveries/list">列出暂存响应</a> 获取列表中的 `request_id`
-    - **方式 C：调用** <a href="/cn/api-reference/system-api/recoveries/lookup">lookup 反查</a>，提交原始请求 JSON，返回候选记录并拿到 `request_id`
+    - **方式 B：调用** <a href="/cn/api-reference/extension-api/recoveries/list">列出暂存响应</a> 获取列表中的 `request_id`
+    - **方式 C：调用** <a href="/cn/api-reference/extension-api/recoveries/lookup">lookup 反查</a>，提交原始请求 JSON，返回候选记录并拿到 `request_id`
   </Step>
 
 <Step title="通过 request_id 找回完整内容">
   使用{" "}
-  <a href="/cn/api-reference/system-api/recoveries/get">获取暂存响应详情</a>：
+  <a href="/cn/api-reference/extension-api/recoveries/get">获取暂存响应详情</a>：
   `GET /v1/recoveries/{request_id}`，即可获取原始请求与完整响应体。
 </Step>
 
   <Step title="可选：清理暂存记录">
     找回完成后，你可以选择：
-    - 删除单条：<a href="/cn/api-reference/system-api/recoveries/delete">删除一条暂存响应</a>
-    - 删除全部：<a href="/cn/api-reference/system-api/recoveries/delete-all">删除所有暂存响应</a>（支持 `dry_run` 预演）
+    - 删除单条：<a href="/cn/api-reference/extension-api/recoveries/delete">删除一条暂存响应</a>
+    - 删除全部：<a href="/cn/api-reference/extension-api/recoveries/delete-all">删除所有暂存响应</a>（支持 `dry_run` 预演）
   </Step>
 </Steps>
 
@@ -80,31 +80,31 @@ Recoveries（中断响应找回）用于解决一种常见情况：你发起了 
 <CardGroup cols={2}>
   <Card
     title="列出暂存列表"
-    href="/cn/api-reference/system-api/recoveries/list"
+    href="/cn/api-reference/extension-api/recoveries/list"
   >
     GET /v1/recoveries
   </Card>
   <Card
     title="获取详情（找回响应）"
-    href="/cn/api-reference/system-api/recoveries/get"
+    href="/cn/api-reference/extension-api/recoveries/get"
   >
     GET /v1/recoveries/{request_id}
   </Card>
   <Card
     title="lookup 反查（无 request_id）"
-    href="/cn/api-reference/system-api/recoveries/lookup"
+    href="/cn/api-reference/extension-api/recoveries/lookup"
   >
     POST /v1/recoveries/lookup
   </Card>
   <Card
     title="删除单条暂存"
-    href="/cn/api-reference/system-api/recoveries/delete"
+    href="/cn/api-reference/extension-api/recoveries/delete"
   >
     DELETE /v1/recoveries/{request_id}
   </Card>
   <Card
     title="删除全部暂存（支持 dry_run）"
-    href="/cn/api-reference/system-api/recoveries/delete-all"
+    href="/cn/api-reference/extension-api/recoveries/delete-all"
   >
     DELETE /v1/recoveries?all=true
   </Card>

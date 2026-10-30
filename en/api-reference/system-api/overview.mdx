@@ -1,0 +1,53 @@
+---
+title: "System APIs Overview"
+sidebarTitle: "Overview"
+tag: "INFO"
+icon: "book-open"
+---
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">Base URL</Badge>
+  `https://sys.poixe.com`
+</div>
+
+System APIs are used to **manage your account** (for example, to query your account balance) and are authenticated with a **System Token**.
+
+<Callout type="warning" icon="triangle-exclamation">
+  The System APIs (`sys.poixe.com`) and the model-calling APIs (`api.poixe.com`) are two separate services that use different tokens. Be careful not to mix them up.
+</Callout>
+
+## How they differ from other APIs
+
+| | System APIs | Text APIs / Extension APIs |
+|---|---|---|
+| **Purpose** | Manage your account | Call models and use platform extension features |
+| **Domain** | `https://sys.poixe.com` | `https://api.poixe.com` |
+| **Token** | System token (starts with `sys-`) | API token / business token (starts with `sk-`) |
+
+## Authentication
+
+Every System API request must include your system token in the HTTP header:
+
+```text
+Authorization: Bearer sys-xxxxxxxxxxxxxxxx
+```
+
+- A system token must start with `sys-`
+- Tokens starting with `sk-` are API tokens (business tokens) and **cannot** be used to access the System APIs
+- Create a system token on the [System Tokens page](https://poixe.com/setting/system). See [System Tokens](/en/docs/dashboard/system-tokens) for details
+
+## Common error codes
+
+| Status code | Description |
+|---|---|
+| `401` | The token is invalid, expired, or disabled |
+| `403` | Insufficient permissions |
+| `404` | Resource not found |
+
+## Endpoints
+
+<CardGroup cols={1}>
+  <Card title="Get account balance" href="/en/api-reference/system-api/balance/overview">
+    GET /api/account/balance
+  </Card>
+</CardGroup>

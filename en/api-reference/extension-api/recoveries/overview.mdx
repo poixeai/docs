@@ -25,7 +25,7 @@ When a non-streaming request appears to fail or time out on the client, but you 
 
 - The client network drops or fluctuates, interrupting the connection
 - A CDN or proxy layer forces a timeout or closes the connection
-- A brief system interface fluctuation causes the connection to be closed
+- A brief server-side fluctuation causes the connection to be closed
 - The request takes a long time, and the client times out before the upstream provider finishes
 
 ## Walkthrough: how to recover after an interruption (core steps)
@@ -36,7 +36,7 @@ When a non-streaming request appears to fail or time out on the client, but you 
   </Step>
 
   <Step title="The connection is interrupted: the client shows a failure, but the upstream may have finished">
-    Common causes include a dropped client network, a CDN-enforced timeout, or a brief system interface fluctuation that closes the connection.
+    Common causes include a dropped client network, a CDN-enforced timeout, or a brief server-side fluctuation that closes the connection.
 
     <Callout type="info" icon="info-circle">
       **Note:** A non-streaming request may already have been processed and billed normally by the upstream provider, with only the result failing to reach the client.
@@ -58,20 +58,20 @@ When a non-streaming request appears to fail or time out on the client, but you 
     You can get the `request_id` in any of the following ways:
     
     - **Option A: Console.** Check the corresponding request log on the <a href="https://poixe.com/log" target="_blank">Logs page</a> and get the `request_id` directly
-    - **Option B: Call** <a href="/en/api-reference/system-api/recoveries/list">List stored responses</a> to get the `request_id` from the list
-    - **Option C: Call** <a href="/en/api-reference/system-api/recoveries/lookup">lookup</a>, submit the original request JSON, and receive candidate records along with the `request_id`
+    - **Option B: Call** <a href="/en/api-reference/extension-api/recoveries/list">List stored responses</a> to get the `request_id` from the list
+    - **Option C: Call** <a href="/en/api-reference/extension-api/recoveries/lookup">lookup</a>, submit the original request JSON, and receive candidate records along with the `request_id`
   </Step>
 
 <Step title="Recover the full content by request_id">
   Use{" "}
-  <a href="/en/api-reference/system-api/recoveries/get">Get stored response details</a>:
+  <a href="/en/api-reference/extension-api/recoveries/get">Get stored response details</a>:
   `GET /v1/recoveries/{request_id}` to retrieve the original request and the complete response body.
 </Step>
 
   <Step title="Optional: clean up stored records">
     After recovery, you can choose to:
-    - Delete a single record: <a href="/en/api-reference/system-api/recoveries/delete">Delete a stored response</a>
-    - Delete all records: <a href="/en/api-reference/system-api/recoveries/delete-all">Delete all stored responses</a> (supports a `dry_run` preview)
+    - Delete a single record: <a href="/en/api-reference/extension-api/recoveries/delete">Delete a stored response</a>
+    - Delete all records: <a href="/en/api-reference/extension-api/recoveries/delete-all">Delete all stored responses</a> (supports a `dry_run` preview)
   </Step>
 </Steps>
 
@@ -80,31 +80,31 @@ When a non-streaming request appears to fail or time out on the client, but you 
 <CardGroup cols={2}>
   <Card
     title="List stored responses"
-    href="/en/api-reference/system-api/recoveries/list"
+    href="/en/api-reference/extension-api/recoveries/list"
   >
     GET /v1/recoveries
   </Card>
   <Card
     title="Get details (recover a response)"
-    href="/en/api-reference/system-api/recoveries/get"
+    href="/en/api-reference/extension-api/recoveries/get"
   >
     GET /v1/recoveries/{request_id}
   </Card>
   <Card
     title="lookup (without a request_id)"
-    href="/en/api-reference/system-api/recoveries/lookup"
+    href="/en/api-reference/extension-api/recoveries/lookup"
   >
     POST /v1/recoveries/lookup
   </Card>
   <Card
     title="Delete a single stored response"
-    href="/en/api-reference/system-api/recoveries/delete"
+    href="/en/api-reference/extension-api/recoveries/delete"
   >
     DELETE /v1/recoveries/{request_id}
   </Card>
   <Card
     title="Delete all stored responses (supports dry_run)"
-    href="/en/api-reference/system-api/recoveries/delete-all"
+    href="/en/api-reference/extension-api/recoveries/delete-all"
   >
     DELETE /v1/recoveries?all=true
   </Card>
