@@ -1,0 +1,56 @@
+---
+title: "定价选项"
+sidebarTitle: "查询定价选项"
+tag: "GET"
+icon: "tag"
+---
+
+import PricingOptionsReq from "/snippets/system/channel-pricing-options.req.mdx";
+import PricingOptionsResp from "/snippets/system/channel-pricing-options.resp.mdx";
+
+<RequestExample>
+  <PricingOptionsReq />
+</RequestExample>
+
+<ResponseExample>
+  <PricingOptionsResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://sys.poixe.com/api/channels/pricing-options`
+</div>
+
+查询各渠道类型的可选价格配置。在 [创建渠道](/cn/api-reference/system-api/channel/create) 时，`price` 字段必须从本接口返回的 `prices` 列表中选取有效值。
+
+## 查询参数
+
+<ParamField query="channel_type" type="string">
+  按渠道类型 slug 过滤（可重复传入多个）。省略则返回所有类型。例：`?channel_type=openai_chatgpt&channel_type=anthropic_claude`
+</ParamField>
+
+## 响应字段
+
+返回数组，每项代表一个渠道类型的定价信息：
+
+<ResponseField name="type" type="string">
+  渠道类型 slug，如 `openai_chatgpt`
+</ResponseField>
+
+<ResponseField name="type_name" type="string">
+  渠道类型展示名称，如 `OpenAI ChatGPT`
+</ResponseField>
+
+<ResponseField name="prices" type="array">
+  该类型的可用价格配置列表：
+
+  <Expandable title="price 配置字段">
+    <ResponseField name="price" type="number">
+      价格倍率，创建渠道时须从此列表中选取
+    </ResponseField>
+    <ResponseField name="weight" type="integer">
+      该价格档位的系统路由权重，权重越高被分配请求的概率越大
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+

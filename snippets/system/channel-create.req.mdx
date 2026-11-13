@@ -1,0 +1,12 @@
+```bash curl
+curl https://sys.poixe.com/api/channels \
+  -X POST \
+  -H "Authorization: Bearer $POIXE_SYSTEM_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "openai_chatgpt",
+    "keys": ["enc:v2:k1:ABC...", "enc:v2:k1:DEF..."],
+    "price": 0.5,
+    "comment": "batch jan"
+  }'
+```

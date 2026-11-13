@@ -1,0 +1,124 @@
+---
+title: "Create Channel"
+sidebarTitle: "Create Channel"
+tag: "POST"
+icon: "plus"
+---
+
+import ChannelCreateReq from "/snippets/system/channel-create.req.mdx";
+import ChannelCreateResp from "/snippets/system/channel-create.resp.mdx";
+
+<RequestExample>
+  <ChannelCreateReq />
+</RequestExample>
+
+<ResponseExample>
+  <ChannelCreateResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">POST</Badge>
+  `https://sys.poixe.com/api/channels`
+</div>
+
+Asynchronously create one or more channels. Returns a task ID immediately — poll [Task Status](/en/api-reference/system-api/channel/task) for the result.
+
+<Callout type="warning" icon="triangle-exclamation">
+  The `keys` field must contain pre-encrypted ciphertext in `enc:v2:...` format. **Plaintext API Keys are not accepted.** Use the [encryption tools](/en/docs/vendor/key-security#encryption-tools--examples) to encrypt locally first.
+</Callout>
+
+## Request Body
+
+<ParamField body="type" type="string" required>
+  Channel type slug, chosen from the `type` field returned by [Pricing Options](/en/api-reference/system-api/channel/pricing-options).
+
+  <Expandable title="All channel types">
+    | slug | Display name |
+    |---|---|
+    | `openai_chatgpt` | OpenAI ChatGPT |
+    | `azure_chatgpt` | Azure ChatGPT |
+    | `anthropic_claude` | Anthropic Claude |
+    | `azure_claude` | Azure Claude |
+    | `aws_bedrock_claude` | AWS Bedrock Claude |
+    | `aws_platform_claude` | Claude Platform on AWS |
+    | `google_aistudio_gemini` | Google AI Studio Gemini |
+    | `google_vertex_gemini` | Google Vertex Gemini |
+    | `deepseek_deepseek` | DeepSeek DeepSeek |
+    | `xai_grok` | xAI Grok |
+    | `volcengine_deepseek` | Volcengine DeepSeek |
+    | `volcengine_doubao` | Volcengine Doubao |
+    | `aliyun_deepseek` | Aliyun DeepSeek |
+    | `aliyun_qwen` | Aliyun Qwen |
+    | `aliyun_kimi` | Aliyun Kimi |
+    | `siliconflow_deepseek` | SiliconFlow DeepSeek |
+    | `siliconflow_qwen` | SiliconFlow Qwen |
+    | `siliconflow_kimi` | SiliconFlow Kimi |
+    | `moonshot_kimi` | Moonshot Kimi |
+    | `chutes_deepseek` | Chutes DeepSeek |
+    | `chutes_qwen` | Chutes Qwen |
+    | `chutes_kimi` | Chutes Kimi |
+    | `chutes_chatgpt` | Chutes ChatGPT |
+    | `cerebras_chatgpt` | Cerebras ChatGPT |
+    | `groq_chatgpt` | Groq ChatGPT |
+    | `fireworks_chatgpt` | Fireworks ChatGPT |
+    | `novita_chatgpt` | Novita ChatGPT |
+    | `together_chatgpt` | Together ChatGPT |
+    | `nebius_chatgpt` | Nebius ChatGPT |
+    | `openrouter_chatgpt` | OpenRouter ChatGPT |
+    | `openrouter_claude` | OpenRouter Claude |
+    | `openrouter_gemini` | OpenRouter Gemini |
+  </Expandable>
+</ParamField>
+
+<ParamField body="keys" type="array" required>
+  List of pre-encrypted API Keys, each an `enc:v2:...` ciphertext string, 1–100 items
+</ParamField>
+
+<ParamField body="price" type="number" required>
+  Price multiplier — must be a valid value from the `prices` list returned by `/api/channels/pricing-options`
+</ParamField>
+
+<ParamField body="comment" type="string">
+  Optional label stored with every channel in this batch
+</ParamField>
+
+<ParamField body="base_url" type="string">
+  Required for Azure channel types. Full endpoint URL, must end with `.azure.com`. All keys in a single request must share the same `base_url` — submit separate requests for keys on different Azure endpoints
+</ParamField>
+
+<ParamField body="aws_region" type="string">
+  AWS types only. Defaults to `eu-central-1`. Valid values: `eu-central-1` · `eu-west-1` · `eu-west-2` · `us-east-1` · `us-east-2` · `us-west-2`
+</ParamField>
+
+## Key Format by Type
+
+| Type | Key content |
+|---|---|
+| Most types | Standard API key string |
+| `aws_platform_claude` | `"workspace_id api_key"` (space-separated, encrypted as one string) |
+| `google_vertex_gemini` | SA mode: full service account JSON; API key mode: `AIza...` string |
+
+## Response Fields
+
+<ResponseField name="task_id" type="string">
+  Task ID, used to poll [Task Status](/en/api-reference/system-api/channel/task)
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Informational message
+</ResponseField>
+
+<ResponseField name="timestamp" type="integer">
+  Response timestamp (Unix seconds)
+</ResponseField>
+
+## Errors
+
+| Condition | HTTP | type |
+|---|---|---|
+| Invalid type slug | 400 | `invalid_request_error` |
+| Key not an `enc:v2:` envelope | 400 | `invalid_request_error` |
+| Azure: missing or invalid `base_url` | 400 | `invalid_request_error` |
+| AWS: invalid `aws_region` | 400 | `invalid_request_error` |
+| Duplicate key detected by egress | 400 | `invalid_request_error` |
+| Channel count limit exceeded | 429 | `rate_limit_error` |

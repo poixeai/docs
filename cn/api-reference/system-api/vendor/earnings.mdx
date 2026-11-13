@@ -1,0 +1,63 @@
+---
+title: "供应商收益"
+sidebarTitle: "供应商收益"
+tag: "GET"
+icon: "chart-line"
+---
+
+import VendorEarningsReq from "/snippets/system/vendor-earnings.req.mdx";
+import VendorEarningsResp from "/snippets/system/vendor-earnings.resp.mdx";
+
+<RequestExample>
+  <VendorEarningsReq />
+</RequestExample>
+
+<ResponseExample>
+  <VendorEarningsResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://sys.poixe.com/api/vendor/earnings`
+</div>
+
+查询当前账户的供应商收益汇总，包括总收益、已结算金额和待结算金额，以及供给数据统计。
+
+## 响应字段
+
+<ResponseField name="tier" type="integer">
+  供应商等级
+</ResponseField>
+
+<ResponseField name="earnings" type="object">
+  收益汇总：
+
+  <Expandable title="earnings 字段">
+    <ResponseField name="total_earnings" type="number">
+      累计总收益，单位 USD，精确到 3 位小数
+    </ResponseField>
+    <ResponseField name="paid_cash" type="number">
+      已结算金额，单位 USD
+    </ResponseField>
+    <ResponseField name="unpaid_cash" type="number">
+      待结算金额，单位 USD
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="supply" type="object">
+  供给统计：
+
+  <Expandable title="supply 字段">
+    <ResponseField name="provided_quota" type="number">
+      累计提供的额度，单位 USD
+    </ResponseField>
+    <ResponseField name="request_count" type="integer">
+      累计服务的请求次数
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="timestamp" type="integer">
+  响应时间戳（Unix 秒）
+</ResponseField>

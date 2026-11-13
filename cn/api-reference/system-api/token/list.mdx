@@ -1,0 +1,128 @@
+---
+title: "令牌列表与详情"
+sidebarTitle: "获取令牌列表"
+tag: "GET"
+icon: "key"
+---
+
+import TokenListReq from "/snippets/system/token-list.req.mdx";
+import TokenListResp from "/snippets/system/token-list.resp.mdx";
+import TokenGetReq from "/snippets/system/token-get.req.mdx";
+import TokenGetResp from "/snippets/system/token-get.resp.mdx";
+
+<RequestExample>
+  <TokenListReq />
+</RequestExample>
+
+<ResponseExample>
+  <TokenListResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://sys.poixe.com/api/tokens`
+</div>
+
+分页获取当前账户的令牌列表。
+
+## 查询参数
+
+<ParamField query="page" type="integer" default="1">
+  页码（从 1 开始）
+</ParamField>
+
+<ParamField query="page_size" type="integer" default="20">
+  每页条数，最大 100
+</ParamField>
+
+<ParamField query="status" type="string">
+  按状态过滤，可选值：`enabled` · `disabled` · `expired` · `exhausted` · `compromised`
+</ParamField>
+
+## 响应字段
+
+<ResponseField name="total" type="integer">
+  令牌总数
+</ResponseField>
+
+<ResponseField name="page" type="integer">
+  当前页码
+</ResponseField>
+
+<ResponseField name="page_size" type="integer">
+  每页条数
+</ResponseField>
+
+<ResponseField name="items" type="array">
+  令牌列表，每项字段如下：
+
+  <Expandable title="令牌对象字段">
+    <ResponseField name="id" type="integer">
+      令牌 ID
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      令牌名称
+    </ResponseField>
+    <ResponseField name="key_mask" type="string">
+      令牌 Key 的脱敏展示，格式如 `sk-...wxyz`
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      令牌状态：`enabled` · `disabled` · `expired` · `exhausted` · `compromised` · `unknown`
+    </ResponseField>
+    <ResponseField name="created_at" type="integer">
+      创建时间戳（Unix 秒）
+    </ResponseField>
+    <ResponseField name="unlimited_quota" type="boolean">
+      是否为无限额度令牌。为 `true` 时，`remain_cash` 不受消耗限制，不应作为上限展示
+    </ResponseField>
+    <ResponseField name="usage" type="object">
+      用量统计：
+
+      <Expandable title="usage 字段">
+        <ResponseField name="remain_cash" type="number">
+          剩余余额，单位 USD。充值的钱减去已消耗金额后的余额
+        </ResponseField>
+        <ResponseField name="used_cash" type="number">
+          已消耗金额，单位 USD。从账户余额中扣减的实际费用
+        </ResponseField>
+        <ResponseField name="used_quota" type="number">
+          上游额度消耗，单位 USD。按官方计费价格计算的上游实际调用消耗量。Poixe 以折扣价转售官方额度，此字段反映真实的官方上游消耗
+        </ResponseField>
+        <ResponseField name="request_count" type="integer">
+          累计请求次数
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="timestamp" type="integer">
+  响应时间戳（Unix 秒）
+</ResponseField>
+
+## 获取单个令牌详情
+
+<RequestExample>
+  <TokenGetReq />
+</RequestExample>
+
+<ResponseExample>
+  <TokenGetResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://sys.poixe.com/api/tokens/:tokenID`
+</div>
+
+获取单个令牌的详情。
+
+## 路径参数
+
+<ParamField path="tokenID" type="integer" required>
+  令牌 ID
+</ParamField>
+
+## 响应
+
+返回单个令牌对象，字段与列表中的令牌对象相同，另附 `timestamp`。

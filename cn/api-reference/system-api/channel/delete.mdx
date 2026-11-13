@@ -1,0 +1,48 @@
+---
+title: "删除渠道"
+sidebarTitle: "删除渠道"
+tag: "DELETE"
+icon: "trash"
+---
+
+import ChannelDeleteReq from "/snippets/system/channel-delete.req.mdx";
+import ChannelDeleteResp from "/snippets/system/channel-delete.resp.mdx";
+
+<RequestExample>
+  <ChannelDeleteReq />
+</RequestExample>
+
+<ResponseExample>
+  <ChannelDeleteResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">DELETE</Badge>
+  `https://sys.poixe.com/api/channels`
+</div>
+
+批量删除指定渠道。删除后，渠道将被标记为删除状态，不可恢复。不属于当前账户的 ID 会被静默忽略。
+
+<Callout type="warning" icon="triangle-exclamation">
+  删除操作不可撤销。若需暂停渠道而非永久删除，请在供应商面板中手动禁用渠道。
+</Callout>
+
+## 请求体
+
+<ParamField body="ids" type="array" required>
+  要删除的渠道 ID 列表（整数数组），不得为空
+</ParamField>
+
+## 响应字段
+
+<ResponseField name="deleted_count" type="integer">
+  本次成功删除的渠道数
+</ResponseField>
+
+<ResponseField name="deleted_ids" type="array">
+  实际被删除的渠道 ID 列表
+</ResponseField>
+
+<ResponseField name="timestamp" type="integer">
+  响应时间戳（Unix 秒）
+</ResponseField>

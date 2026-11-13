@@ -19,6 +19,9 @@
       "href": "https://poixe.com/dashboard"
     }
   },
+  "contextual": {
+    "options": ["copy", "view", "chatgpt", "claude", "perplexity", "mcp", "cursor", "vscode"]
+  },
   "footer": {
     "socials": {
       "website": "https://poixe.com",
@@ -42,6 +45,14 @@
     {
       "source": "/cn",
       "destination": "/cn/docs/get-started/overview"
+    },
+    {
+      "source": "/cn/api-reference/system-api/balance/:slug*",
+      "destination": "/cn/api-reference/system-api/account/overview"
+    },
+    {
+      "source": "/en/api-reference/system-api/balance/:slug*",
+      "destination": "/en/api-reference/system-api/account/overview"
     },
     {
       "source": "/cn/api-reference/system-api/models/:slug*",
@@ -74,6 +85,7 @@
                 "pages": [
                   "cn/docs/get-started/overview",
                   "cn/docs/get-started/quickstart",
+                  "cn/docs/get-started/prerequisites",
                   "cn/docs/get-started/about",
                   {
                     "group": "计划与赠金",
@@ -108,7 +120,8 @@
                 "pages": [
                   "cn/docs/vendor/onboarding",
                   "cn/docs/vendor/integration",
-                  "cn/docs/vendor/payouts"
+                  "cn/docs/vendor/payouts",
+                  "cn/docs/vendor/key-security"
                 ]
               },
               {
@@ -203,8 +216,33 @@
                 "pages": [
                   "cn/api-reference/system-api/overview",
                   {
-                    "group": "获取账户余额",
-                    "pages": ["cn/api-reference/system-api/balance/overview"]
+                    "group": "账户",
+                    "pages": ["cn/api-reference/system-api/account/overview"]
+                  },
+                  {
+                    "group": "令牌",
+                    "pages": [
+                      "cn/api-reference/system-api/token/list",
+                      "cn/api-reference/system-api/token/lookup"
+                    ]
+                  },
+                  {
+                    "group": "渠道",
+                    "pages": [
+                      "cn/api-reference/system-api/channel/list",
+                      "cn/api-reference/system-api/channel/pricing-options",
+                      "cn/api-reference/system-api/channel/create",
+                      "cn/api-reference/system-api/channel/task",
+                      "cn/api-reference/system-api/channel/delete"
+                    ]
+                  },
+                  {
+                    "group": "供应商",
+                    "pages": ["cn/api-reference/system-api/vendor/earnings"]
+                  },
+                  {
+                    "group": "流量主",
+                    "pages": ["cn/api-reference/system-api/affiliate/earnings"]
                   }
                 ]
               }
@@ -254,6 +292,7 @@
                 "pages": [
                   "en/docs/get-started/overview",
                   "en/docs/get-started/quickstart",
+                  "en/docs/get-started/prerequisites",
                   "en/docs/get-started/about",
                   {
                     "group": "Programs & credits",
@@ -288,7 +327,8 @@
                 "pages": [
                   "en/docs/vendor/onboarding",
                   "en/docs/vendor/integration",
-                  "en/docs/vendor/payouts"
+                  "en/docs/vendor/payouts",
+                  "en/docs/vendor/key-security"
                 ]
               },
               {
@@ -383,8 +423,33 @@
                 "pages": [
                   "en/api-reference/system-api/overview",
                   {
-                    "group": "Get account balance",
-                    "pages": ["en/api-reference/system-api/balance/overview"]
+                    "group": "Account",
+                    "pages": ["en/api-reference/system-api/account/overview"]
+                  },
+                  {
+                    "group": "Token",
+                    "pages": [
+                      "en/api-reference/system-api/token/list",
+                      "en/api-reference/system-api/token/lookup"
+                    ]
+                  },
+                  {
+                    "group": "Channel",
+                    "pages": [
+                      "en/api-reference/system-api/channel/list",
+                      "en/api-reference/system-api/channel/pricing-options",
+                      "en/api-reference/system-api/channel/create",
+                      "en/api-reference/system-api/channel/task",
+                      "en/api-reference/system-api/channel/delete"
+                    ]
+                  },
+                  {
+                    "group": "Vendor",
+                    "pages": ["en/api-reference/system-api/vendor/earnings"]
+                  },
+                  {
+                    "group": "Affiliate",
+                    "pages": ["en/api-reference/system-api/affiliate/earnings"]
                   }
                 ]
               }

@@ -1,5 +1,5 @@
 ---
-title: "System APIs Overview"
+title: "System API Overview"
 sidebarTitle: "Overview"
 tag: "INFO"
 icon: "book-open"
@@ -10,44 +10,99 @@ icon: "book-open"
   `https://sys.poixe.com`
 </div>
 
-System APIs are used to **manage your account** (for example, to query your account balance) and are authenticated with a **System Token**.
+The System API is used to programmatically manage accounts, tokens, channels, and earnings data. All requests are authenticated using a **System Token**.
 
 <Callout type="warning" icon="triangle-exclamation">
-  The System APIs (`sys.poixe.com`) and the model-calling APIs (`api.poixe.com`) are two separate services that use different tokens. Be careful not to mix them up.
+  The System API (`sys.poixe.com`) and the model inference API (`api.poixe.com`) are two separate services with different token types. Do not mix them up.
 </Callout>
 
-## How they differ from other APIs
+## Comparison with Other APIs
 
-| | System APIs | Text APIs / Extension APIs |
+| | System API | Inference / Extension API |
 |---|---|---|
-| **Purpose** | Manage your account | Call models and use platform extension features |
+| **Purpose** | Account management, channel management, earnings | Model inference, extended features |
 | **Domain** | `https://sys.poixe.com` | `https://api.poixe.com` |
-| **Token** | System token (starts with `sys-`) | API token / business token (starts with `sk-`) |
+| **Token** | System token (`sys-` prefix) | Business token (`sk-` prefix) |
 
 ## Authentication
 
-Every System API request must include your system token in the HTTP header:
+All System API requests require a system token in the HTTP Authorization header:
 
 ```text
 Authorization: Bearer sys-xxxxxxxxxxxxxxxx
 ```
 
-- A system token must start with `sys-`
-- Tokens starting with `sk-` are API tokens (business tokens) and **cannot** be used to access the System APIs
-- Create a system token on the [System Tokens page](https://poixe.com/setting/system). See [System Tokens](/en/docs/dashboard/system-tokens) for details
+System tokens must start with `sys-`. Business tokens (`sk-` prefix) **cannot** be used with the System API. System tokens can be created on the [System Token settings page](https://poixe.com/setting/system). See [System Tokens](/en/docs/dashboard/system-tokens) for details.
 
-## Common error codes
+## Pagination
 
-| Status code | Description |
-|---|---|
-| `401` | The token is invalid, expired, or disabled |
-| `403` | Insufficient permissions |
-| `404` | Resource not found |
+List endpoints that support pagination are controlled via query parameters:
 
-## Endpoints
+| Parameter | Default | Max | Description |
+|---|---|---|---|
+| `page` | `1` | — | Page number (1-indexed) |
+| `page_size` | `20` | `100` | Items per page |
 
-<CardGroup cols={1}>
-  <Card title="Get account balance" href="/en/api-reference/system-api/balance/overview">
-    GET /api/account/balance
+List response structure:
+
+```json
+{
+  "total": 42,
+  "page": 1,
+  "page_size": 20,
+  "items": [...],
+  "timestamp": 1731337200
+}
+```
+
+## Rate Limits
+
+| Level | Scope | Limit |
+|---|---|---|
+| Global | Per user (all routes) | 120 RPM |
+| Global | Per IP (all routes) | 120 RPM |
+| Per-route | See individual endpoint docs | Varies |
+
+Exceeding the limit returns `429 rate_limit_error`.
+
+## Common Error Format
+
+```json
+{
+  "error": {
+    "type": "invalid_request_error",
+    "message": "ids must be a non-empty array of channel IDs"
+  }
+}
+```
+
+| Status | type | Description |
+|---|---|---|
+| `400` | `invalid_request_error` | Invalid request parameters |
+| `401` | `forbidden_error` | Token invalid, expired, or disabled |
+| `403` | `forbidden_error` | Insufficient permissions |
+| `404` | `resource_not_found_error` | Resource not found |
+| `429` | `rate_limit_error` | Rate limit exceeded |
+| `500` | `internal_error` | Internal server error |
+
+All currency fields are in **USD**, rounded to **3 decimal places**.
+
+## API Reference
+
+<CardGroup cols={2}>
+  <Card title="Account" href="/en/api-reference/system-api/account/overview" icon="user">
+    GET /api/account — Account info and balance
+  </Card>
+  <Card title="Token" href="/en/api-reference/system-api/token/list" icon="key">
+    /api/tokens — Token queries and management
+  </Card>
+  <Card title="Channel" href="/en/api-reference/system-api/channel/list" icon="plug">
+    /api/channels — Channel management and creation
+  </Card>
+  <Card title="Vendor" href="/en/api-reference/system-api/vendor/earnings" icon="chart-line">
+    GET /api/vendor/earnings — Vendor earnings
+  </Card>
+  <Card title="Affiliate" href="/en/api-reference/system-api/affiliate/earnings" icon="users">
+    GET /api/affiliate/earnings — Affiliate earnings
   </Card>
 </CardGroup>

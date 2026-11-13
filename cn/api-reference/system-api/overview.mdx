@@ -10,44 +10,99 @@ icon: "book-open"
   `https://sys.poixe.com`
 </div>
 
-系统接口用于 **管理你的账户**（例如查询账户余额），使用 **系统令牌**（System Token）进行鉴权。
+系统接口用于程序化管理账户、令牌、渠道与收益数据，使用**系统令牌**（System Token）进行鉴权。
 
 <Callout type="warning" icon="triangle-exclamation">
-  系统接口（`sys.poixe.com`）与调用模型的接口（`api.poixe.com`）是两套独立的服务，所使用的令牌也不同，请注意区分。
+  系统接口（`sys.poixe.com`）与调用模型的接口（`api.poixe.com`）是两套独立的服务，令牌类型也不同，请注意区分。
 </Callout>
 
 ## 与其他接口的区别
 
 | | 系统接口 | 文本接口 / 扩展接口 |
 |---|---|---|
-| **用途** | 管理账户 | 调用模型、使用平台扩展功能 |
+| **用途** | 账户管理、渠道管理、收益查询 | 调用模型、扩展功能 |
 | **域名** | `https://sys.poixe.com` | `https://api.poixe.com` |
-| **令牌** | 系统令牌（`sys-` 开头） | 业务令牌 / API 令牌（`sk-` 开头） |
+| **令牌** | 系统令牌（`sys-` 开头） | 业务令牌（`sk-` 开头） |
 
 ## 鉴权
 
-所有系统接口都需要在 HTTP Header 中携带系统令牌：
+所有系统接口请求都需要在 HTTP Header 中携带系统令牌：
 
 ```text
 Authorization: Bearer sys-xxxxxxxxxxxxxxxx
 ```
 
-- 系统令牌必须以 `sys-` 开头
-- `sk-` 开头的令牌是业务令牌（API 令牌），**不能** 用于访问系统接口
-- 系统令牌可在 [系统令牌管理页面](https://poixe.com/setting/system) 创建，详见 [系统令牌](/cn/docs/dashboard/system-tokens)
+系统令牌必须以 `sys-` 开头，`sk-` 开头的业务令牌**不能**用于系统接口。系统令牌可在 [系统令牌管理页面](https://poixe.com/setting/system) 创建，详见 [系统令牌](/cn/docs/dashboard/system-tokens)。
 
-## 通用错误码
+## 分页
 
-| 状态码 | 说明 |
-|---|---|
-| `401` | 令牌无效、已过期或已被禁用 |
-| `403` | 权限不足 |
-| `404` | 资源不存在 |
+支持分页的列表接口通过 Query 参数控制：
+
+| 参数 | 默认值 | 最大值 | 说明 |
+|---|---|---|---|
+| `page` | `1` | — | 页码（从 1 开始） |
+| `page_size` | `20` | `100` | 每页条数 |
+
+列表响应结构：
+
+```json
+{
+  "total": 42,
+  "page": 1,
+  "page_size": 20,
+  "items": [...],
+  "timestamp": 1731337200
+}
+```
+
+## 速率限制
+
+| 层级 | 范围 | 限制 |
+|---|---|---|
+| 全局 | 每个用户（所有路由） | 120 RPM |
+| 全局 | 每个 IP（所有路由） | 120 RPM |
+| 路由级 | 见各接口说明 | 各不相同 |
+
+超出限制返回 `429 rate_limit_error`。
+
+## 通用错误格式
+
+```json
+{
+  "error": {
+    "type": "invalid_request_error",
+    "message": "ids must be a non-empty array of channel IDs"
+  }
+}
+```
+
+| 状态码 | type | 说明 |
+|---|---|---|
+| `400` | `invalid_request_error` | 请求参数有误 |
+| `401` | `forbidden_error` | 令牌无效、已过期或已禁用 |
+| `403` | `forbidden_error` | 权限不足 |
+| `404` | `resource_not_found_error` | 资源不存在 |
+| `429` | `rate_limit_error` | 超出速率限制 |
+| `500` | `internal_error` | 服务内部错误 |
+
+所有货币字段单位为 **USD**，精确到 **3 位小数**。
 
 ## 接口一览
 
-<CardGroup cols={1}>
-  <Card title="获取账户余额" href="/cn/api-reference/system-api/balance/overview">
-    GET /api/account/balance
+<CardGroup cols={2}>
+  <Card title="账户" href="/cn/api-reference/system-api/account/overview" icon="user">
+    GET /api/account — 账户信息与余额
+  </Card>
+  <Card title="令牌" href="/cn/api-reference/system-api/token/list" icon="key">
+    /api/tokens — 令牌查询与管理
+  </Card>
+  <Card title="渠道" href="/cn/api-reference/system-api/channel/list" icon="plug">
+    /api/channels — 渠道管理与创建
+  </Card>
+  <Card title="供应商" href="/cn/api-reference/system-api/vendor/earnings" icon="chart-line">
+    GET /api/vendor/earnings — 供应商收益
+  </Card>
+  <Card title="流量主" href="/cn/api-reference/system-api/affiliate/earnings" icon="users">
+    GET /api/affiliate/earnings — 推广收益
   </Card>
 </CardGroup>

@@ -1,0 +1,48 @@
+---
+title: "令牌查询（by key）"
+sidebarTitle: "令牌查询"
+tag: "POST"
+icon: "magnifying-glass"
+---
+
+import TokenLookupReq from "/snippets/system/token-lookup.req.mdx";
+import TokenLookupResp from "/snippets/system/token-lookup.resp.mdx";
+
+<RequestExample>
+  <TokenLookupReq />
+</RequestExample>
+
+<ResponseExample>
+  <TokenLookupResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">POST</Badge>
+  `https://sys.poixe.com/api/tokens/lookup`
+</div>
+
+通过令牌 Key（`sk-` 开头的字符串）反查令牌 ID。适用于已知令牌值、需要获取其 ID 的场景。
+
+## 请求体
+
+<ParamField body="key" type="string" required>
+  令牌 Key，必须以 `sk-` 开头，且属于当前账户
+</ParamField>
+
+## 响应字段
+
+<ResponseField name="id" type="integer">
+  令牌 ID
+</ResponseField>
+
+<ResponseField name="timestamp" type="integer">
+  响应时间戳（Unix 秒）
+</ResponseField>
+
+## 错误
+
+| 条件 | HTTP | type |
+|---|---|---|
+| `key` 缺失或为空 | 400 | `invalid_request_error` |
+| `key` 不以 `sk-` 开头 | 400 | `invalid_request_error` |
+| Key 不存在或不属于当前账户 | 404 | `resource_not_found_error` |

@@ -1,0 +1,50 @@
+---
+title: "Affiliate Earnings"
+sidebarTitle: "Affiliate Earnings"
+tag: "GET"
+icon: "users"
+---
+
+import AffiliateEarningsReq from "/snippets/system/affiliate-earnings.req.mdx";
+import AffiliateEarningsResp from "/snippets/system/affiliate-earnings.resp.mdx";
+
+<RequestExample>
+  <AffiliateEarningsReq />
+</RequestExample>
+
+<ResponseExample>
+  <AffiliateEarningsResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://sys.poixe.com/api/affiliate/earnings`
+</div>
+
+Retrieve the affiliate earnings summary for the current account.
+
+## Response Fields
+
+<ResponseField name="is_certified" type="boolean">
+  Whether the current account is certified for the affiliate program
+</ResponseField>
+
+<ResponseField name="earnings" type="object">
+  Earnings summary:
+
+  <Expandable title="earnings fields">
+    <ResponseField name="total_earnings" type="number">
+      Cumulative total affiliate earnings in USD, rounded to 3 decimal places
+    </ResponseField>
+    <ResponseField name="paid_cash" type="number">
+      Settled amount in USD
+    </ResponseField>
+    <ResponseField name="unpaid_cash" type="number">
+      Pending settlement amount in USD
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="timestamp" type="integer">
+  Response timestamp (Unix seconds)
+</ResponseField>

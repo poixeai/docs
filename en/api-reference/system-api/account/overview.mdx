@@ -1,0 +1,50 @@
+---
+title: "Account"
+sidebarTitle: "Account"
+tag: "GET"
+icon: "user"
+---
+
+import AccountReq from "/snippets/system/account.req.mdx";
+import AccountResp from "/snippets/system/account.resp.mdx";
+
+<RequestExample>
+  <AccountReq />
+</RequestExample>
+
+<ResponseExample>
+  <AccountResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://sys.poixe.com/api/account`
+</div>
+
+Retrieve basic information and balance for the current account.
+
+### Request
+
+No request body required. Authenticate with your system token.
+
+### Response Fields
+
+<ResponseField name="id" type="integer">
+  Account unique ID
+</ResponseField>
+
+<ResponseField name="email" type="string">
+  Account email address
+</ResponseField>
+
+<ResponseField name="level" type="integer">
+  Account level, see the Level system
+</ResponseField>
+
+<ResponseField name="balance" type="number">
+  Current balance in USD, rounded to 3 decimal places
+</ResponseField>
+
+<ResponseField name="timestamp" type="integer">
+  Response timestamp (Unix seconds)
+</ResponseField>

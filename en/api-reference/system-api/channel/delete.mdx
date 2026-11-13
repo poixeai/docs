@@ -1,0 +1,48 @@
+---
+title: "Delete Channels"
+sidebarTitle: "Delete Channels"
+tag: "DELETE"
+icon: "trash"
+---
+
+import ChannelDeleteReq from "/snippets/system/channel-delete.req.mdx";
+import ChannelDeleteResp from "/snippets/system/channel-delete.resp.mdx";
+
+<RequestExample>
+  <ChannelDeleteReq />
+</RequestExample>
+
+<ResponseExample>
+  <ChannelDeleteResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">DELETE</Badge>
+  `https://sys.poixe.com/api/channels`
+</div>
+
+Batch delete channels by ID. Deleted channels are permanently removed and cannot be recovered. IDs not belonging to the calling account are silently skipped.
+
+<Callout type="warning" icon="triangle-exclamation">
+  Deletion is irreversible. If you need to pause a channel rather than permanently remove it, disable it manually from the vendor dashboard instead.
+</Callout>
+
+## Request Body
+
+<ParamField body="ids" type="array" required>
+  Array of channel IDs to delete (integers). Must not be empty.
+</ParamField>
+
+## Response Fields
+
+<ResponseField name="deleted_count" type="integer">
+  Number of channels successfully deleted
+</ResponseField>
+
+<ResponseField name="deleted_ids" type="array">
+  List of channel IDs that were actually deleted
+</ResponseField>
+
+<ResponseField name="timestamp" type="integer">
+  Response timestamp (Unix seconds)
+</ResponseField>

@@ -1,0 +1,128 @@
+---
+title: "Token List & Get"
+sidebarTitle: "List & Get"
+tag: "GET"
+icon: "key"
+---
+
+import TokenListReq from "/snippets/system/token-list.req.mdx";
+import TokenListResp from "/snippets/system/token-list.resp.mdx";
+import TokenGetReq from "/snippets/system/token-get.req.mdx";
+import TokenGetResp from "/snippets/system/token-get.resp.mdx";
+
+<RequestExample>
+  <TokenListReq />
+</RequestExample>
+
+<ResponseExample>
+  <TokenListResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://sys.poixe.com/api/tokens`
+</div>
+
+Retrieve a paginated list of tokens for the current account.
+
+## Query Parameters
+
+<ParamField query="page" type="integer" default="1">
+  Page number (1-indexed)
+</ParamField>
+
+<ParamField query="page_size" type="integer" default="20">
+  Items per page, max 100
+</ParamField>
+
+<ParamField query="status" type="string">
+  Filter by status. Valid values: `enabled` · `disabled` · `expired` · `exhausted` · `compromised`
+</ParamField>
+
+## Response Fields
+
+<ResponseField name="total" type="integer">
+  Total number of tokens
+</ResponseField>
+
+<ResponseField name="page" type="integer">
+  Current page number
+</ResponseField>
+
+<ResponseField name="page_size" type="integer">
+  Items per page
+</ResponseField>
+
+<ResponseField name="items" type="array">
+  Token list. Each item contains:
+
+  <Expandable title="Token object fields">
+    <ResponseField name="id" type="integer">
+      Token ID
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      Token name
+    </ResponseField>
+    <ResponseField name="key_mask" type="string">
+      Masked token key, e.g. `sk-...wxyz`
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      Token status: `enabled` · `disabled` · `expired` · `exhausted` · `compromised` · `unknown`
+    </ResponseField>
+    <ResponseField name="created_at" type="integer">
+      Creation timestamp (Unix seconds)
+    </ResponseField>
+    <ResponseField name="unlimited_quota" type="boolean">
+      Whether this token has unlimited quota. When `true`, `remain_cash` is not consumed and should not be displayed as a limit
+    </ResponseField>
+    <ResponseField name="usage" type="object">
+      Usage statistics:
+
+      <Expandable title="usage fields">
+        <ResponseField name="remain_cash" type="number">
+          Remaining balance in USD. Top-up balance minus consumed amount
+        </ResponseField>
+        <ResponseField name="used_cash" type="number">
+          Consumed amount in USD. Actual charges deducted from account balance
+        </ResponseField>
+        <ResponseField name="used_quota" type="number">
+          Upstream quota consumed in USD. The actual upstream usage measured at official list prices. Poixe resells upstream quota at a discount — this field reflects real upstream consumption
+        </ResponseField>
+        <ResponseField name="request_count" type="integer">
+          Cumulative number of requests
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="timestamp" type="integer">
+  Response timestamp (Unix seconds)
+</ResponseField>
+
+## Get Single Token
+
+<RequestExample>
+  <TokenGetReq />
+</RequestExample>
+
+<ResponseExample>
+  <TokenGetResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://sys.poixe.com/api/tokens/:tokenID`
+</div>
+
+Retrieve details for a single token.
+
+## Path Parameters
+
+<ParamField path="tokenID" type="integer" required>
+  Token ID
+</ParamField>
+
+## Response
+
+Returns a single token object with the same fields as a list item, plus `timestamp`.

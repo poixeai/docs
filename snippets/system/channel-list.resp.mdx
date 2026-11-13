@@ -1,0 +1,44 @@
+```json response
+{
+  "total": 3,
+  "page": 1,
+  "page_size": 20,
+  "items": [
+    {
+      "id": 1,
+      "name": "my-channel",
+      "comment": "primary key",
+      "status": "enabled",
+      "type": "openai_chatgpt",
+      "type_name": "OpenAI ChatGPT",
+      "base_url": "https://api.openai.com",
+      "key_mask": "sk-...abcd",
+      "price": 1.0,
+      "usage": {
+        "used_quota": 10.000,
+        "request_count": 500
+      }
+    },
+    {
+      "id": 2,
+      "name": "disabled-channel",
+      "comment": "",
+      "status": "system_disabled",
+      "type": "deepseek_deepseek",
+      "type_name": "DeepSeek DeepSeek",
+      "base_url": "https://api.deepseek.com",
+      "key_mask": "sk-...efgh",
+      "price": 0.5,
+      "usage": {
+        "used_quota": 50.000,
+        "request_count": 2000
+      },
+      "auto_disabled": {
+        "reason": "exceeded max consumption limit",
+        "disabled_at": 1731000000
+      }
+    }
+  ],
+  "timestamp": 1731337200
+}
+```

@@ -1,0 +1,143 @@
+---
+title: "Channel List & Get"
+sidebarTitle: "List & Get"
+tag: "GET"
+icon: "plug"
+---
+
+import ChannelListReq from "/snippets/system/channel-list.req.mdx";
+import ChannelListResp from "/snippets/system/channel-list.resp.mdx";
+import ChannelGetReq from "/snippets/system/channel-get.req.mdx";
+import ChannelGetResp from "/snippets/system/channel-get.resp.mdx";
+
+<RequestExample>
+  <ChannelListReq />
+</RequestExample>
+
+<ResponseExample>
+  <ChannelListResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://sys.poixe.com/api/channels`
+</div>
+
+Retrieve a paginated list of channels for the current account.
+
+## Query Parameters
+
+<ParamField query="page" type="integer" default="1">
+  Page number (1-indexed)
+</ParamField>
+
+<ParamField query="page_size" type="integer" default="20">
+  Items per page, max 100
+</ParamField>
+
+<ParamField query="status" type="string">
+  Filter by status. Valid values: `enabled` · `manual_disabled` · `system_disabled` · `archived`
+</ParamField>
+
+## Response Fields
+
+<ResponseField name="total" type="integer">
+  Total number of channels
+</ResponseField>
+
+<ResponseField name="page" type="integer">
+  Current page number
+</ResponseField>
+
+<ResponseField name="page_size" type="integer">
+  Items per page
+</ResponseField>
+
+<ResponseField name="items" type="array">
+  Channel list. Each item contains:
+
+  <Expandable title="Channel object fields">
+    <ResponseField name="id" type="integer">
+      Channel ID
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      Channel name
+    </ResponseField>
+    <ResponseField name="comment" type="string">
+      Comment / note
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      Channel status: `enabled` · `manual_disabled` · `system_disabled` · `archived` · `unknown`
+    </ResponseField>
+    <ResponseField name="type" type="string">
+      Channel type slug, e.g. `openai_chatgpt`
+    </ResponseField>
+    <ResponseField name="type_name" type="string">
+      Channel type display name, e.g. `OpenAI ChatGPT`
+    </ResponseField>
+    <ResponseField name="base_url" type="string">
+      Upstream base URL
+    </ResponseField>
+    <ResponseField name="key_mask" type="string">
+      Masked API key, e.g. `sk-...abcd`
+    </ResponseField>
+    <ResponseField name="price" type="number">
+      Price multiplier
+    </ResponseField>
+    <ResponseField name="usage" type="object">
+      Usage statistics:
+
+      <Expandable title="usage fields">
+        <ResponseField name="used_quota" type="number">
+          Upstream quota consumed in USD, measured at official list prices
+        </ResponseField>
+        <ResponseField name="request_count" type="integer">
+          Cumulative number of requests
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name="auto_disabled" type="object">
+      System auto-disable details, present only when `status` is `system_disabled`:
+
+      <Expandable title="auto_disabled fields">
+        <ResponseField name="reason" type="string">
+          Reason for auto-disabling
+        </ResponseField>
+        <ResponseField name="disabled_at" type="integer">
+          Timestamp when auto-disabled (Unix seconds)
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="timestamp" type="integer">
+  Response timestamp (Unix seconds)
+</ResponseField>
+
+## Get Single Channel
+
+<RequestExample>
+  <ChannelGetReq />
+</RequestExample>
+
+<ResponseExample>
+  <ChannelGetResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://sys.poixe.com/api/channels/:channelID`
+</div>
+
+Retrieve details for a single channel.
+
+## Path Parameters
+
+<ParamField path="channelID" type="integer" required>
+  Channel ID
+</ParamField>
+
+## Response
+
+Returns a single channel object with the same fields as a list item, plus `timestamp`.

@@ -1,0 +1,69 @@
+---
+title: "Before You Start"
+sidebarTitle: "Before You Start"
+description: "What you should know before using Poixe."
+---
+
+## The AI Divide
+
+AI is reshaping productivity — not by leveling the playing field, but by amplifying existing differences. Those who adapt quickly are growing faster than ever; those who don't are falling further behind.
+
+Standard web subscriptions are convenient but constrained by platform restrictions, making them unsuitable for large-scale or programmatic use. The API layer fills that gap — built for high-volume, stable workloads — but it comes with a steeper technical learning curve.
+
+## Who Poixe Is For
+
+We recommend having the following foundational knowledge before onboarding:
+
+- **API billing model** — Understand token-based pricing and context mechanics; know how costs are generated
+- **RESTful API basics** — Know how to make HTTP requests (headers, body structure, auth)
+- **AI tool configuration** — Be familiar with the tools you plan to use, such as Claude Code, Codex, or other CLI clients
+
+If these prerequisites don't yet apply to you, we recommend building that foundation first.
+
+## On Billing: API Costs Move Fast
+
+API usage costs can exceed expectations significantly. In Claude Code, for example, a single message like `hi` can result in tens of thousands of tokens billed — this is expected behavior, not a platform error.
+
+The reason: every API call carries the full conversation history, system prompts, and other context. The token count is far higher than the text you see on screen. The platform does not set spending limits on your behalf — your usage drives your costs.
+
+**If you have billing questions, we're happy to help — please bring logs or request IDs.**
+
+Our logging system records full billing detail for every request: the actual provider, token breakdown, and total cost. Claiming "inflated billing" or "fraud" without any supporting evidence resolves nothing, and reveals a fundamental misunderstanding of how API billing works.
+
+**Whoever makes the claim bears the burden of proof.**
+
+## Routing & Provider Transparency
+
+Poixe lets you choose your model provider. For `claude-sonnet-4-6`, for instance, the platform routes across multiple sources: Anthropic direct, AWS Bedrock, OpenRouter, and others.
+
+| Scenario | Behavior |
+|---|---|
+| No provider prefix | Default routing — system selects automatically |
+| Provider prefix specified | Request is handled exclusively by that provider, logged accordingly |
+
+Every request's log entry includes the actual provider and full billing detail. If you need to verify independently, you can purchase credits from the specific provider and run a comparison test yourself.
+
+If you encounter a model quality issue, we welcome feedback — with reproducible test cases.
+
+See: [Provider Routing](/en/docs/models-pricing/provider-routing)
+
+## Communication Standards
+
+Our team will do everything we can to help. We ask only that conversations remain civil, respectful, and constructive.
+
+The following are not acceptable:
+- Personal attacks, insults, or threats
+- Accusations without evidence
+- Spam or repeated invalid requests
+
+Accounts that repeatedly violate these standards may be terminated without prior notice. This is not a threat — it is how we maintain a healthy support environment for everyone.
+
+Full policy: [Terms of Use §6](https://poixe.com/policies/terms-of-use)
+
+## A Note for Vendors
+
+Due to system architecture differences, channel billing may occasionally show discrepancies. If you notice a significant gap between expected and reported earnings, contact our team promptly — do not draw conclusions unilaterally.
+
+The platform provides a management API with real-time earnings and usage data per channel (30-second cache). We recommend setting up automated monitoring to compare both sides continuously and flag anomalies early.
+
+Bring the data. We will investigate together.

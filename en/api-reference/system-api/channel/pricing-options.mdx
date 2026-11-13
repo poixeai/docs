@@ -1,0 +1,56 @@
+---
+title: "Pricing Options"
+sidebarTitle: "Pricing Options"
+tag: "GET"
+icon: "tag"
+---
+
+import PricingOptionsReq from "/snippets/system/channel-pricing-options.req.mdx";
+import PricingOptionsResp from "/snippets/system/channel-pricing-options.resp.mdx";
+
+<RequestExample>
+  <PricingOptionsReq />
+</RequestExample>
+
+<ResponseExample>
+  <PricingOptionsResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://sys.poixe.com/api/channels/pricing-options`
+</div>
+
+Query available price configurations for each channel type. The `price` field in [Create Channel](/en/api-reference/system-api/channel/create) must be a valid value from the `prices` list returned here.
+
+## Query Parameters
+
+<ParamField query="channel_type" type="string">
+  Filter by channel type slug (repeatable). Omit to return all types. Example: `?channel_type=openai_chatgpt&channel_type=anthropic_claude`
+</ParamField>
+
+## Response Fields
+
+Returns an array. Each item represents pricing info for one channel type:
+
+<ResponseField name="type" type="string">
+  Channel type slug, e.g. `openai_chatgpt`
+</ResponseField>
+
+<ResponseField name="type_name" type="string">
+  Channel type display name, e.g. `OpenAI ChatGPT`
+</ResponseField>
+
+<ResponseField name="prices" type="array">
+  Available price configurations for this type:
+
+  <Expandable title="price entry fields">
+    <ResponseField name="price" type="number">
+      Price multiplier — must select from this list when creating a channel
+    </ResponseField>
+    <ResponseField name="weight" type="integer">
+      Routing weight for this price tier. Higher weight means more requests are routed to channels at this price
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+

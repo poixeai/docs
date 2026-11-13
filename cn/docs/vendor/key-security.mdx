@@ -1,0 +1,146 @@
+---
+title: "API Key 安全保护"
+sidebarTitle: "API Key 安全"
+---
+
+现代互联网系统正处于前所未有的安全威胁之下。AI 的普及大幅降低了攻击门槛——近期的真实案例包括：PHP CGI 参数注入漏洞（CVE-2024-4577）被大规模利用、iOS 沙盒逃逸漏洞链在野利用、以及开源 AI 网关 LiteLLM 遭遇供应链投毒攻击。任何依赖传统技术框架的系统，都可能在某个意想不到的地方暴露风险。
+
+作为聚合大量供应商 API Key 的平台，Poixe 对此保持高度警觉，并将安全设计贯穿整个架构。本章节介绍平台对供应商 API Key 的保护机制，以及你可以主动采取的防护措施。
+
+## Poixe 的保护机制
+
+Poixe 采用**端到端加密**方案处理供应商 API Key：**明文密钥在任何情况下都不会触达 Poixe 业务服务器**。业务服务器是对外开放的、最容易成为攻击目标的一层。
+
+### 两种提交方式
+
+**方式一：供应商面板（浏览器本地自动加密）**
+
+在供应商面板中粘贴 API Key 时，浏览器从 `https://poixe.com/security.json` 获取 RSA 公钥，在本地完成加密，仅将 `enc:v2:...` 密文提交给后端。
+
+**方式二：管理接口（本地预加密）**
+
+通过 `sys.poixe.com` 管理接口提交渠道时，`keys` 字段必须是 `enc:v2:...` 格式的预加密密文，**不接受明文 API Key**。需使用下方提供的加密工具在本地完成加密。
+
+### 解密环境隔离
+
+加密后的密文由后端业务系统存储，不经任何解密。平台引入了独立的**高可信安全出口机器**，在物理隔离的环境中解密渠道 API Key，仅在实际向上游发出请求的一刻才解密。整个应用层和数据库层均无法访问明文密钥。
+
+### 渠道自动清理机制
+
+Poixe 还设计了主动清理机制，确保不再使用的 API Key 不会在系统中长期保存：
+
+- **手动禁用的渠道**：供应商自行禁用后，**24 小时**内若未重新启用，系统将自动将其归档（`archived` 状态），清除敏感 Key 字段，且无法再恢复
+- **系统自动禁用的渠道**：因渠道报错被系统自动禁用后，**3 天**内若无处理，同样触发自动归档清理
+
+这一机制的核心目的是：**不再使用的 API Key 不应长期保存在任何系统中**，即使是加密存储也存在潜在风险。
+
+## 系统管理接口
+
+Poixe 提供系统管理接口（`sys.poixe.com`），供供应商以编程方式管理渠道、查询收益、监控状态。
+
+主要能力：
+
+- 查询渠道列表与状态，发现异常渠道及时处理
+- 获取供应商收益汇总（总收益、已结算、待结算）
+- 批量创建、删除渠道，支持自动化部署
+- 查询令牌使用情况
+
+详细接口文档：[系统接口参考](/cn/api-reference/system-api/overview)
+
+## 我们的建议
+
+### 在上游设置 IP 白名单
+
+Poixe 的所有上游请求均从固定的 egress IP 发出。**在 OpenAI、Anthropic、Azure、AWS 等上游平台为你的 API Key 设置 IP 白名单**，可以确保即使密钥泄露，攻击者也无法从其他 IP 使用该密钥。
+
+获取当前 egress IP 列表：
+
+```bash
+curl -s https://poixe.com/security.json | jq '.egress_ips'
+```
+
+### 设置上游消费限额
+
+在上游平台为 API Key 设置**月消费上限**或**每日调用限制**，可以在最坏情况下把损失控制在可接受范围内。建议按你预期在 Poixe 上的实际用量设置略高的限额，而非无上限。
+
+### 通过接口实时监控，及时发现异常
+
+Poixe 管理接口提供渠道消耗数据（`used_quota`、`request_count`）和供应商收益汇总。建议设计一个定时任务，定期对比：
+
+- Poixe 渠道的 `used_quota` 与上游账单
+- 供应商 `earnings.total_earnings` 与你的预期收益
+
+若发现计费差异，立即通过接口删除相关渠道，并向 Poixe 团队反馈：
+
+```bash
+curl https://sys.poixe.com/api/channels \
+  -X DELETE \
+  -H "Authorization: Bearer $POIXE_SYSTEM_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"ids": [<channel_id>]}'
+```
+
+## 加密工具与示例
+
+Poixe 提供开源加密工具集 [poixe-security](https://github.com/poixeai/poixe-security)，支持 CLI、Python SDK、Go SDK 和浏览器 HTML 工具。Python SDK 也已发布到 PyPI：[poixe-encrypt](https://pypi.org/project/poixe-encrypt/)。
+
+### CLI
+
+```bash
+# 安装：从 GitHub Releases 下载对应平台的二进制文件
+
+# OpenAI
+echo "sk-proj-..." | poixe encrypt -t openai_chatgpt
+
+# Azure（每行格式：endpoint apikey，同一批次支持不同 Endpoint）
+printf 'https://resource-a.openai.azure.com sk-aaa...\nhttps://resource-b.openai.azure.com sk-bbb...' \
+  | poixe encrypt -t azure_chatgpt
+
+# AWS Bedrock
+echo "AKID..." | poixe encrypt -t aws_bedrock_claude --region us-east-1
+```
+
+### Python SDK
+
+```bash
+pip install poixe-encrypt
+```
+
+```python
+from poixe_encrypt import ChannelType, encrypt
+
+cipher = encrypt(ChannelType.OPENAI_CHATGPT, "sk-proj-...")
+print(cipher)  # enc:v2:k1:...
+
+# Azure
+cipher = encrypt(ChannelType.AZURE_CHATGPT, "key",
+    endpoint="https://my-resource.openai.azure.com")
+```
+
+更多工具（Go SDK、批量加密、HTML 离线工具）详见 [poixe-security](https://github.com/poixeai/poixe-security)。
+
+## 查看与验证公钥
+
+Poixe 加密使用的 RSA 公钥通过两个渠道公开：
+
+**生产接口**：`https://poixe.com/security.json`，实时返回当前公钥、密钥 ID（`kid`）、SHA-256 指纹（`fingerprint`）以及 egress IP 列表。
+
+**GitHub 镜像**：[github.com/poixeai/poixe-security](https://github.com/poixeai/poixe-security/blob/main/security.json)，可用于离线核对。
+
+### 独立验证方式
+
+通过 DNS TXT 记录独立验证，无需信任 HTTPS 链路：
+
+```bash
+dig TXT _encryption.poixe.com +short
+# "v=v2; kid=k1; fp=19bb2f0101de7bb3e1ca6fea27fa06474b37de654b0191e3430b4e30f5c6e761"
+```
+
+用 openssl 本地计算指纹并与上述结果比对：
+
+```bash
+# 从 security.json 提取 PEM，保存为 pubkey.pem，然后：
+openssl pkey -pubin -in pubkey.pem -outform DER | sha256sum
+```
+
+详细验证步骤见 [poixe-security 文档](https://github.com/poixeai/poixe-security/blob/main/docs/verification.md)。

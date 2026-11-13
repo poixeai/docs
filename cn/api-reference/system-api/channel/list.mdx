@@ -1,0 +1,143 @@
+---
+title: "渠道列表与详情"
+sidebarTitle: "获取渠道列表"
+tag: "GET"
+icon: "plug"
+---
+
+import ChannelListReq from "/snippets/system/channel-list.req.mdx";
+import ChannelListResp from "/snippets/system/channel-list.resp.mdx";
+import ChannelGetReq from "/snippets/system/channel-get.req.mdx";
+import ChannelGetResp from "/snippets/system/channel-get.resp.mdx";
+
+<RequestExample>
+  <ChannelListReq />
+</RequestExample>
+
+<ResponseExample>
+  <ChannelListResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://sys.poixe.com/api/channels`
+</div>
+
+分页获取当前账户的渠道列表。
+
+## 查询参数
+
+<ParamField query="page" type="integer" default="1">
+  页码（从 1 开始）
+</ParamField>
+
+<ParamField query="page_size" type="integer" default="20">
+  每页条数，最大 100
+</ParamField>
+
+<ParamField query="status" type="string">
+  按状态过滤，可选值：`enabled` · `manual_disabled` · `system_disabled` · `archived`
+</ParamField>
+
+## 响应字段
+
+<ResponseField name="total" type="integer">
+  渠道总数
+</ResponseField>
+
+<ResponseField name="page" type="integer">
+  当前页码
+</ResponseField>
+
+<ResponseField name="page_size" type="integer">
+  每页条数
+</ResponseField>
+
+<ResponseField name="items" type="array">
+  渠道列表，每项字段如下：
+
+  <Expandable title="渠道对象字段">
+    <ResponseField name="id" type="integer">
+      渠道 ID
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      渠道名称
+    </ResponseField>
+    <ResponseField name="comment" type="string">
+      备注
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      渠道状态：`enabled` · `manual_disabled` · `system_disabled` · `archived` · `unknown`
+    </ResponseField>
+    <ResponseField name="type" type="string">
+      渠道类型 slug，如 `openai_chatgpt`
+    </ResponseField>
+    <ResponseField name="type_name" type="string">
+      渠道类型展示名称，如 `OpenAI ChatGPT`
+    </ResponseField>
+    <ResponseField name="base_url" type="string">
+      上游 Base URL
+    </ResponseField>
+    <ResponseField name="key_mask" type="string">
+      API Key 脱敏展示，格式如 `sk-...abcd`
+    </ResponseField>
+    <ResponseField name="price" type="number">
+      价格倍率
+    </ResponseField>
+    <ResponseField name="usage" type="object">
+      用量统计：
+
+      <Expandable title="usage 字段">
+        <ResponseField name="used_quota" type="number">
+          上游额度消耗，单位 USD。按官方计费价格计算的上游实际调用消耗量
+        </ResponseField>
+        <ResponseField name="request_count" type="integer">
+          累计请求次数
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name="auto_disabled" type="object">
+      系统自动禁用原因，仅当 `status` 为 `system_disabled` 时存在：
+
+      <Expandable title="auto_disabled 字段">
+        <ResponseField name="reason" type="string">
+          禁用原因描述
+        </ResponseField>
+        <ResponseField name="disabled_at" type="integer">
+          禁用时间戳（Unix 秒）
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="timestamp" type="integer">
+  响应时间戳（Unix 秒）
+</ResponseField>
+
+## 获取单个渠道详情
+
+<RequestExample>
+  <ChannelGetReq />
+</RequestExample>
+
+<ResponseExample>
+  <ChannelGetResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://sys.poixe.com/api/channels/:channelID`
+</div>
+
+获取单个渠道的详情。
+
+## 路径参数
+
+<ParamField path="channelID" type="integer" required>
+  渠道 ID
+</ParamField>
+
+## 响应
+
+返回单个渠道对象，字段与列表中的渠道对象相同，另附 `timestamp`。

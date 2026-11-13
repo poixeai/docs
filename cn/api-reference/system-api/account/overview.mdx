@@ -1,0 +1,50 @@
+---
+title: "账户信息"
+sidebarTitle: "查询账户信息"
+tag: "GET"
+icon: "user"
+---
+
+import AccountReq from "/snippets/system/account.req.mdx";
+import AccountResp from "/snippets/system/account.resp.mdx";
+
+<RequestExample>
+  <AccountReq />
+</RequestExample>
+
+<ResponseExample>
+  <AccountResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://sys.poixe.com/api/account`
+</div>
+
+查询当前账户的基本信息与余额。
+
+### 请求
+
+无请求体，使用系统令牌鉴权即可。
+
+### 响应字段
+
+<ResponseField name="id" type="integer">
+  账户唯一 ID
+</ResponseField>
+
+<ResponseField name="email" type="string">
+  账户绑定邮箱
+</ResponseField>
+
+<ResponseField name="level" type="integer">
+  账户等级，详见 Level 体系
+</ResponseField>
+
+<ResponseField name="balance" type="number">
+  当前余额，单位 USD，精确到 3 位小数
+</ResponseField>
+
+<ResponseField name="timestamp" type="integer">
+  响应时间戳（Unix 秒）
+</ResponseField>

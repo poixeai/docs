@@ -1,0 +1,48 @@
+---
+title: "Token Lookup"
+sidebarTitle: "Lookup"
+tag: "POST"
+icon: "magnifying-glass"
+---
+
+import TokenLookupReq from "/snippets/system/token-lookup.req.mdx";
+import TokenLookupResp from "/snippets/system/token-lookup.resp.mdx";
+
+<RequestExample>
+  <TokenLookupReq />
+</RequestExample>
+
+<ResponseExample>
+  <TokenLookupResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">POST</Badge>
+  `https://sys.poixe.com/api/tokens/lookup`
+</div>
+
+Look up a token's ID by its key value (the `sk-` string). The key must belong to the calling account.
+
+## Request Body
+
+<ParamField body="key" type="string" required>
+  Token key — must start with `sk-` and belong to the current account
+</ParamField>
+
+## Response Fields
+
+<ResponseField name="id" type="integer">
+  Token ID
+</ResponseField>
+
+<ResponseField name="timestamp" type="integer">
+  Response timestamp (Unix seconds)
+</ResponseField>
+
+## Errors
+
+| Condition | HTTP | type |
+|---|---|---|
+| `key` missing or empty | 400 | `invalid_request_error` |
+| `key` does not start with `sk-` | 400 | `invalid_request_error` |
+| Key not found or belongs to another account | 404 | `resource_not_found_error` |

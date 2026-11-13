@@ -1,0 +1,146 @@
+---
+title: "API Key Security"
+sidebarTitle: "API Key Security"
+---
+
+Modern internet systems face unprecedented security threats. AI has dramatically lowered the barrier to attack — recent real-world examples include the mass exploitation of the PHP CGI parameter injection vulnerability (CVE-2024-4577), iOS sandbox escape exploit chains being used in the wild, and the open-source AI gateway LiteLLM suffering a supply chain poisoning attack. Any system relying on traditional technology frameworks may be exposed in unexpected ways.
+
+As a platform aggregating API Keys from many vendors, Poixe takes this seriously and embeds security throughout its architecture. This page covers how the platform protects vendor API Keys, and the proactive measures you can take.
+
+## How Poixe Protects Your Keys
+
+Poixe uses an **end-to-end encryption** approach: **plaintext keys never reach Poixe's business servers** under any circumstances. The business server is the most externally exposed layer and the most likely attack target.
+
+### Two Submission Methods
+
+**Method 1: Vendor Dashboard (browser-side local encryption)**
+
+When you paste an API Key into the vendor dashboard, the browser fetches the RSA public key from `https://poixe.com/security.json`, encrypts locally, and only submits the `enc:v2:...` ciphertext to the backend.
+
+**Method 2: Management API (pre-encrypt locally)**
+
+When submitting channels via the `sys.poixe.com` management API, the `keys` field must contain pre-encrypted ciphertext in `enc:v2:...` format. **Plaintext API Keys are not accepted.** Use the encryption tools below to encrypt locally first.
+
+### Decryption Environment Isolation
+
+Encrypted ciphertext is stored by the backend without any decryption. The platform has introduced dedicated **high-trust secure egress machines** that operate in a physically isolated environment, decrypting channel API Keys only at the moment of making an actual upstream request. The application layer and database layer cannot access plaintext keys at all.
+
+### Automatic Channel Cleanup
+
+Poixe also runs an active cleanup mechanism to ensure unused API Keys are not stored in the system indefinitely:
+
+- **Manually disabled channels**: if not re-enabled within **24 hours**, the system automatically archives the channel (marks it `archived`), clears the sensitive Key field, and prevents recovery
+- **System-disabled channels**: channels auto-disabled due to errors are similarly archived **3 days** after the disabling if not addressed
+
+The core principle: **API Keys you no longer use should not persist in any system** — even encrypted storage carries residual risk.
+
+## System Management API
+
+Poixe provides a system management API (`sys.poixe.com`) for vendors to programmatically manage channels, query earnings, and monitor status.
+
+Key capabilities:
+
+- Query channel list and status, detect and handle anomalous channels quickly
+- Retrieve vendor earnings summary (total, settled, pending)
+- Batch create and delete channels, supporting automated deployment
+- Query token usage
+
+Full API reference: [System API Reference](/en/api-reference/system-api/overview)
+
+## Our Recommendations
+
+### Set IP Allowlists on Upstream Platforms
+
+All Poixe upstream requests originate from fixed egress IPs. **Setting an IP allowlist on OpenAI, Anthropic, Azure, AWS, and other upstream platforms** ensures that even if a key is leaked, attackers cannot use it from other IPs.
+
+Get the current egress IP list:
+
+```bash
+curl -s https://poixe.com/security.json | jq '.egress_ips'
+```
+
+### Set Spending Limits on Upstream Platforms
+
+Set a **monthly spend cap** or **daily call limit** on the upstream platform for your API Key. This caps damage in the worst case to an acceptable range. We recommend setting limits slightly above your expected actual usage on Poixe, rather than leaving them unlimited.
+
+### Monitor via API, Detect Anomalies Early
+
+The Poixe management API provides channel consumption data (`used_quota`, `request_count`) and vendor earnings summaries. Consider setting up a scheduled task to periodically compare:
+
+- Poixe channel `used_quota` vs upstream billing
+- Vendor `earnings.total_earnings` vs expected earnings
+
+If you find billing discrepancies, immediately delete the suspicious channels via the API and report to the Poixe team:
+
+```bash
+curl https://sys.poixe.com/api/channels \
+  -X DELETE \
+  -H "Authorization: Bearer $POIXE_SYSTEM_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"ids": [<channel_id>]}'
+```
+
+## Encryption Tools & Examples
+
+Poixe provides the open-source encryption toolkit [poixe-security](https://github.com/poixeai/poixe-security), supporting CLI, Python SDK, Go SDK, and a browser-based HTML tool. The Python SDK is also published to PyPI: [poixe-encrypt](https://pypi.org/project/poixe-encrypt/).
+
+### CLI
+
+```bash
+# Install: download the binary for your platform from GitHub Releases
+
+# OpenAI
+echo "sk-proj-..." | poixe encrypt -t openai_chatgpt
+
+# Azure
+echo "my-key" | poixe encrypt -t azure_chatgpt \
+  --endpoint https://my-resource.openai.azure.com
+
+# AWS Bedrock
+echo "AKID..." | poixe encrypt -t aws_bedrock_claude --region us-east-1
+```
+
+### Python SDK
+
+```bash
+pip install poixe-encrypt
+```
+
+```python
+from poixe_encrypt import ChannelType, encrypt
+
+cipher = encrypt(ChannelType.OPENAI_CHATGPT, "sk-proj-...")
+print(cipher)  # enc:v2:k1:...
+
+# Azure
+cipher = encrypt(ChannelType.AZURE_CHATGPT, "key",
+    endpoint="https://my-resource.openai.azure.com")
+```
+
+More tools (Go SDK, batch encryption, offline HTML tool) at [poixe-security](https://github.com/poixeai/poixe-security).
+
+## View & Verify the Public Key
+
+The RSA public key used for Poixe encryption is published through two channels:
+
+**Production endpoint**: `https://poixe.com/security.json` — returns the current public key, key ID (`kid`), SHA-256 fingerprint, and egress IP list in real time.
+
+**GitHub mirror**: [github.com/poixeai/poixe-security](https://github.com/poixeai/poixe-security/blob/main/security.json) for offline verification.
+
+### Independent Verification
+
+Verify independently via DNS TXT record, without trusting the HTTPS chain:
+
+```bash
+dig TXT _encryption.poixe.com +short
+# "v=v2; kid=k1; fp=19bb2f0101de7bb3e1ca6fea27fa06474b37de654b0191e3430b4e30f5c6e761"
+```
+
+Compute the fingerprint locally with openssl and compare:
+
+```bash
+# Extract PEM from security.json, save as pubkey.pem, then:
+openssl pkey -pubin -in pubkey.pem -outform DER | sha256sum
+```
+
+Detailed verification steps: [poixe-security docs](https://github.com/poixeai/poixe-security/blob/main/docs/verification.md).

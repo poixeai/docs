@@ -1,0 +1,82 @@
+---
+title: "任务状态"
+sidebarTitle: "查询任务状态"
+tag: "GET"
+icon: "clock"
+---
+
+import ChannelTaskReq from "/snippets/system/channel-task.req.mdx";
+import ChannelTaskResp from "/snippets/system/channel-task.resp.mdx";
+
+<RequestExample>
+  <ChannelTaskReq />
+</RequestExample>
+
+<ResponseExample>
+  <ChannelTaskResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://sys.poixe.com/api/channel-tasks/:taskID`
+</div>
+
+轮询渠道创建任务的执行状态，直到 `status` 为 `completed` 或 `failed`。任务 24 小时后过期。
+
+建议轮询间隔为 2–5 秒，任务通常在数秒内完成。
+
+## 路径参数
+
+<ParamField path="taskID" type="string" required>
+  [创建渠道](/cn/api-reference/system-api/channel/create) 返回的 `task_id`
+</ParamField>
+
+## 响应字段
+
+<ResponseField name="task_id" type="string">
+  任务 ID
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  任务状态：`pending` · `running` · `completed` · `failed`
+</ResponseField>
+
+<ResponseField name="created_count" type="integer">
+  已成功创建的渠道数
+</ResponseField>
+
+<ResponseField name="failed_count" type="integer">
+  失败的渠道数。`completed` 状态时若此值大于 0，表示部分 Key 通过模型验证失败（找不到可用模型），成功创建的渠道仍会列出
+</ResponseField>
+
+<ResponseField name="channels" type="array">
+  已成功创建的渠道列表（任务完成后）：
+
+  <Expandable title="渠道字段">
+    <ResponseField name="id" type="integer">
+      渠道 ID
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      渠道名称
+    </ResponseField>
+    <ResponseField name="type" type="string">
+      渠道类型 slug
+    </ResponseField>
+    <ResponseField name="type_name" type="string">
+      渠道类型展示名称
+    </ResponseField>
+    <ResponseField name="models" type="string">
+      探测到的可用模型列表，逗号分隔
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      渠道状态
+    </ResponseField>
+    <ResponseField name="created_at" type="integer">
+      创建时间戳（Unix 秒）
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="timestamp" type="integer">
+  响应时间戳（Unix 秒）
+</ResponseField>

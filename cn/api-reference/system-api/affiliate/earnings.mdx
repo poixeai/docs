@@ -1,0 +1,50 @@
+---
+title: "推广收益"
+sidebarTitle: "推广收益"
+tag: "GET"
+icon: "users"
+---
+
+import AffiliateEarningsReq from "/snippets/system/affiliate-earnings.req.mdx";
+import AffiliateEarningsResp from "/snippets/system/affiliate-earnings.resp.mdx";
+
+<RequestExample>
+  <AffiliateEarningsReq />
+</RequestExample>
+
+<ResponseExample>
+  <AffiliateEarningsResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://sys.poixe.com/api/affiliate/earnings`
+</div>
+
+查询当前账户的推广（Affiliate）收益汇总。
+
+## 响应字段
+
+<ResponseField name="is_certified" type="boolean">
+  当前账户是否已通过推广认证
+</ResponseField>
+
+<ResponseField name="earnings" type="object">
+  收益汇总：
+
+  <Expandable title="earnings 字段">
+    <ResponseField name="total_earnings" type="number">
+      累计推广总收益，单位 USD，精确到 3 位小数
+    </ResponseField>
+    <ResponseField name="paid_cash" type="number">
+      已结算金额，单位 USD
+    </ResponseField>
+    <ResponseField name="unpaid_cash" type="number">
+      待结算金额，单位 USD
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="timestamp" type="integer">
+  响应时间戳（Unix 秒）
+</ResponseField>

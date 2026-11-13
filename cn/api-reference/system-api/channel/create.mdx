@@ -1,0 +1,123 @@
+---
+title: "创建渠道"
+sidebarTitle: "创建渠道"
+tag: "POST"
+icon: "plus"
+---
+
+import ChannelCreateReq from "/snippets/system/channel-create.req.mdx";
+import ChannelCreateResp from "/snippets/system/channel-create.resp.mdx";
+
+<RequestExample>
+  <ChannelCreateReq />
+</RequestExample>
+
+<ResponseExample>
+  <ChannelCreateResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">POST</Badge>
+  `https://sys.poixe.com/api/channels`
+</div>
+
+异步批量创建渠道。提交后返回任务 ID，通过 [查询任务状态](/cn/api-reference/system-api/channel/task) 轮询结果。
+
+<Callout type="warning" icon="triangle-exclamation">
+  `keys` 字段必须是 `enc:v2:...` 格式的预加密密文，**不接受明文 API Key**。请先使用 [加密工具](/cn/docs/vendor/key-security#加密工具与示例) 在本地完成加密。
+</Callout>
+
+## 请求体
+
+<ParamField body="type" type="string" required>
+  渠道类型 slug，从 [定价选项](/cn/api-reference/system-api/channel/pricing-options) 返回的 `type` 字段中选取。
+
+  <Expandable title="全部渠道类型">
+    | slug | 展示名称 |
+    |---|---|
+    | `openai_chatgpt` | OpenAI ChatGPT |
+    | `azure_chatgpt` | Azure ChatGPT |
+    | `anthropic_claude` | Anthropic Claude |
+    | `azure_claude` | Azure Claude |
+    | `aws_bedrock_claude` | AWS Bedrock Claude |
+    | `aws_platform_claude` | Claude Platform on AWS |
+    | `google_aistudio_gemini` | Google AI Studio Gemini |
+    | `google_vertex_gemini` | Google Vertex Gemini |
+    | `deepseek_deepseek` | DeepSeek DeepSeek |
+    | `xai_grok` | xAI Grok |
+    | `volcengine_deepseek` | Volcengine DeepSeek |
+    | `volcengine_doubao` | Volcengine Doubao |
+    | `aliyun_deepseek` | Aliyun DeepSeek |
+    | `aliyun_qwen` | Aliyun Qwen |
+    | `aliyun_kimi` | Aliyun Kimi |
+    | `siliconflow_deepseek` | SiliconFlow DeepSeek |
+    | `siliconflow_qwen` | SiliconFlow Qwen |
+    | `siliconflow_kimi` | SiliconFlow Kimi |
+    | `moonshot_kimi` | Moonshot Kimi |
+    | `chutes_deepseek` | Chutes DeepSeek |
+    | `chutes_qwen` | Chutes Qwen |
+    | `chutes_kimi` | Chutes Kimi |
+    | `chutes_chatgpt` | Chutes ChatGPT |
+    | `cerebras_chatgpt` | Cerebras ChatGPT |
+    | `groq_chatgpt` | Groq ChatGPT |
+    | `fireworks_chatgpt` | Fireworks ChatGPT |
+    | `novita_chatgpt` | Novita ChatGPT |
+    | `together_chatgpt` | Together ChatGPT |
+    | `nebius_chatgpt` | Nebius ChatGPT |
+    | `openrouter_chatgpt` | OpenRouter ChatGPT |
+    | `openrouter_claude` | OpenRouter Claude |
+    | `openrouter_gemini` | OpenRouter Gemini |
+  </Expandable>
+</ParamField>
+
+<ParamField body="keys" type="array" required>
+  预加密的 API Key 列表，每个元素是一个 `enc:v2:...` 密文字符串，1–100 个
+</ParamField>
+
+<ParamField body="price" type="number" required>
+  价格倍率，必须是 `/api/channels/pricing-options` 返回的 `prices` 列表中的有效值
+</ParamField>
+
+<ParamField body="comment" type="string">
+  备注（可选），会附加到本批次的每个渠道上
+</ParamField>
+
+<ParamField body="base_url" type="string">
+  可选，向后兼容保留。Azure 渠道的 Endpoint 已绑定在每个加密密文内，省略此字段时系统从密文中按 Key 推导——同一批次可以包含指向不同 Endpoint 的 Key。如需兼容旧有流程而传入此字段，须以 `.azure.com` 结尾，本批次所有 Key 共享该值
+</ParamField>
+
+<ParamField body="aws_region" type="string">
+  AWS 渠道类型可选，默认 `eu-central-1`。可选值：`eu-central-1` · `eu-west-1` · `eu-west-2` · `us-east-1` · `us-east-2` · `us-west-2`
+</ParamField>
+
+## Key 格式说明
+
+| 类型 | Key 内容 |
+|---|---|
+| 大部分类型 | 标准 API Key 字符串 |
+| `aws_platform_claude` | `"workspace_id api_key"`（空格分隔，整体加密为一个字符串） |
+| `google_vertex_gemini` | SA 模式：完整服务账号 JSON；API Key 模式：`AIza...` 字符串 |
+
+## 响应字段
+
+<ResponseField name="task_id" type="string">
+  任务 ID，用于轮询 [任务状态](/cn/api-reference/system-api/channel/task)
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  提示信息
+</ResponseField>
+
+<ResponseField name="timestamp" type="integer">
+  响应时间戳（Unix 秒）
+</ResponseField>
+
+## 错误
+
+| 条件 | HTTP | type |
+|---|---|---|
+| 无效的 type slug | 400 | `invalid_request_error` |
+| Key 不是 `enc:v2:` 格式 | 400 | `invalid_request_error` |
+| AWS：`aws_region` 无效 | 400 | `invalid_request_error` |
+| Egress 检测到重复 Key | 400 | `invalid_request_error` |
+| 超出渠道数量上限 | 429 | `rate_limit_error` |

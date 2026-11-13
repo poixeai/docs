@@ -1,0 +1,82 @@
+---
+title: "Task Status"
+sidebarTitle: "Task Status"
+tag: "GET"
+icon: "clock"
+---
+
+import ChannelTaskReq from "/snippets/system/channel-task.req.mdx";
+import ChannelTaskResp from "/snippets/system/channel-task.resp.mdx";
+
+<RequestExample>
+  <ChannelTaskReq />
+</RequestExample>
+
+<ResponseExample>
+  <ChannelTaskResp />
+</ResponseExample>
+
+<div className="inline-flex flex-wrap items-center gap-4 rounded-lg border px-3 py-2">
+  <Badge color="gray">GET</Badge>
+  `https://sys.poixe.com/api/channel-tasks/:taskID`
+</div>
+
+Poll the status of a channel creation task until `status` is `completed` or `failed`. Tasks expire after **24 hours**.
+
+Recommended polling interval: 2–5 seconds. Tasks typically complete within seconds.
+
+## Path Parameters
+
+<ParamField path="taskID" type="string" required>
+  The `task_id` returned by [Create Channel](/en/api-reference/system-api/channel/create)
+</ParamField>
+
+## Response Fields
+
+<ResponseField name="task_id" type="string">
+  Task ID
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Task status: `pending` · `running` · `completed` · `failed`
+</ResponseField>
+
+<ResponseField name="created_count" type="integer">
+  Number of channels successfully created
+</ResponseField>
+
+<ResponseField name="failed_count" type="integer">
+  Number of channels that failed. If `status` is `completed` and this is greater than 0, some keys failed model validation — no available models were found. Successfully created channels are still listed
+</ResponseField>
+
+<ResponseField name="channels" type="array">
+  Successfully created channels (available after task completes):
+
+  <Expandable title="channel fields">
+    <ResponseField name="id" type="integer">
+      Channel ID
+    </ResponseField>
+    <ResponseField name="name" type="string">
+      Channel name
+    </ResponseField>
+    <ResponseField name="type" type="string">
+      Channel type slug
+    </ResponseField>
+    <ResponseField name="type_name" type="string">
+      Channel type display name
+    </ResponseField>
+    <ResponseField name="models" type="string">
+      Comma-separated list of detected available models
+    </ResponseField>
+    <ResponseField name="status" type="string">
+      Channel status
+    </ResponseField>
+    <ResponseField name="created_at" type="integer">
+      Creation timestamp (Unix seconds)
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="timestamp" type="integer">
+  Response timestamp (Unix seconds)
+</ResponseField>
