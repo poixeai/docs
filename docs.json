@@ -148,7 +148,14 @@
                       "cn/api-reference/introduction/errors/overview",
                       "cn/api-reference/introduction/errors/upstream",
                       "cn/api-reference/introduction/errors/system",
-                      "cn/api-reference/introduction/errors/unformatted"
+                      "cn/api-reference/introduction/errors/unformatted",
+                      {
+                        "group": "常见错误",
+                        "pages": [
+                          "cn/api-reference/introduction/errors/common/token-locked",
+                          "cn/api-reference/introduction/errors/common/model-overloaded"
+                        ]
+                      }
                     ]
                   },
                   {
@@ -355,7 +362,14 @@
                       "en/api-reference/introduction/errors/overview",
                       "en/api-reference/introduction/errors/upstream",
                       "en/api-reference/introduction/errors/system",
-                      "en/api-reference/introduction/errors/unformatted"
+                      "en/api-reference/introduction/errors/unformatted",
+                      {
+                        "group": "Common errors",
+                        "pages": [
+                          "en/api-reference/introduction/errors/common/token-locked",
+                          "en/api-reference/introduction/errors/common/model-overloaded"
+                        ]
+                      }
                     ]
                   },
                   {
