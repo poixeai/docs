@@ -22,17 +22,17 @@ The System API is used to programmatically manage accounts, tokens, channels, an
 |---|---|---|
 | **Purpose** | Account management, channel management, earnings | Model inference, extended features |
 | **Domain** | `https://sys.poixe.com` | `https://api.poixe.com` |
-| **Token** | System token (`sys-` prefix) | Business token (`sk-` prefix) |
+| **Token** | System token | Business token |
 
 ## Authentication
 
 All System API requests require a system token in the HTTP Authorization header:
 
 ```text
-Authorization: Bearer sys-xxxxxxxxxxxxxxxx
+Authorization: Bearer YOUR_SYSTEM_TOKEN
 ```
 
-System tokens must start with `sys-`. Business tokens (`sk-` prefix) **cannot** be used with the System API. System tokens can be created on the [System Token settings page](https://poixe.com/setting/system). See [System Tokens](/en/docs/dashboard/system-tokens) for details.
+Business tokens **cannot** be used with the System API. System tokens can be created on the [System Token settings page](https://poixe.com/setting/system). See [System Tokens](/en/docs/dashboard/system-tokens) for details.
 
 ## Pagination
 

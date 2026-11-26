@@ -29,14 +29,14 @@ This endpoint is commonly used to:
 - Display the account balance in an internal admin dashboard
 
 <Callout type="warning" icon="triangle-exclamation">
-  This endpoint uses a **system token** (starts with `sys-`) and the `sys.poixe.com` domain. API tokens (business tokens) starting with `sk-` cannot call it.
+  This endpoint uses a **system token** and the `sys.poixe.com` domain. API tokens (business tokens) cannot call it.
   See [System Tokens](/en/docs/dashboard/system-tokens) for how to create one and how it differs from an API token.
 </Callout>
 
 ## Authentication and headers
 
 <ParamField header="Authorization" type="string" required>
-  Bearer token. The format is `Bearer YOUR_SYSTEM_TOKEN`, where the token starts with `sys-`.
+  Bearer token. The format is `Bearer YOUR_SYSTEM_TOKEN`.
 </ParamField>
 
 <ParamField header="Content-Type" type="string">

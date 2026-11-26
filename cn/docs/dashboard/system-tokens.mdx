@@ -16,13 +16,12 @@ title: "系统令牌"
 |---|---|---|
 | **用途** | 调用模型（对话、生成等） | 管理账户信息与系统操作 |
 | **接口域名** | `api.poixe.com` | `sys.poixe.com` |
-| **令牌前缀** | `sk-` | `sys-` |
 | **创建位置** | [令牌管理](https://poixe.com/token) | [系统令牌](https://poixe.com/setting/system) |
 | **额度与限制** | 可设置授权额度、速率与模型限制 | 无额度概念，不能用于调用模型 |
 | **对应文档** | [文本接口](/cn/api-reference/text-api/openai-completions/overview)、[扩展接口](/cn/api-reference/extension-api/models/overview) | [系统接口](/cn/api-reference/system-api/overview) |
 
 <Callout type="warning" icon="triangle-exclamation">
-  两种令牌 **不能互换**：`sk-` 开头的业务令牌无法访问系统接口，系统令牌也无法用于调用模型。
+  两种令牌 **不能互换**：业务令牌无法访问系统接口，系统令牌也无法用于调用模型。
 </Callout>
 
 ## 创建系统令牌

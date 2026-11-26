@@ -16,13 +16,12 @@ A System Token is used to **manage your account**, for example to query your acc
 |---|---|---|
 | **Purpose** | Call models (chat, generation, etc.) | Manage account information and system operations |
 | **API domain** | `api.poixe.com` | `sys.poixe.com` |
-| **Token prefix** | `sk-` | `sys-` |
 | **Where to create** | [Token Management](https://poixe.com/token) | [System Tokens](https://poixe.com/setting/system) |
 | **Quota & restrictions** | Authorized quota, rate limits, and model restrictions | No quota; cannot be used to call models |
 | **Related docs** | [Text APIs](/en/api-reference/text-api/openai-completions/overview), [Extension APIs](/en/api-reference/extension-api/models/overview) | [System APIs](/en/api-reference/system-api/overview) |
 
 <Callout type="warning" icon="triangle-exclamation">
-  The two token types are **not interchangeable**: an API token starting with `sk-` cannot access the System APIs, and a system token cannot be used to call models.
+  The two token types are **not interchangeable**: an API token cannot access the System APIs, and a system token cannot be used to call models.
 </Callout>
 
 ## Create a system token

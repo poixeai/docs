@@ -22,17 +22,17 @@ icon: "book-open"
 |---|---|---|
 | **用途** | 账户管理、渠道管理、收益查询 | 调用模型、扩展功能 |
 | **域名** | `https://sys.poixe.com` | `https://api.poixe.com` |
-| **令牌** | 系统令牌（`sys-` 开头） | 业务令牌（`sk-` 开头） |
+| **令牌** | 系统令牌 | 业务令牌 |
 
 ## 鉴权
 
 所有系统接口请求都需要在 HTTP Header 中携带系统令牌：
 
 ```text
-Authorization: Bearer sys-xxxxxxxxxxxxxxxx
+Authorization: Bearer YOUR_SYSTEM_TOKEN
 ```
 
-系统令牌必须以 `sys-` 开头，`sk-` 开头的业务令牌**不能**用于系统接口。系统令牌可在 [系统令牌管理页面](https://poixe.com/setting/system) 创建，详见 [系统令牌](/cn/docs/dashboard/system-tokens)。
+业务令牌**不能**用于系统接口。系统令牌可在 [系统令牌管理页面](https://poixe.com/setting/system) 创建，详见 [系统令牌](/cn/docs/dashboard/system-tokens)。
 
 ## 分页
 
